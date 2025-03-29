@@ -12,7 +12,7 @@ import { globalStore } from "../stores";
  */
 export const HomePage = () => {
   const { posts } = globalStore.getState();
-
+  console.log("home");
   return (
     <div className="bg-gray-100 min-h-screen flex justify-center">
       <div className="max-w-md w-full">

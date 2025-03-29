@@ -8,7 +8,6 @@ import { NotFoundPage } from "./pages";
 export function render() {
   const Page = router.get().getTarget() ?? NotFoundPage;
   const $root = document.querySelector("#root");
-
   try {
     renderElement(<Page />, $root);
   } catch (error) {

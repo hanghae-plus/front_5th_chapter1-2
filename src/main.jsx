@@ -5,7 +5,6 @@ import { globalStore } from "./stores";
 import { ForbiddenError, UnauthorizedError } from "./errors";
 import { router } from "./router";
 import { render } from "./render";
-
 router.set(
   createRouter({
     "/": HomePage,
