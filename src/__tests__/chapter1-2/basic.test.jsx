@@ -320,7 +320,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
 
     it("배열 입력에 대해 DocumentFragment를 생성해야 한다", () => {
       const result = createElement([<div>첫 번째</div>, <span>두 번째</span>]);
-
+      console.log(result);
       expect(result.nodeType).toBe(Node.DOCUMENT_FRAGMENT_NODE);
       expect(result.childNodes.length).toBe(2);
       expect(result.childNodes[0].tagName).toBe("DIV");

@@ -1,5 +1,4 @@
 export function normalizeVNode(vNode) {
-  // console.log(vNode);
   // 랜더링 제외 / 텍스트 노드 처리
   const is = (type) => typeof vNode === type;
   if (vNode === null || vNode === undefined || is("boolean")) return "";
