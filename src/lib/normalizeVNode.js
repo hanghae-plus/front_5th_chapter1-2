@@ -7,6 +7,7 @@ export function normalizeVNode(vNode) {
   // 컴포넌트 정규화
   const normalizeChildren = (children) =>
     (children || []).map(normalizeVNode).filter((c) => c !== "");
+  // Function TextComponent로 함수형 컴포넌트가 넘어오는 경우가 있음
   if (typeof vNode.type === "function") {
     return normalizeVNode(
       vNode.type({
