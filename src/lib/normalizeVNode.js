@@ -1,3 +1,5 @@
+import { getTypes } from "../utils";
+
 /**
  * 가상 DOM 노드 타입 정의
  * @typedef {Object} VNode
@@ -13,8 +15,6 @@
  * @returns {string|VNode} 정규화된 가상 돔 노드 or 문자열
  */
 export function normalizeVNode(vNode) {
-  const getTypes = (vNode) => (vNode === null ? "null" : typeof vNode);
-
   const vNodeType = getTypes(vNode);
   const invalidTypes = ["null", "undefined", "boolean"];
 
