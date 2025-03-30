@@ -1,7 +1,9 @@
 export function createVNode(type, props, ...children) {
   if (isVNode(type)) return type;
   else {
-    const flattenChildren = getFlattenChildren(children);
+    const flattenChildren = Array.isArray(children)
+      ? getFlattenChildren(children)
+      : children;
     return { type, props, children: flattenChildren };
   }
 }
@@ -10,14 +12,10 @@ function isVNode(node) {
   return typeof node === "object" && node !== null && "type" in node;
 }
 
-function getFlattenChildren(children) {
-  if (Array.isArray(children)) {
-    return children.flat(Infinity).filter((child) => !isEmpty(child));
-  } else {
-    return children;
-  }
+export function getFlattenChildren(children) {
+  return children.flat(Infinity).filter((child) => !isEmpty(child));
 }
 
-function isEmpty(value) {
-  return value === false || value === null || value === undefined;
+export function isEmpty(value) {
+  return typeof value === "boolean" || value === null || value === undefined;
 }
