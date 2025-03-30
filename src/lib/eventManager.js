@@ -1,32 +1,40 @@
-const eventRegistry = new Map();
-const registeredEvents = new Set();
+const delegatedEvents = new Map();
+const delegatedRoots = new WeakMap();
 
-export function setupEventListeners(root) {
-  eventRegistry.forEach((elementMap, eventType) => {
-    if (registeredEvents.has(eventType)) return;
-    root.addEventListener(eventType, (event) => {
-      for (const [element, handler] of elementMap) {
-        if (element.contains(event.target)) {
-          handler.call(element, event);
+export function setupEventListeners(delegateRoot) {
+  if (!delegatedRoots.has(delegateRoot)) {
+    delegatedRoots.set(delegateRoot, new Set());
+  }
+
+  const boundEvents = delegatedRoots.get(delegateRoot);
+
+  delegatedEvents.forEach((delegates, eventType) => {
+    if (boundEvents.has(eventType)) return;
+
+    delegateRoot.addEventListener(eventType, (event) => {
+      for (const [delegateTarget, delegateHandler] of delegates) {
+        if (delegateTarget.contains(event.target)) {
+          delegateHandler.call(delegateTarget, event);
         }
       }
     });
-    registeredEvents.add(eventType);
+
+    boundEvents.add(eventType);
   });
 }
 
-export function addEvent(element, eventType, handler) {
-  if (!eventRegistry.has(eventType)) {
-    eventRegistry.set(eventType, new Map());
+export function addEvent(delegateTarget, eventType, delegateHandler) {
+  if (!delegatedEvents.has(eventType)) {
+    delegatedEvents.set(eventType, new Map());
   }
 
-  const elementMap = eventRegistry.get(eventType);
-  elementMap.set(element, handler);
+  const delegates = delegatedEvents.get(eventType);
+  delegates.set(delegateTarget, delegateHandler);
 }
 
-export function removeEvent(element, eventType) {
-  const elementMap = eventRegistry.get(eventType);
-  if (elementMap) {
-    elementMap.delete(element);
+export function removeEvent(delegateTarget, eventType) {
+  const delegates = delegatedEvents.get(eventType);
+  if (delegates) {
+    delegates.delete(delegateTarget);
   }
 }
