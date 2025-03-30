@@ -33,9 +33,15 @@ export function createElement(vNode) {
 }
 
 function updateAttributes($el, props) {
+  if (props === null || props === undefined) {
+    return;
+  }
+
   Object.entries(props).forEach(([key, value]) => {
     if (key.startsWith("on")) {
       addEvent($el, key, value);
+    } else if (key === "className") {
+      $el.setAttribute("class", value);
     } else {
       $el.setAttribute(key, value);
     }
