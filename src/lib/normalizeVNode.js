@@ -21,7 +21,9 @@ export function normalizeVNode(vNode) {
   if (invalidTypes.includes(vNodeType)) {
     return "";
   }
-  if (vNodeType === "number") {
+
+  const textNodeTypes = ["string", "number"];
+  if (textNodeTypes.includes(vNodeType)) {
     return String(vNode);
   }
 
