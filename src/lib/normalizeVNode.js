@@ -12,5 +12,23 @@
 
  */
 export function normalizeVNode(vNode) {
+  // console.log("vNode는", vNode, "/ vNode의 타입은 ", typeof vNode);
+  //vNode는 { type: [Function: TestComponent], props: null, children: [] } / vNode의 타입은  object
+  //
+  if (vNode === null) return "";
+
+  if (typeof vNode === "object" && typeof vNode.type === "function") {
+    // normalizeVNode(vNode);
+    //TODO: 재귀적으로 컴포넌트를 정규화할 방법을 모색
+  }
+  if (vNode === undefined || typeof vNode === "boolean") {
+    return "";
+  }
+  if (typeof vNode === "string") {
+    return vNode;
+  }
+  if (typeof vNode === "number") {
+    return String(vNode);
+  }
   return vNode;
 }
