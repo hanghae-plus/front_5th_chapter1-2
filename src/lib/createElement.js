@@ -2,8 +2,44 @@
 // import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
-  updateAttributes(vNode);
-  return vNode;
+  console.log("createElement", vNode);
+  if (
+    typeof vNode === "boolean" ||
+    typeof vNode === "undefined" ||
+    vNode === null
+  ) {
+    return document.createTextNode("");
+  }
+
+  if (typeof vNode === "string" || typeof vNode === "number") {
+    return document.createTextNode(vNode);
+  }
+
+  if (Array.isArray(vNode)) {
+    const fragment = document.createDocumentFragment();
+    fragment.append(...vNode.map(createElement));
+    return fragment;
+  }
+
+  const $el = document.createElement(vNode.type);
+
+  Object.entries(vNode.props || {})
+    .filter(([, value]) => value)
+    .forEach(([attr, value]) => {
+      console.log(attr, value);
+      // TODO: attr format하는 함수 만들기
+      if (attr === "className") {
+        $el.setAttribute("class", value);
+      } else {
+        $el.setAttribute(attr, value);
+      }
+    });
+
+  updateAttributes($el, vNode.props);
+
+  vNode.children.map(createElement).forEach((child) => $el.appendChild(child));
+
+  return $el;
 }
 
 function updateAttributes($el, props) {
