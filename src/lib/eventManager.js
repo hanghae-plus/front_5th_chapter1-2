@@ -1,5 +1,29 @@
-export function setupEventListeners(root) {}
+const eventRegistry = new Map();
 
-export function addEvent(element, eventType, handler) {}
+export function setupEventListeners(root) {
+  eventRegistry.forEach((elementMap, eventType) => {
+    root.addEventListener(eventType, (event) => {
+      for (const [element, handler] of elementMap) {
+        if (element.contains(event.target)) {
+          handler.call(element, event);
+        }
+      }
+    });
+  });
+}
 
-export function removeEvent(element, eventType, handler) {}
+export function addEvent(element, eventType, handler) {
+  if (!eventRegistry.has(eventType)) {
+    eventRegistry.set(eventType, new WeakMap());
+  }
+
+  const elementMap = eventRegistry.get(eventType);
+  elementMap.set(element, handler);
+}
+
+export function removeEvent(element, eventType) {
+  const elementMap = eventRegistry.get(eventType);
+  if (elementMap) {
+    elementMap.delete(element);
+  }
+}
