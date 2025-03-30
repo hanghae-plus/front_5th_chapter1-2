@@ -11,6 +11,6 @@ export function renderElement(vNode, container) {
   const normalizedNode = normalizeVNode(vNode);
   const $el = createElement(normalizedNode);
 
-  container.appendChild($el);
+  container.replaceChildren($el);
   setupEventListeners(container);
 }
