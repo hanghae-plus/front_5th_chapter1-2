@@ -32,8 +32,10 @@ function updateAttributes($el, props) {
     // key 이름 매핑
     if (key === "className") key = "class";
     // 함수처리, on도 신경써야 할 지..
-    if (key.startsWith("on") && typeof value === "function")
-      addEvent($el, key, value);
+    if (key.startsWith("on") && typeof value === "function") {
+      const eventType = key.slice(2).toLowerCase();
+      addEvent($el, eventType, value);
+    }
     // value가 객체인 경우.. 아직 미구현 ex: style={{ display: "none" }};
     else if (typeof value === "object")
       Object.entries(value).forEach(setAttributes);

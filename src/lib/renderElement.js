@@ -9,13 +9,13 @@ export function renderElement(vNode, container) {
   // 이후에는 updateElement로 기존 DOM을 업데이트한다.
   // 렌더링이 완료되면 container에 이벤트를 등록한다.
   if (!vNode) throw new Error();
+
   const newNode = normalizeVNode(vNode);
-  if (!oldNode || !container.firstChild) {
-    const created = createElement(newNode);
-    container.appendChild(created);
+  if (!container.firstChild) {
+    container.appendChild(createElement(newNode));
   } else {
     updateElement(container, newNode, oldNode);
   }
-  setupEventListeners(container);
   oldNode = newNode;
+  setupEventListeners(container);
 }

@@ -1,4 +1,4 @@
-const eventsMap = globalThis.eventsMap || {};
+const eventsMap = {};
 
 export function setupEventListeners(root) {
   Object.entries(eventsMap).forEach(([eventType, elements]) => {
@@ -31,5 +31,3 @@ export function removeEvent(element, eventType, handler) {
   if (handlers.size === 0) elements.delete(element);
   if (elements.size === 0) delete eventsMap[eventType];
 }
-
-globalThis.eventsMap = eventsMap;
