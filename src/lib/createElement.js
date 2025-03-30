@@ -1,4 +1,4 @@
-import { addEvent } from "./eventManager";
+import { updateAttributes } from "../utils";
 
 export function createElement(vNode) {
   // 엘리먼트 제외 / 텍스트 엘리먼트 처리
@@ -25,21 +25,4 @@ export function createElement(vNode) {
   if (props) updateAttributes($el, props);
   if (children) children.forEach((c) => $el.appendChild(createElement(c)));
   return $el;
-}
-
-function updateAttributes($el, props) {
-  const setAttributes = ([key, value]) => {
-    // key 이름 매핑
-    if (key === "className") key = "class";
-    // 함수처리, on도 신경써야 할 지..
-    if (key.startsWith("on") && typeof value === "function") {
-      const eventType = key.slice(2).toLowerCase();
-      addEvent($el, eventType, value);
-    }
-    // value가 객체인 경우.. 아직 미구현 ex: style={{ display: "none" }};
-    // else if (typeof value === "object")
-    //   Object.entries(value).forEach(setAttributes);
-    else $el.setAttribute(key, value);
-  };
-  Object.entries(props).forEach(setAttributes);
 }

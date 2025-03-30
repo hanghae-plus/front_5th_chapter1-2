@@ -1,5 +1,5 @@
+import { updateAttributes } from "../utils";
 import { createElement } from "./createElement.js";
-import { addEvent, removeEvent } from "./eventManager";
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
   const origin = parentElement.childNodes[index];
@@ -37,24 +37,4 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     const on = oldNode.children?.[i];
     updateElement(origin, nn, on, i);
   }
-}
-
-function updateAttributes($el, originNewProps, originOldProps) {
-  Object.entries(originOldProps).forEach(([key, value]) => {
-    if (key.startsWith("on") && typeof value === "function") {
-      const eventType = key.slice(2).toLowerCase();
-      removeEvent($el, eventType, value);
-    }
-  });
-  const setAttributes = ([key, value]) => {
-    if (key === "className") key = "class";
-    if (key.startsWith("on") && typeof value === "function") {
-      const eventType = key.slice(2).toLowerCase();
-      addEvent($el, eventType, value);
-    }
-    // else if (typeof value === "object")
-    //   Object.entries(value).forEach(setAttributes);
-    else $el.setAttribute(key, value);
-  };
-  Object.entries(originNewProps).forEach(setAttributes);
 }
