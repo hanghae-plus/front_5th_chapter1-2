@@ -2,9 +2,10 @@ export function createVNode(type, props, ...children) {
   return {
     type,
     props,
-    children: children.flat(Infinity).filter(isTruthy),
+    children: children.flat(Infinity).filter(isValidChild),
   };
 }
 
-const isFalsy = (value) => [false, null, undefined, ""].includes(value);
-const isTruthy = (value) => !isFalsy(value);
+const isNullishOrBoolean = (value) =>
+  [false, null, undefined, true].includes(value);
+const isValidChild = (child) => !isNullishOrBoolean(child);
