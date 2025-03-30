@@ -14,6 +14,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
   describe("createVNode > ", () => {
     it("올바른 구조의 vNode를 생성해야 한다", () => {
       const vNode = createVNode("div", { id: "test" }, "Hello");
+      console.log(vNode); //TODO: DELETE ME !!!
       expect(vNode).toEqual({
         type: "div",
         props: { id: "test" },
@@ -38,6 +39,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
         createVNode("span", null, "Hello"),
         createVNode("b", null, "world"),
       );
+      console.log("vNode: ", vNode); //FIXME: DELETE ME !!!
       expect(vNode.type).toBe("div");
       expect(vNode.children.length).toBe(2);
       expect(vNode.children[0].type).toBe("span");
@@ -131,7 +133,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
           },
         },
         {
-          name: "함수형 컴포넌트",
+          name: "함수형 컴포넌트", //NOTE: React 처럼 함수형 컴포넌트를 선언해도 vNode가 생성됨
           vNode: <TestComponent message="Hello World" />,
           expected: {
             type: TestComponent,
@@ -149,7 +151,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
           },
         },
         {
-          name: "조건부 렌더링",
+          name: "조건부 렌더링", //NOTE: children으로 false 만났을 경우 추가 x
           vNode: (
             <div>
               {true && <span>Shown</span>}
@@ -186,7 +188,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
           },
         },
         {
-          name: "null과 undefined 처리",
+          name: "null과 undefined 처리", //NOTE: children으로 null, undefined만났을 경우, 추가 x
           vNode: (
             <div>
               {null}
