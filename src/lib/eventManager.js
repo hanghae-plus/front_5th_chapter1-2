@@ -1,15 +1,18 @@
-const eventMap = new Map();
+const event = {
+  root: null,
+  map: new Map(),
+};
 
 /**
  * @param {HTMLElement} root
  */
 export function setupEventListeners(root) {
-  const exRoot = eventMap.get("root");
-  if (exRoot !== root) {
-    eventMap.set("root", root);
+  const currentRoot = event.root;
+  if (currentRoot !== root) {
+    event.root = root;
   }
 
-  eventMap.forEach((event) => {
+  event.map.forEach((event) => {
     Object.entries(event)
       .filter(([, handler]) => typeof handler === "function")
       .forEach(([eventType, handler]) => {
@@ -24,8 +27,8 @@ export function setupEventListeners(root) {
  * @param {Function} handler
  */
 export function addEvent(element, eventType, handler) {
-  eventMap.set(element, {
-    ...eventMap.get(element),
+  event.map.set(element, {
+    ...event.map.get(element),
     [eventType]: handler,
   });
 }
@@ -36,12 +39,14 @@ export function addEvent(element, eventType, handler) {
  * @param {Function} handler
  */
 export function removeEvent(element, eventType, handler) {
-  const exEvent = eventMap.get(element);
+  const exEvent = event.map.get(element);
   const hasEvent = !!exEvent;
   if (hasEvent) {
-    eventMap.delete(element);
+    event.map.delete(element);
   }
 
-  const root = eventMap.get("root");
+  const root = event.root;
+  if (!root) return;
+
   root.removeEventListener(eventType, handler);
 }

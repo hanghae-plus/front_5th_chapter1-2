@@ -18,18 +18,14 @@ export function renderElement(vNode, container) {
 
   // 최초 렌더링시에는 createElement로 DOM을 생성하고
   if (isFirstRender) {
-    // 노드 삽입
     container.appendChild(element);
   }
-  // 이후에는 updateElement로 기존 DOM을 업데이트한다.
+  // FIXME: 이후에는 updateElement로 기존 DOM을 업데이트한다.
   else {
-    // FIXME: 노드 변경
-    // container.replaceChild(element, container.children[0]);
     container.innerHTML = "";
     container.appendChild(element);
   }
 
-  // TODO: 이벤트가 고장났어요 ㅜ 외않되
   // 이벤트 등록
   setupEventListeners(container);
 }

@@ -1,5 +1,4 @@
 import { getTypes } from "../utils";
-import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
   const vNodeType = getTypes(vNode);
@@ -26,7 +25,7 @@ export function createElement(vNode) {
         }
         // 이벤트 속성 처리
         else if (/on[A-Z]/.test(key)) {
-          addEvent($el, key.replace("on", "").toLowerCase(), value);
+          $el.addEventListener(key.replace("on", "").toLowerCase(), value);
         }
         // 일반 속성 처리
         else {
