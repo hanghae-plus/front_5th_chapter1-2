@@ -14,7 +14,7 @@ export function setupEventListeners(root) {
 
 export function addEvent(element, eventType, handler) {
   if (!eventRegistry.has(eventType)) {
-    eventRegistry.set(eventType, new WeakMap());
+    eventRegistry.set(eventType, new Map());
   }
 
   const elementMap = eventRegistry.get(eventType);
