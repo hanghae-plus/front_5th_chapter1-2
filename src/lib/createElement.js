@@ -1,3 +1,5 @@
+import { addEvent } from "./eventManager.js";
+
 import { isEmpty, isPrimitive, isFunctionComponent } from "./utils.js";
 
 export function createElement(vNode) {
@@ -47,7 +49,13 @@ function updateAttributes($el, props) {
 
   for (const key of propKeys) {
     const attrName = key === "className" ? "class" : key;
-    $el.setAttribute(attrName, props[key]);
+    const isEventAttr = key.startsWith("on");
+    if (isEventAttr) {
+      const eventName = key.slice(2).toLowerCase();
+      addEvent($el, eventName, props[key]);
+    } else {
+      $el.setAttribute(attrName, props[key]);
+    }
   }
 }
 
