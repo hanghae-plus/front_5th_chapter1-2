@@ -7,13 +7,21 @@ export function normalizeVNode(vNode) {
     return `${vNode}`;
   }
 
-  if (typeof vNode === "function") {
-    return normalizeVNode(vNode());
+  if (typeof vNode.type === "function") {
+    const Component = vNode.type;
+    return normalizeVNode(
+      Component({
+        ...vNode.props,
+        children: vNode.children,
+      }),
+    );
   }
 
   return {
     type: vNode.type,
     props: vNode.props,
-    children: vNode.children.map(normalizeVNode),
+    children: vNode.children
+      .map(normalizeVNode)
+      .filter((child) => child !== ""),
   };
 }
