@@ -8,6 +8,7 @@ import { render } from "./render";
 
 router.set(
   createHashRouter({
+    
     "/": HomePage,
     "/login": () => {
       const { loggedIn } = globalStore.getState();
