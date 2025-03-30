@@ -1,3 +1,5 @@
+import { isEmpty } from "./utils.js";
+
 export function createVNode(type, props, ...children) {
   if (isVNode(type)) return type;
   else {
@@ -14,8 +16,4 @@ function isVNode(node) {
 
 export function getFlattenChildren(children) {
   return children.flat(Infinity).filter((child) => !isEmpty(child));
-}
-
-export function isEmpty(value) {
-  return typeof value === "boolean" || value === null || value === undefined;
 }
