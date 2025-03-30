@@ -18,8 +18,10 @@ export function createElement(vNode) {
   }
 
   if (typeof normalizedVNode === "object") {
-    const { type, children } = vNode;
+    const { type, children, props } = vNode;
     const el = document.createElement(type);
+    updateAttributes(el, props);
+
     children.forEach((child) => {
       const childEl = createElement(child);
       el.appendChild(childEl);
@@ -28,4 +30,14 @@ export function createElement(vNode) {
   }
 }
 
-// function updateAttributes($el, props) {}
+function updateAttributes($el, props) {
+  if (props) {
+    Object.entries(props).forEach(([key, value]) => {
+      if (key === "className") {
+        $el.setAttribute("class", value);
+      } else {
+        $el.setAttribute(key, value);
+      }
+    });
+  }
+}
