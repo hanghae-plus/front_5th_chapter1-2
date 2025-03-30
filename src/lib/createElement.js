@@ -39,7 +39,8 @@ function updateAttributes($el, props) {
 
   Object.entries(props).forEach(([key, value]) => {
     if (key.startsWith("on")) {
-      addEvent($el, key, value);
+      const eventType = key.toLowerCase().substring(2);
+      addEvent($el, eventType, value);
     } else if (key === "className") {
       $el.setAttribute("class", value);
     } else {

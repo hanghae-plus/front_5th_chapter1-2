@@ -1,7 +1,9 @@
 const eventRegistry = new Map();
+const registeredEvents = new Set();
 
 export function setupEventListeners(root) {
   eventRegistry.forEach((elementMap, eventType) => {
+    if (registeredEvents.has(eventType)) return;
     root.addEventListener(eventType, (event) => {
       for (const [element, handler] of elementMap) {
         if (element.contains(event.target)) {
@@ -9,6 +11,7 @@ export function setupEventListeners(root) {
         }
       }
     });
+    registeredEvents.add(eventType);
   });
 }
 
