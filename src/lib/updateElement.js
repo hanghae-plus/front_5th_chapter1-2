@@ -51,8 +51,9 @@ function updateAttributes($el, originNewProps, originOldProps) {
     if (key.startsWith("on") && typeof value === "function") {
       const eventType = key.slice(2).toLowerCase();
       addEvent($el, eventType, value);
-    } else if (typeof value === "object")
-      Object.entries(value).forEach(setAttributes);
+    }
+    // else if (typeof value === "object")
+    //   Object.entries(value).forEach(setAttributes);
     else $el.setAttribute(key, value);
   };
   Object.entries(originNewProps).forEach(setAttributes);

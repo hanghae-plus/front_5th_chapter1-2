@@ -37,8 +37,8 @@ function updateAttributes($el, props) {
       addEvent($el, eventType, value);
     }
     // value가 객체인 경우.. 아직 미구현 ex: style={{ display: "none" }};
-    else if (typeof value === "object")
-      Object.entries(value).forEach(setAttributes);
+    // else if (typeof value === "object")
+    //   Object.entries(value).forEach(setAttributes);
     else $el.setAttribute(key, value);
   };
   Object.entries(props).forEach(setAttributes);
