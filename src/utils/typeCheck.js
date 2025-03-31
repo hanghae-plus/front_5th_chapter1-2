@@ -9,3 +9,6 @@ export const isInvalidVNode = (vNode) => {
 export const isFuncVNode = (vNode) => {
   return typeof vNode === "object" && typeof vNode.type === "function";
 };
+export const isArray = (vNode) => {
+  return Array.isArray(vNode);
+};

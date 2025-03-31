@@ -440,7 +440,6 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
       container = document.createElement("div");
       document.body.appendChild(container);
     });
-
     afterEach(() => {
       document.body.removeChild(container);
     });

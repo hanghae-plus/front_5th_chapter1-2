@@ -1,6 +1,6 @@
 // import { addEvent } from "./eventManager";
 
-import { isInvalidVNode } from "../utils/typeCheck";
+import { isArray, isInvalidVNode, isValidVNode } from "../utils/typeCheck";
 
 /**가상돔을 돔으로 변환하는 함수
  * 1. vNode가 null, undefined, boolean일 경우 빈 텍스트 노드 반환
@@ -11,15 +11,39 @@ import { isInvalidVNode } from "../utils/typeCheck";
  * -  vNode.props의 속성들을 적용
  * -  vNOde.children의 각 자식에 대해 createElement를 재귀호출하여 추가* **/
 export function createElement(vNode) {
-  console.log(typeof vNode);
   if (isInvalidVNode(vNode)) {
     return document.createTextNode("");
   }
-  console.log("text nodes");
-  return document.createTextNode(vNode);
+
+  if (isValidVNode(vNode)) {
+    return document.createTextNode(vNode.toString());
+  }
+  if (isArray(vNode)) {
+    const fragment = new DocumentFragment();
+
+    for (let node of vNode) {
+      fragment.appendChild(createElement(node));
+    }
+    return fragment;
+  }
+
+  const $el = document.createElement(vNode.type);
+
+  Object.entries(vNode.props || {})
+    .filter(([, value]) => value)
+    .forEach(([attr, value]) => {
+      updateAttributes($el, attr, value);
+    });
+
+  const children = vNode.children.map(createElement);
+
+  children.forEach((child) => $el.appendChild(child));
+
+  return $el;
 }
 
-function updateAttributes($el, props) {
-  console.log($el, props);
-}
-console.log(updateAttributes);
+const updateAttributes = ($el, attr, value) => {
+  attr === "className"
+    ? $el.setAttribute("class", value)
+    : $el.setAttribute(attr, value);
+};
