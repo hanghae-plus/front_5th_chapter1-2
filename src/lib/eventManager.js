@@ -1,10 +1,13 @@
 const eventMap = new Map();
 
 export function setupEventListeners(root) {
-  for (const [eventType, handlers] of eventMap.entries()) {
-    handlers.forEach(({ element, handler }) => {
-      if (element && root.contains(element)) {
-        root.addEventListener(eventType, handler);
+  for (const eventType of eventMap.keys()) {
+    root.addEventListener(eventType, (event) => {
+      const handlers = eventMap.get(eventType);
+      for (const { element, handler } of handlers) {
+        if (element.contains(event.target)) {
+          handler(event);
+        }
       }
     });
   }
