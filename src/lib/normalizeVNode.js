@@ -24,11 +24,13 @@ export function normalizeVNode(vNode) {
     return normalizeVNode(type({ children, ...(props || {}) }));
   }
 
-  const normalizedChildren = Array.isArray(children)
-    ? children.map(normalizeVNode)
-    : children
-      ? [normalizeVNode(children)]
-      : [];
+  const normalizedChildren = (
+    Array.isArray(children)
+      ? children.map(normalizeVNode)
+      : children
+        ? [normalizeVNode(children)]
+        : []
+  ).filter((child) => child !== null && child !== "");
 
   return {
     type,
