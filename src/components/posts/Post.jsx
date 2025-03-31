@@ -1,19 +1,47 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
 import { toTimeFormat } from "../../utils/index.js";
-
+import { userStorage } from "../../storages";
+import { globalStore } from "../../stores";
 export const Post = ({
+  id,
   author,
   time,
   content,
   likeUsers,
   activationLike = false,
 }) => {
+  const currentUser = userStorage.get();
+
   const handleLike = () => {
-    if (!activationLike) {
+    const { loggedIn, posts } = globalStore.getState();
+
+    if (!loggedIn) {
       alert("로그인 후 이용해주세요");
-      return;
+      return null;
     }
+
+    const newPosts = posts.map((post) => {
+      if (post.id === id) {
+        if (post.likeUsers.includes(currentUser.username)) {
+          return {
+            ...post,
+            likeUsers: post.likeUsers.filter(
+              (user) => user !== currentUser.username,
+            ),
+          };
+        }
+        return {
+          ...post,
+          likeUsers: [...post.likeUsers, currentUser.username],
+        };
+      }
+      return post;
+    });
+
+    globalStore.setState({
+      posts: newPosts,
+    });
   };
 
   return (
@@ -27,7 +55,11 @@ export const Post = ({
       <p>{content}</p>
       <div className="mt-2 flex justify-between text-gray-500">
         <span
-          className={`like-button cursor-pointer${activationLike ? " text-blue-500" : ""}`}
+          className={`like-button cursor-pointer${
+            currentUser && likeUsers.includes(currentUser.username)
+              ? " text-blue-500"
+              : ""
+          }`}
           onClick={handleLike}
         >
           좋아요 {likeUsers.length}
