@@ -23,6 +23,7 @@ export function normalizeVNode(vNode) {
     }
     return children !== null ? [normalizeVNode(children)] : [];
   }
+
   return {
     ...vNode,
     children: normalizeChildren(vNode.children),
