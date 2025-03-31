@@ -1,9 +1,11 @@
-const exceptedNormalizedType = ["null", "undefined", "boolean"];
-const toStringType = ["string", "number"];
-function getType(vNode) {
+export const exceptedNormalizedType = ["null", "undefined", "boolean"];
+export const toStringType = ["string", "number"];
+export function getType(vNode) {
   // null 일때 강제로 type null로 반환
   if (vNode === null) {
     return "null";
+  } else if (Array.isArray(vNode)) {
+    return "array";
   } else {
     return typeof vNode;
   }
@@ -38,15 +40,15 @@ function normalizeChildren(children) {
  */
 export function normalizeVNode(vNode) {
   const vNodeType = getType(vNode);
-  console.log("1 vNode", vNode);
+  // console.log("1 vNode", vNode);
   if (exceptedNormalizedType.includes(vNodeType)) {
     return "";
   }
   if (toStringType.includes(vNodeType)) {
     return String(vNode);
   }
-  console.log("vNodeType", vNodeType);
-  console.log("vNode", vNode);
+  // console.log("vNodeType", vNodeType);
+  // console.log("vNode", vNode);
   // vNode가 함수형 컴포넌트 일 때
   if (vNodeType === "object" && typeof vNode.type === "function") {
     // createVNode의 형태 반환
