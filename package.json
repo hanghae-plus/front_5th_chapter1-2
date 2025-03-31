@@ -24,7 +24,10 @@
     "test:e2e:report": "npx playwright show-report",
     "test:generate": "playwright codegen localhost:5173",
     "prepare": "husky",
-    "deploy": "pnpm run build && gh-pages -d dist"
+    "build:test": "vite build --mode development",
+    "build:prod": "vite build --mode production",
+    "predeploy": "pnpm run build:prod && cp dist/index.html dist/404.html",
+    "deploy": "gh-pages -d dist"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
