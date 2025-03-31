@@ -32,9 +32,12 @@ export function addEvent(delegateTarget, eventType, delegateHandler) {
   delegates.set(delegateTarget, delegateHandler);
 }
 
-export function removeEvent(delegateTarget, eventType) {
+export function removeEvent(delegateTarget, eventType, delegateHandler) {
   const delegates = delegatedEvents.get(eventType);
-  if (delegates) {
+  if (!delegates) return;
+
+  const existing = delegates.get(delegateTarget);
+  if (existing === delegateHandler) {
     delegates.delete(delegateTarget);
   }
 }
