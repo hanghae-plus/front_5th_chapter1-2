@@ -445,21 +445,20 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
     });
 
     it("이벤트가 위임 방식으로 등록되어야 한다", () => {
-      const clickHandler = vi.fn();
+      const clickHandler = vi.fn(); //Mock Funtion 생성
       const button = document.createElement("button");
       container.appendChild(button);
-
+      //container밑 button, button에 click addEvent,
       addEvent(button, "click", clickHandler);
       setupEventListeners(container);
       button.click();
 
-      expect(clickHandler).toHaveBeenCalledTimes(1);
+      expect(clickHandler).toHaveBeenCalledTimes(1); //한 번만 호출하는지 확인
 
       const handleClick = (e) => e.stopPropagation();
       button.addEventListener("click", handleClick);
       button.click();
       expect(clickHandler).toHaveBeenCalledTimes(1);
-
       expect(clickHandler).toHaveBeenCalledTimes(1);
       button.removeEventListener("click", handleClick);
       button.click();
@@ -479,7 +478,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
       removeEvent(button, "click", clickHandler);
       button.click();
 
-      expect(clickHandler).toHaveBeenCalledTimes(1);
+      expect(clickHandler).toHaveBeenCalledTimes(1); //새롭게 안 사실, toHave...는 기록을 저장한다. 그래서 0이 아닌 1ㅇ이고 2가 나오면 제거가 안된거다
     });
   });
 
