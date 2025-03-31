@@ -2,12 +2,6 @@ import { isNullishOrBoolean } from "./createVNode";
 import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
-  if (typeof vNode?.type === "function") {
-    throw new Error(
-      "function component must be normalized before creating element",
-    );
-  }
-
   if (isNullishOrBoolean(vNode)) {
     return document.createTextNode("");
   }
