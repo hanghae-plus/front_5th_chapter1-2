@@ -1,3 +1,4 @@
+import { isFuncVNode, isInvalidVNode, isValidVNode } from "../utils/typeCheck";
 import { createVNode } from "./createVNode";
 
 /**
@@ -14,18 +15,18 @@ import { createVNode } from "./createVNode";
 
  */
 export function normalizeVNode(vNode) {
-  if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
+  if (isInvalidVNode(vNode)) {
     return "";
   }
 
-  if (typeof vNode === "object" && typeof vNode.type === "function") {
+  if (isValidVNode(vNode)) {
+    return String(vNode);
+  }
+
+  if (isFuncVNode(vNode)) {
     return normalizeVNode(
       vNode.type({ ...vNode.props, children: vNode.children }),
     );
-  }
-
-  if (typeof vNode === "string" || typeof vNode === "number") {
-    return String(vNode);
   }
 
   const children = Array.isArray(vNode.children)
