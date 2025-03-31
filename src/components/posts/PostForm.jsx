@@ -4,10 +4,11 @@ import { globalStore } from "../../stores";
 import { userStorage } from "../../storages";
 
 export const PostForm = () => {
-  const currentUser = userStorage.get();
+  const currentUser = globalStore.getState().currentUser;
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const content = document.getElementById("post-content").value;
 
     const post = {

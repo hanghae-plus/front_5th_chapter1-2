@@ -4,11 +4,9 @@ import { toTimeFormat } from "../../utils/index.js";
 import { userStorage } from "../../storages";
 import { globalStore } from "../../stores";
 export const Post = ({ id, author, time, content, likeUsers }) => {
-  const currentUser = userStorage.get();
+  const { loggedIn, posts, currentUser } = globalStore.getState();
 
   const handleLike = () => {
-    const { loggedIn, posts } = globalStore.getState();
-
     if (!loggedIn) {
       alert("로그인 후 이용해주세요");
       return null;
