@@ -17,15 +17,11 @@ export function normalizeVNode(vNode) {
       ...vNode.props,
     });
 
-    functionNode.props = {
-      ...(vNode.props || {}),
-      ...(functionNode.props || {}),
-    };
-
-    functionNode.children = functionNode.children.map(normalizeVNode);
-
     return normalizeVNode(functionNode);
   }
 
-  return vNode;
+  return {
+    ...vNode,
+    children: vNode.children.map(normalizeVNode),
+  };
 }
