@@ -1,38 +1,36 @@
 import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
+import { getAttributeName, getEventType, isEventAttribute } from "./utils.js";
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
   if (!parentElement) {
     throw new Error("updateElement: parentElement가 정의되어 있지 않습니다.");
   }
+
   if (!newNode) {
     removeChildAtIndex(parentElement, index);
     return;
   }
-
   if (!oldNode) {
-    const element = createElement(newNode);
-    parentElement.appendChild(element);
+    const newElement = createElement(newNode);
+    parentElement.appendChild(newElement);
     return;
   }
+
+  const currentElement = parentElement.childNodes[index];
 
   if (isNodeChanged(newNode, oldNode)) {
     const newElement = createElement(newNode);
-    const oldElement = parentElement.childNodes[index];
-
-    parentElement.replaceChild(newElement, oldElement);
+    parentElement.replaceChild(newElement, currentElement);
     return;
   }
-
   if (isTextNode(newNode) && newNode !== oldNode) {
-    const newTextElement = document.createTextNode(newNode);
-    const oldTextElement = parentElement.childNodes[index];
-
-    parentElement.replaceChild(newTextElement, oldTextElement);
+    const newTextElement = createElement(newNode);
+    parentElement.replaceChild(newTextElement, currentElement);
     return;
   }
 
-  updateSameNode(parentElement.childNodes[index], newNode, oldNode);
+  updateSameNode(currentElement, newNode, oldNode);
 }
 
 /** 부모 요소의 자식 노드 중 index 위치의 노드를 제거 */
@@ -82,34 +80,30 @@ function updateAttributes(target, newProps = {}, oldProps = {}) {
 }
 
 function removeOldAttributes(target, newProps = {}, oldProps = {}) {
-  for (const key in oldProps) {
-    if (!(key in newProps)) {
-      if (key === "className") {
-        target.removeAttribute("class");
-      } else if (key.startsWith("on")) {
-        const eventType = key.toLowerCase().substring(2);
-        removeEvent(target, eventType, oldProps[key]);
-      } else {
-        target.removeAttribute(key);
-      }
+  const propsKeys = Object.keys(oldProps);
+
+  for (const key of propsKeys) {
+    if (key in newProps) continue;
+
+    if (isEventAttribute(key)) {
+      const eventType = getEventType(key);
+      removeEvent(target, eventType, oldProps[key]);
+    } else {
+      target.removeAttribute(getAttributeName(key));
     }
   }
 }
 
 function addNewAttributes(target, newProps = {}, oldProps = {}) {
   for (const key in newProps) {
-    if (newProps[key] !== oldProps[key]) {
-      if (key === "className") {
-        target.setAttribute("class", newProps[key]);
-      } else if (key.startsWith("on")) {
-        const eventType = key.toLowerCase().substring(2);
-        if (oldProps[key]) {
-          removeEvent(target, eventType, oldProps[key]);
-        }
-        addEvent(target, eventType, newProps[key]);
-      } else {
-        target.setAttribute(key, newProps[key]);
-      }
+    if (newProps[key] === oldProps[key]) continue;
+
+    if (isEventAttribute(key)) {
+      const eventType = getEventType(key);
+      if (oldProps[key]) removeEvent(target, eventType, oldProps[key]);
+      addEvent(target, eventType, newProps[key]);
+    } else {
+      target.setAttribute(getAttributeName(key), newProps[key]);
     }
   }
 }
