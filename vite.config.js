@@ -1,6 +1,6 @@
-import { defineConfig as defineTestConfig, mergeConfig } from "vitest/config";
+import path from "path";
 import { defineConfig } from "vite";
-
+import { defineConfig as defineTestConfig, mergeConfig } from "vitest/config";
 export default mergeConfig(
   defineConfig({
     esbuild: {
@@ -10,6 +10,11 @@ export default mergeConfig(
       esbuildOptions: {
         jsx: "transform",
         jsxFactory: "createVNode",
+      },
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
       },
     },
   }),
