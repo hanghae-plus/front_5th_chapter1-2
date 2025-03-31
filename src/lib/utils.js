@@ -8,8 +8,8 @@ export function isEmpty(value) {
 
 export function isFunctionComponent(vNode) {
   return (
+    !isEmpty(vNode) &&
     typeof vNode === "object" &&
-    vNode !== null &&
     typeof vNode.type === "function"
   );
 }
