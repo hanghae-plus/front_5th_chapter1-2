@@ -8,7 +8,6 @@ export function createVNode(type, props, ...children) {
   let flatChildren = children
     .flat(Infinity)
     .filter((child) => child || child === 0);
-  // console.log(flatChildren);
   return {
     type,
     props,

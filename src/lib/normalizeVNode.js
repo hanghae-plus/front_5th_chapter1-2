@@ -1,3 +1,5 @@
+import { createVNode } from "./createVNode";
+
 /**
  * 주어진 가상노드(vNode)를 표준화된 형태로 변환하는 역할
  * 다양한 타입의 입력을 처리하여 일관된 형식의 가상노드를 반환하여
@@ -12,23 +14,22 @@
 
  */
 export function normalizeVNode(vNode) {
-  // console.log("vNode는", vNode, "/ vNode의 타입은 ", typeof vNode);
-  //vNode는 { type: [Function: TestComponent], props: null, children: [] } / vNode의 타입은  object
-  //
-  if (vNode === null) return "";
-
-  if (typeof vNode === "object" && typeof vNode.type === "function") {
-    // normalizeVNode(vNode);
-    //TODO: 재귀적으로 컴포넌트를 정규화할 방법을 모색
-  }
-  if (vNode === undefined || typeof vNode === "boolean") {
+  if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
     return "";
   }
-  if (typeof vNode === "string") {
-    return vNode;
+
+  if (typeof vNode === "object" && typeof vNode.type === "function") {
+    return normalizeVNode(
+      vNode.type({ ...vNode.props, children: vNode.children }),
+    );
   }
-  if (typeof vNode === "number") {
+
+  if (typeof vNode === "string" || typeof vNode === "number") {
     return String(vNode);
   }
-  return vNode;
+
+  const children = Array.isArray(vNode.children)
+    ? vNode.children.map(normalizeVNode)
+    : normalizeVNode(vNode.children);
+  return createVNode(vNode.type, vNode.props, ...children);
 }
