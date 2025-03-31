@@ -7,17 +7,24 @@ export function normalizeVNode(vNode) {
     return String(vNode);
   }
 
-  if (typeof vNode === "function") {
-    const vFunction = vNode();
-    return normalizeVNode(vFunction);
+  if (typeof vNode.type === "function") {
+    const result = vNode.type({
+      ...vNode.props,
+      children: normalizeChildren(vNode.children),
+    });
+    return normalizeVNode(result);
   }
 
-  if (vNode.children) {
-    return {
-      ...vNode,
-      children: vNode.children.flatMap(normalizeVNode).filter(Boolean),
-    };
+  function normalizeChildren(children) {
+    if (Array.isArray(children)) {
+      return children
+        .map((child) => normalizeVNode(child))
+        .filter((child) => child !== null && child !== "");
+    }
+    return children !== null ? [normalizeVNode(children)] : [];
   }
-
-  return vNode;
+  return {
+    ...vNode,
+    children: normalizeChildren(vNode.children),
+  };
 }

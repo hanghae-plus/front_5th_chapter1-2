@@ -1,5 +1,4 @@
 /** @jsx createVNode */
-
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   addEvent,
@@ -249,6 +248,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
       );
 
       const normalized = normalizeVNode(<TestComponent />);
+      console.dir(normalized, { depth: null });
 
       expect(normalized).toEqual(
         <ul {...{}}>
