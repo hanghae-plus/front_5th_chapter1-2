@@ -3,14 +3,7 @@ import { createVNode } from "../../lib";
 import { toTimeFormat } from "../../utils/index.js";
 import { userStorage } from "../../storages";
 import { globalStore } from "../../stores";
-export const Post = ({
-  id,
-  author,
-  time,
-  content,
-  likeUsers,
-  activationLike = false,
-}) => {
+export const Post = ({ id, author, time, content, likeUsers }) => {
   const currentUser = userStorage.get();
 
   const handleLike = () => {
