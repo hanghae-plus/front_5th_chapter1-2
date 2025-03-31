@@ -215,6 +215,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
     ])(
       "null, undefined, boolean 값은 빈 문자열로 변환되어야 한다. (%s)",
       (input, expected) => {
+        console.log(input, expect);
         expect(normalizeVNode(input)).toBe(expected);
       },
     );
