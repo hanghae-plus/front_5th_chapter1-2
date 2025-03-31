@@ -4,22 +4,18 @@ import { isEmpty, isPrimitive, isFunctionComponent } from "./utils.js";
 
 export function createElement(vNode) {
   if (isFunctionComponent(vNode)) return handleFunctionComponent();
-
-  let element;
-  if (isEmpty(vNode)) element = handleEmpty();
-  else if (Array.isArray(vNode)) element = handleArray(vNode);
-  else if (isPrimitive(vNode)) element = handlePrimitive(vNode);
-  else element = handleElement(vNode);
-
-  return element;
-}
-
-function handleEmpty() {
-  return document.createTextNode("");
+  else if (isEmpty(vNode)) return handleEmpty();
+  else if (Array.isArray(vNode)) return handleArray(vNode);
+  else if (isPrimitive(vNode)) return handlePrimitive(vNode);
+  else return handleElement(vNode);
 }
 
 function handleFunctionComponent() {
   throw new Error("createElement: 함수형 컴포넌트는 지원되지 않습니다.");
+}
+
+function handleEmpty() {
+  return document.createTextNode("");
 }
 
 function handleArray(vNode) {
