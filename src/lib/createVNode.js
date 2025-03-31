@@ -6,6 +6,7 @@ export function createVNode(type, props, ...children) {
   };
 }
 
-const isNullishOrBoolean = (value) =>
+export const isNullishOrBoolean = (value) =>
   [false, null, undefined, true].includes(value);
+
 const isValidChild = (child) => !isNullishOrBoolean(child);

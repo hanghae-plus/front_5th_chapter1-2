@@ -1,23 +1,35 @@
+import { isNullishOrBoolean } from "./createVNode";
 import { addEvent } from "./eventManager";
-import { normalizeVNode } from "./normalizeVNode";
 
 export function createElement(vNode) {
-  const normalizedVNode = normalizeVNode(vNode);
-
-  if (typeof normalizedVNode === "string") {
-    return document.createTextNode(normalizedVNode);
+  if (typeof vNode?.type === "function") {
+    throw new Error(
+      "function component must be normalized before creating element",
+    );
   }
 
-  if (Array.isArray(normalizedVNode)) {
+  if (isNullishOrBoolean(vNode)) {
+    return document.createTextNode("");
+  }
+
+  if (typeof vNode === "number") {
+    return document.createTextNode(String(vNode));
+  }
+
+  if (typeof vNode === "string") {
+    return document.createTextNode(vNode);
+  }
+
+  if (Array.isArray(vNode)) {
     const el = document.createDocumentFragment();
-    normalizedVNode.forEach((child) => {
+    vNode.forEach((child) => {
       const childEl = createElement(child);
       el.appendChild(childEl);
     });
     return el;
   }
 
-  if (typeof normalizedVNode === "object") {
+  if (typeof vNode === "object") {
     const { type, children, props } = vNode;
     const el = document.createElement(type);
     updateAttributes(el, props);
