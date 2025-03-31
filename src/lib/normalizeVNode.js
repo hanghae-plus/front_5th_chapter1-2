@@ -1,10 +1,4 @@
-const isEmptyStrType = (val) => {
-  return val === null || typeof val === "undefined" || typeof val === "boolean";
-};
-
-const isNumericOrStr = (val) => {
-  return !isNaN(Number(val)) || typeof val === "string";
-};
+import { isEmptyStrType, isNumericOrStr } from "../utils/typeUtils";
 
 export function normalizeVNode(vNode) {
   // null, undefined, boolean 값은 빈 문자열로 변환
