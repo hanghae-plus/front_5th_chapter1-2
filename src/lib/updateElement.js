@@ -81,9 +81,7 @@ function updateAttributes(target, newProps = {}, oldProps = {}) {
 }
 
 function removeOldAttributes(target, newProps = {}, oldProps = {}) {
-  const propsKeys = Object.keys(oldProps);
-
-  for (const key of propsKeys) {
+  for (const key in oldProps) {
     if (key in newProps) continue;
 
     if (isEventAttribute(key)) {
