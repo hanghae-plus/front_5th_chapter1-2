@@ -1,26 +1,38 @@
-// 중앙 저장소: 이벤트 핸들러 정보 저장
 const handlers = new Map();
+const rootListeners = new Map();
 
 export function setupEventListeners(root) {
-  // 모든 등록된 이벤트 타입을 처리할 단일 리스너 설정
+  // 이미 등록된 이벤트 유형은 다시 등록하지 않음
   handlers.forEach((elements, eventType) => {
-    root.addEventListener(eventType, (event) => {
-      const target = event.target;
+    if (!rootListeners.has(root)) {
+      rootListeners.set(root, new Set());
+    }
 
-      const eventElements = elements;
+    const rootEvents = rootListeners.get(root);
 
-      eventElements.forEach((handlersArray, element) => {
-        if (
-          target === element ||
-          element.contains(target) ||
-          target.contains(element)
-        ) {
-          handlersArray.forEach((handler) => {
-            handler(event);
-          });
-        }
-      });
-    });
+    if (!rootEvents.has(eventType)) {
+      const listener = (event) => {
+        const target = event.target;
+        const eventElements = handlers.get(eventType);
+
+        if (!eventElements) return;
+
+        eventElements.forEach((handlersArray, element) => {
+          if (
+            target === element ||
+            element.contains(target) ||
+            target.contains(element)
+          ) {
+            [...handlersArray].forEach((handler) => {
+              handler(event);
+            });
+          }
+        });
+      };
+
+      root.addEventListener(eventType, listener);
+      rootEvents.add(eventType);
+    }
   });
 }
 
@@ -35,12 +47,14 @@ export function addEvent(element, eventType, handler) {
     eventElements.set(element, []);
   }
 
-  eventElements.get(element).push(handler);
+  // 중복 등록 방지
+  const elementHandlers = eventElements.get(element);
+  if (!elementHandlers.includes(handler)) {
+    elementHandlers.push(handler);
+  }
 }
 
 export function removeEvent(element, eventType, handler) {
-  console.log(element, eventType, handler);
-
   if (!handlers.has(eventType)) {
     return;
   }
@@ -65,4 +79,10 @@ export function removeEvent(element, eventType, handler) {
       handlers.delete(eventType);
     }
   }
+}
+
+// 테스트 용도로 핸들러 상태 초기화 추가
+export function clearAllHandlers() {
+  handlers.clear();
+  rootListeners.clear();
 }
