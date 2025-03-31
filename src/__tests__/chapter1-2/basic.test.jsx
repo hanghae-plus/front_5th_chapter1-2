@@ -264,6 +264,68 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
       );
     });
 
+    it("배열을 정규화한다.", () => {
+      const vNode = createVNode("div", null, ["Hello", "world"]);
+      expect(normalizeVNode(vNode)).toEqual({
+        type: "div",
+        props: null,
+        children: ["Hello", "world"],
+      });
+    });
+
+    it("함수일 경우 처리", () => {
+      // 테스트용 컴포넌트 함수
+      const TestComponent = ({ children, className }) => ({
+        type: "div",
+        props: { className },
+        children,
+      });
+
+      // 입력: 컴포넌트 함수를 포함한 VNode
+      const input = {
+        type: TestComponent,
+        props: { className: "test-class" },
+        children: ["테스트 텍스트"],
+      };
+
+      // 예상 결과: 컴포넌트 함수가 실행되어 반환된 정규화된 VNode
+      const expected = {
+        type: "div",
+        props: { className: "test-class" },
+        children: ["테스트 텍스트"],
+      };
+
+      const result = normalizeVNode(input);
+      expect(result).toEqual(expected);
+    });
+
+    it("일반 엘리먼트의 자식 노드 처리", () => {
+      // 입력: 일반 엘리먼트를 포함한 VNode
+      const input = {
+        type: "div",
+        props: { className: "container" },
+        children: [
+          "텍스트 노드",
+          { type: "span", props: null, children: ["span 내부 텍스트"] },
+          { type: "p", props: { id: "paragraph" }, children: ["단락 텍스트"] },
+        ],
+      };
+
+      // 예상 결과: 자식 노드들이 정규화된 VNode
+      const expected = {
+        type: "div",
+        props: { className: "container" },
+        children: [
+          "텍스트 노드",
+          { type: "span", props: null, children: ["span 내부 텍스트"] },
+          { type: "p", props: { id: "paragraph" }, children: ["단락 텍스트"] },
+        ],
+      };
+
+      const result = normalizeVNode(input);
+      expect(result).toEqual(expected);
+    });
+
     it("Falsy 값 (null, undefined, false)은 자식 노드에서 제거되어야 한다.", () => {
       const normalized = normalizeVNode(
         <div>
