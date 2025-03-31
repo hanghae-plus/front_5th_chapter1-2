@@ -1,33 +1,30 @@
-const eventMap = new Map();
+const eventTypeMap = new Map();
 
 export function setupEventListeners(root) {
-  for (const eventType of eventMap.keys()) {
+  for (const [eventType, typeEvents] of eventTypeMap) {
     root.addEventListener(eventType, (event) => {
-      const handlers = eventMap.get(eventType);
-      for (const { element, handler } of handlers) {
-        if (element.contains(event.target)) {
-          handler(event);
-        }
+      const target = event.target;
+      if (typeEvents.has(target)) {
+        const handler = typeEvents.get(target);
+        handler(event);
       }
     });
   }
 }
 
 export function addEvent(element, eventType, handler) {
-  if (!eventMap.has(eventType)) {
-    eventMap.set(eventType, []);
+  if (!eventTypeMap.has(eventType)) {
+    eventTypeMap.set(eventType, new Map());
   }
-  eventMap.get(eventType).push({ element, handler });
+  const typeEvents = eventTypeMap.get(eventType);
+  typeEvents.set(element, handler);
 }
 
-export function removeEvent(element, eventType, handler) {
-  if (eventMap.has(eventType)) {
-    const handlers = eventMap.get(eventType);
-    const index = handlers.findIndex(
-      (h) => h.element === element && h.handler === handler,
-    );
-    if (index !== -1) {
-      handlers.splice(index, 1);
+export function removeEvent(element, eventType) {
+  if (eventTypeMap.has(eventType)) {
+    const typeEvents = eventTypeMap.get(eventType);
+    if (typeEvents.has(element)) {
+      typeEvents.delete(element);
     }
   }
 }
