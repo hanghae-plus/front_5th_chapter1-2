@@ -3,6 +3,8 @@ let _root = null;
 const elementSet = new Set();
 const eventListenerMap = new WeakMap();
 
+// TODO: 로직 간소화 리팩토링 필요
+
 export function setupEventListeners(root) {
   if (!root) {
     throw new Error("setupEventListeners: root가 정의되지 않았습니다.");

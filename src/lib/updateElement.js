@@ -2,6 +2,7 @@ import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
 import { getAttributeName, getEventType, isEventAttribute } from "./utils.js";
 
+// TODO: 로직 간소화 리팩토링 필요
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
   if (!parentElement) {
     throw new Error("updateElement: parentElement가 정의되어 있지 않습니다.");
