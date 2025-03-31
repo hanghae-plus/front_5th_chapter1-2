@@ -14,7 +14,6 @@ export const HomePage = () => {
   const { posts } = globalStore.getState();
 
   const user = globalStore.getState().currentUser;
-  console.log("user!!!", user);
 
   return (
     <div className="bg-gray-100 min-h-screen flex justify-center">
