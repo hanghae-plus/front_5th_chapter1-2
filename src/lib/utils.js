@@ -13,3 +13,15 @@ export function isFunctionComponent(vNode) {
     typeof vNode.type === "function"
   );
 }
+
+export function getAttributeName(key) {
+  return key === "className" ? "class" : key;
+}
+
+export function isEventAttribute(key) {
+  return key.startsWith("on");
+}
+
+export function getEventType(key) {
+  return key.slice(2).toLowerCase();
+}

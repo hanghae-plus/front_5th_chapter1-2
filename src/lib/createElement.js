@@ -1,10 +1,18 @@
 import { addEvent } from "./eventManager.js";
 
-import { isEmpty, isPrimitive, isFunctionComponent } from "./utils.js";
+import {
+  isEmpty,
+  isPrimitive,
+  isEventAttribute,
+  isFunctionComponent,
+  getAttributeName,
+  getEventType,
+} from "./utils.js";
 
 export function createElement(vNode) {
   if (isFunctionComponent(vNode)) return handleFunctionComponent();
-  else if (isEmpty(vNode)) return handleEmpty();
+
+  if (isEmpty(vNode)) return handleEmpty();
   else if (Array.isArray(vNode)) return handleArray(vNode);
   else if (isPrimitive(vNode)) return handlePrimitive(vNode);
   else return handleElement(vNode);
@@ -44,11 +52,11 @@ function updateAttributes($el, props) {
   const propKeys = Object.keys(props);
 
   for (const key of propKeys) {
-    const attrName = key === "className" ? "class" : key;
-    const isEventAttr = key.startsWith("on");
-    if (isEventAttr) {
-      const eventName = key.slice(2).toLowerCase();
-      addEvent($el, eventName, props[key]);
+    const attrName = getAttributeName(key);
+
+    if (isEventAttribute(attrName)) {
+      const eventType = getEventType(attrName);
+      if (eventType) addEvent($el, eventType, props[key]);
     } else {
       $el.setAttribute(attrName, props[key]);
     }

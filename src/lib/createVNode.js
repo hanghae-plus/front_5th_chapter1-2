@@ -11,7 +11,7 @@ export function createVNode(type, props, ...children) {
 }
 
 function isVNode(node) {
-  return typeof node === "object" && node !== null && "type" in node;
+  return typeof node === "object" && !isEmpty(node) && "type" in node;
 }
 
 export function getFlattenChildren(children) {
