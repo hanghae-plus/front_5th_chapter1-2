@@ -18,6 +18,8 @@ export function normalizeVNode(vNode) {
       ...vNode.props,
       children: vNode.props?.children || vNode.children,
     };
+    console.log("vNode.type", vNode.type);
+    console.log("propsWithChildren", propsWithChildren);
     return normalizeVNode(vNode.type(propsWithChildren));
   }
 
