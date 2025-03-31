@@ -4,6 +4,6 @@ export * from "./createRouter";
 export * from "./createStorage";
 export * from "./createStore";
 export * from "./createVNode";
-export * from "./eventManager.js";
+export * from "./eventManager";
 export * from "./normalizeVNode";
 export * from "./renderElement";
