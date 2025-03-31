@@ -6,7 +6,7 @@ import { addEvent } from "./eventManager";
  * @returns {Element} 변환 완료된 DOM 요소
  */
 export function createElement(vNode) {
-  const _applyProps = (element, props) => {
+  function _applyProps(element, props) {
     Object.entries(props).forEach(([key, value]) => {
       if (key.startsWith("on") && typeof value === "function") {
         // 이벤트 핸들러 처리
@@ -20,7 +20,7 @@ export function createElement(vNode) {
         element.setAttribute(key, value);
       }
     });
-  };
+  }
 
   if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
     return document.createTextNode("");
