@@ -44,7 +44,7 @@ const eventHandler = (event) => {
   }
   const eventData = eventStore.get(event.target);
   const handler = eventData.get(event.type);
-  if (eventData) {
+  if (handler) {
     handler.call(event.target, event);
   }
 };
