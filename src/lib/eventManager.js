@@ -19,7 +19,7 @@ export function setupEventListeners(root) {
     // 이벤트 타입이 root에 등록되어 있지 않다면 이벤트 리스너 등록
     root.addEventListener(eventType, (event) => {
       const target = event.target;
-      const typeEvents = eventTypeMap.get(eventType);
+      // 이벤트가 발생한 target의 handler가 Map에 있다면
       if (typeEvents.has(target)) {
         const handler = typeEvents.get(target);
         handler(event);
