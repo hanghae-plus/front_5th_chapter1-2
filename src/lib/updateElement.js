@@ -1,7 +1,7 @@
 import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
 
-function updateAttributes(target, originNewProps, originOldProps) {
+export function updateAttributes(target, originNewProps, originOldProps) {
   const newProps = originNewProps || {};
   const oldProps = originOldProps || {};
 
@@ -38,92 +38,71 @@ function updateAttributes(target, originNewProps, originOldProps) {
 }
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
-  if (Array.isArray(newNode)) {
-    newNode = { type: "fragment", children: newNode };
-  }
-
-  if (Array.isArray(oldNode)) {
-    oldNode = { type: "fragment", children: oldNode };
-  }
-
-  if (!oldNode) {
-    const newElement = createElement(newNode);
-    if (newElement) {
-      parentElement.appendChild(newElement);
-    }
+  // 노드가 모두 없는 경우
+  if (!oldNode && !newNode) {
     return;
   }
 
-  if (!newNode) {
-    if (parentElement.childNodes[index]) {
-      parentElement.removeChild(parentElement.childNodes[index]);
-    }
+  // 이전 노드만 있는 경우 (삭제)
+  if (oldNode && !newNode) {
+    parentElement.removeChild(parentElement.childNodes[index]);
     return;
   }
 
-  if (typeof newNode !== "object" && typeof oldNode !== "object") {
-    if (newNode !== oldNode) {
-      if (parentElement.childNodes[index]) {
-        parentElement.replaceChild(
-          document.createTextNode(String(newNode)),
-          parentElement.childNodes[index],
-        );
-      } else {
-        parentElement.appendChild(document.createTextNode(String(newNode)));
-      }
-    }
+  // 이전 노드가 없고 새 노드만 있는 경우 (추가)
+  if (!oldNode && newNode) {
+    parentElement.appendChild(createElement(newNode));
     return;
   }
 
-  if (!newNode || !oldNode) {
-    return;
-  }
-
+  // 둘 다 문자열이거나 숫자인 경우
   if (
-    typeof newNode !== typeof oldNode ||
-    (typeof newNode === "object" &&
-      typeof oldNode === "object" &&
-      newNode.type !== oldNode.type)
+    (typeof oldNode === "string" || typeof oldNode === "number") &&
+    (typeof newNode === "string" || typeof newNode === "number")
   ) {
-    const newElement = createElement(newNode);
-    if (newElement && parentElement.childNodes[index]) {
-      parentElement.replaceChild(newElement, parentElement.childNodes[index]);
-    } else if (newElement) {
-      parentElement.appendChild(newElement);
+    if (oldNode !== newNode) {
+      parentElement.childNodes[index].textContent = newNode;
     }
     return;
   }
 
-  if (typeof newNode === "object" && typeof oldNode === "object") {
-    const element = parentElement.childNodes[index];
+  // 노드 타입이 다른 경우 (교체)
+  if (oldNode.type !== newNode.type) {
+    parentElement.replaceChild(
+      createElement(newNode),
+      parentElement.childNodes[index],
+    );
+    return;
+  }
 
-    if (!element) {
-      parentElement.appendChild(createElement(newNode));
-      return;
-    }
+  // 속성 업데이트
+  updateAttributes(
+    parentElement.childNodes[index],
+    newNode.props,
+    oldNode.props,
+  );
 
-    updateAttributes(element, newNode.props, oldNode.props);
+  // 자식 노드 업데이트
+  const newChildren = Array.isArray(newNode.children)
+    ? newNode.children
+    : newNode.children
+      ? [newNode.children]
+      : [];
 
-    const newChildren = Array.isArray(newNode.children)
-      ? newNode.children
-      : newNode.children
-        ? [newNode.children]
-        : [];
-    const oldChildren = Array.isArray(oldNode.children)
-      ? oldNode.children
-      : oldNode.children
-        ? [oldNode.children]
-        : [];
+  const oldChildren = Array.isArray(oldNode.children)
+    ? oldNode.children
+    : oldNode.children
+      ? [oldNode.children]
+      : [];
 
-    const maxLength = Math.max(newChildren.length, oldChildren.length);
+  const maxLength = Math.max(oldChildren.length, newChildren.length);
 
-    for (let i = 0; i < maxLength; i++) {
-      updateElement(
-        element,
-        i < newChildren.length ? newChildren[i] : null,
-        i < oldChildren.length ? oldChildren[i] : null,
-        i,
-      );
-    }
+  for (let i = 0; i < maxLength; i++) {
+    updateElement(
+      parentElement.childNodes[index],
+      i < newChildren.length ? newChildren[i] : null,
+      i < oldChildren.length ? oldChildren[i] : null,
+      i,
+    );
   }
 }

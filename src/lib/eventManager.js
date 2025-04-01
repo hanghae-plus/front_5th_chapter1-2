@@ -1,88 +1,41 @@
-const handlers = new Map();
-const rootListeners = new Map();
+const rootEventMap = new Map();
+const eventTypeMap = new Map();
 
 export function setupEventListeners(root) {
-  // 이미 등록된 이벤트 유형은 다시 등록하지 않음
-  handlers.forEach((elements, eventType) => {
-    if (!rootListeners.has(root)) {
-      rootListeners.set(root, new Set());
-    }
+  if (!rootEventMap.has(root)) {
+    rootEventMap.set(root, new Set());
+  }
 
-    const rootEvents = rootListeners.get(root);
+  const rootEvents = rootEventMap.get(root);
 
-    if (!rootEvents.has(eventType)) {
-      const listener = (event) => {
-        const target = event.target;
-        const eventElements = handlers.get(eventType);
+  eventTypeMap.forEach((typeEvents, eventType) => {
+    if (rootEvents.has(eventType)) return;
 
-        if (!eventElements) return;
+    rootEvents.add(eventType);
+    root.addEventListener(eventType, (event) => {
+      const target = event.target;
 
-        eventElements.forEach((handlersArray, element) => {
-          if (
-            target === element ||
-            element.contains(target) ||
-            target.contains(element)
-          ) {
-            [...handlersArray].forEach((handler) => {
-              handler(event);
-            });
-          }
-        });
-      };
-
-      root.addEventListener(eventType, listener);
-      rootEvents.add(eventType);
-    }
+      if (typeEvents.has(target)) {
+        const handler = typeEvents.get(target);
+        handler(event);
+      }
+    });
   });
 }
 
 export function addEvent(element, eventType, handler) {
-  if (!handlers.has(eventType)) {
-    handlers.set(eventType, new Map());
+  if (!eventTypeMap.has(eventType)) {
+    eventTypeMap.set(eventType, new Map());
   }
-
-  const eventElements = handlers.get(eventType);
-
-  if (!eventElements.has(element)) {
-    eventElements.set(element, []);
-  }
-
-  // 중복 등록 방지
-  const elementHandlers = eventElements.get(element);
-  if (!elementHandlers.includes(handler)) {
-    elementHandlers.push(handler);
-  }
+  const typeEvents = eventTypeMap.get(eventType);
+  typeEvents.set(element, handler);
 }
 
-export function removeEvent(element, eventType, handler) {
-  if (!handlers.has(eventType)) {
-    return;
-  }
-
-  const eventElements = handlers.get(eventType);
-
-  if (!eventElements.has(element)) {
-    return;
-  }
-
-  const elementHandlers = eventElements.get(element);
-  const index = elementHandlers.indexOf(handler);
-
-  if (index !== -1) {
-    elementHandlers.splice(index, 1);
-
-    if (elementHandlers.length === 0) {
-      eventElements.delete(element);
-    }
-
-    if (eventElements.size === 0) {
-      handlers.delete(eventType);
+export function removeEvent(element, eventType) {
+  if (eventTypeMap.has(eventType)) {
+    const typeEvents = eventTypeMap.get(eventType);
+    if (typeEvents.has(element)) {
+      typeEvents.delete(element);
     }
   }
-}
-
-// 테스트 용도로 핸들러 상태 초기화 추가
-export function clearAllHandlers() {
-  handlers.clear();
-  rootListeners.clear();
 }

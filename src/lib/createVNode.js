@@ -2,8 +2,14 @@ export function createVNode(type, props, ...children) {
   return {
     type,
     props,
-    children: children.flat(Infinity).filter((el) => {
-      return el !== null && el !== undefined && el !== false && el !== true;
-    }),
+    children: children
+      .flat(Infinity)
+      .filter(
+        (child) =>
+          child !== null &&
+          child !== undefined &&
+          child !== false &&
+          child !== true,
+      ),
   };
 }

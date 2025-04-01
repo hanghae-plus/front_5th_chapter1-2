@@ -4,22 +4,19 @@ import { normalizeVNode } from "./normalizeVNode";
 import { updateElement } from "./updateElement";
 
 export function renderElement(vNode, container) {
-  const normalizedVNode = normalizeVNode(vNode);
-  const oldVNode = container._vNode || null;
+  const normalizedNode = normalizeVNode(vNode);
 
-  if (!oldVNode) {
-    const newDom = createElement(normalizedVNode);
-    container.appendChild(newDom);
+  if (container.childNodes.length > 0) {
+    updateElement(container, normalizedNode, container._vNode || null);
   } else {
-    updateElement(container, normalizedVNode, oldVNode, 0);
+    const element = createElement(normalizedNode);
+    container.appendChild(element);
   }
 
-  container._vNode = normalizedVNode;
+  container._vNode = normalizedNode;
 
-  if (!container._hasEventListeners) {
-    setupEventListeners(container);
-    container._hasEventListeners = true;
-  }
+  // 이벤트 리스너 설정
+  setupEventListeners(container);
 
   return container;
 }
