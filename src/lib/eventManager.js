@@ -1,6 +1,9 @@
+import { EVENT_TYPES } from "../constants";
+
 const event = {
   root: null,
   map: new Map(),
+  types: new Set(EVENT_TYPES),
 };
 
 /**
@@ -12,12 +15,10 @@ export function setupEventListeners(root) {
     event.root = root;
   }
 
-  event.map.forEach((event) => {
-    Object.entries(event)
-      .filter(([, handler]) => typeof handler === "function")
-      .forEach(([eventType, handler]) => {
-        root.addEventListener(eventType, handler);
-      });
+  event.types.forEach((eventType) => {
+    root.addEventListener(eventType, (e) => {
+      event.map.get(e.target)?.get(eventType)?.(e);
+    });
   });
 }
 
@@ -27,10 +28,13 @@ export function setupEventListeners(root) {
  * @param {Function} handler
  */
 export function addEvent(element, eventType, handler) {
-  event.map.set(element, {
-    ...event.map.get(element),
-    [eventType]: handler,
-  });
+  // 이벤트가 없다면 추가
+  if (!event.map.has(element)) {
+    event.map.set(element, new Map());
+  }
+
+  // 이벤트 등록
+  event.map.get(element).set(eventType, handler);
 }
 
 /**
@@ -39,14 +43,8 @@ export function addEvent(element, eventType, handler) {
  * @param {Function} handler
  */
 export function removeEvent(element, eventType, handler) {
-  const exEvent = event.map.get(element);
-  const hasEvent = !!exEvent;
-  if (hasEvent) {
-    event.map.delete(element);
-  }
+  if (!event.map.has(element)) return;
+  if (event.map.get(element).get(eventType) !== handler) return;
 
-  const root = event.root;
-  if (!root) return;
-
-  root.removeEventListener(eventType, handler);
+  event.map.get(element).delete(eventType);
 }

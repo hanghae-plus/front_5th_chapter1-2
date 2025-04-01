@@ -20,6 +20,9 @@ export function renderElement(vNode, container) {
   if (isFirstRender) {
     const newElement = createElement(normalizedVNode);
     container.appendChild(newElement);
+
+    // 이벤트 등록
+    setupEventListeners(container);
   }
   // 이후에는 updateElement로 기존 DOM을 업데이트한다.
   else {
@@ -28,7 +31,4 @@ export function renderElement(vNode, container) {
   }
 
   elementMap.set("vNode", normalizedVNode);
-
-  // 이벤트 등록
-  setupEventListeners(container);
 }

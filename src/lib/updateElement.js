@@ -1,5 +1,6 @@
 // import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
+import { addEvent, removeEvent } from "./eventManager.js";
 
 /**
  * @param {HTMLElement} target
@@ -14,12 +15,20 @@ function updateAttributes(target, newProps, oldProps) {
     if (key === "className") key = "class";
     if (key === "htmlFor") key = "for";
 
+    if (key.startsWith("on")) {
+      addEvent(target, key.replace("on", "").toLowerCase(), value);
+    }
+
     target.setAttribute(key, value);
   });
 
   // 없어진거 제거
   Object.keys(oldProps).map((key) => {
     if (newProps[key] !== undefined) return;
+
+    if (key.startsWith("on")) {
+      removeEvent(target, key.replace("on", "").toLowerCase(), oldProps[key]);
+    }
 
     target.removeAttribute(key);
   });
