@@ -1,7 +1,7 @@
-import { addEvent } from "../event";
+import { updateAttributes } from "./updateAttributes.js";
 
 export function createElement(vNode) {
-  // 배열인 경우: DocumentFragment를 생성해서 각 요소를 재귀적으로 추가
+  // 배열: DocumentFragment를 생성해서 각 요소를 재귀적으로 추가
   if (Array.isArray(vNode)) {
     const fragment = document.createDocumentFragment();
     vNode.forEach((child) => {
@@ -20,31 +20,14 @@ export function createElement(vNode) {
     return document.createTextNode(vNode.toString());
   }
 
-  // 객체 타입 (정상적인 VNode인 경우)
-  const $el = document.createElement(vNode.type);
+  // 객체 타입(VNode)
+  const element = document.createElement(vNode.type);
 
-  updateAttributes($el, vNode.props);
+  updateAttributes(element, vNode.props);
 
   vNode.children.forEach((child) => {
-    $el.appendChild(createElement(child));
+    element.appendChild(createElement(child));
   });
 
-  return $el;
-}
-
-function updateAttributes($el, props) {
-  if (props === null || props === undefined) {
-    return;
-  }
-
-  Object.entries(props).forEach(([key, value]) => {
-    if (key.startsWith("on")) {
-      const eventType = key.toLowerCase().substring(2);
-      addEvent($el, eventType, value);
-    } else if (key === "className") {
-      $el.setAttribute("class", value);
-    } else {
-      $el.setAttribute(key, value);
-    }
-  });
+  return element;
 }
