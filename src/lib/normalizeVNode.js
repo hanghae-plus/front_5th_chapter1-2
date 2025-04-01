@@ -1,23 +1,38 @@
+import {
+  isEmptyVNode,
+  isFunctionalComponent,
+  isTextVNode,
+} from "../utils/\bvNode";
+
 export function normalizeVNode(vNode) {
-  if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
+  if (isEmptyVNode(vNode)) {
     return "";
   }
 
-  if (typeof vNode === "string" || typeof vNode === "number") {
+  if (isTextVNode(vNode)) {
     return String(vNode);
   }
 
-  if (typeof vNode === "function") {
-    const vFunction = vNode();
-    return normalizeVNode(vFunction);
+  if (isFunctionalComponent(vNode)) {
+    const vNodeResult = vNode.type({
+      ...vNode.props,
+      children: normalizeChildren(vNode.children),
+    });
+
+    return normalizeVNode(vNodeResult);
   }
 
-  if (vNode.children) {
-    return {
-      ...vNode,
-      children: vNode.children.flatMap(normalizeVNode).filter(Boolean),
-    };
+  function normalizeChildren(children) {
+    if (Array.isArray(children)) {
+      return children
+        .map((child) => normalizeVNode(child))
+        .filter((child) => child !== null && child !== "");
+    }
+    return children !== null ? [normalizeVNode(children)] : [];
   }
 
-  return vNode;
+  return {
+    ...vNode,
+    children: normalizeChildren(vNode.children),
+  };
 }
