@@ -51,14 +51,16 @@ export function createElement(vNode) {
 function updateAttributes($el, props) {
   if (!props) return;
   const keys = Object.keys(props);
-  console.log("keys", keys);
   keys.forEach((k) => {
     if (k === "className") {
-      console.log(k);
       $el.setAttribute("class", props[k]);
       return;
+    } else if (k.startsWith("on")) {
+      const eventName = k.substring(2).toLowerCase();
+      $el.addEventListener(eventName, props[k]);
+    } else {
+      $el.setAttribute(k, props[k]);
     }
-    $el.setAttribute(k, props[k]);
   });
   // 여기서 k 중에 on을 포함하는게 있으면 addEvent를 해주면 될 것 같은데
 }
