@@ -1,7 +1,6 @@
 /** @jsx createVNode */
-import { createVNode } from "../../lib";
+import { createVNode } from "../../lib/vdom";
 import { toTimeFormat } from "../../utils/index.js";
-import { userStorage } from "../../storages";
 import { globalStore } from "../../stores";
 export const Post = ({ id, author, time, content, likeUsers }) => {
   const { loggedIn, posts, currentUser } = globalStore.getState();

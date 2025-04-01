@@ -1,5 +1,5 @@
 /** @jsx createVNode */
-import { createVNode } from "../../lib";
+import { createVNode } from "../../lib/vdom";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
 

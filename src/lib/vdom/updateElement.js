@@ -1,4 +1,4 @@
-import { addEvent, removeEvent } from "./eventManager";
+import { addEvent, removeEvent } from "../event";
 import { createElement } from "./createElement.js";
 
 function updateAttributes(target, originNewProps = {}, originOldProps = {}) {

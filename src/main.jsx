@@ -1,5 +1,6 @@
 /** @jsx createVNode */
-import { createRouter, createVNode } from "./lib";
+import { createRouter } from "./lib/router";
+import { createVNode } from "./lib/vdom";
 import { HomePage, LoginPage, ProfilePage } from "./pages";
 import { globalStore } from "./stores";
 import { ForbiddenError, UnauthorizedError } from "./errors";

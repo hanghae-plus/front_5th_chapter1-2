@@ -1,4 +1,4 @@
-import { createStore } from "../lib";
+import { createStore } from "../lib/store";
 import { userStorage } from "../storages";
 
 const 초 = 1000;

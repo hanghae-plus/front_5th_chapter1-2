@@ -1,4 +1,4 @@
-import { addEvent } from "./eventManager";
+import { addEvent } from "../event";
 
 export function createElement(vNode) {
   // 배열인 경우: DocumentFragment를 생성해서 각 요소를 재귀적으로 추가
