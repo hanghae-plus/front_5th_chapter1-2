@@ -19,15 +19,16 @@ function updateAttributes(target, originNewProps, originOldProps) {
   });
 
   // oldProps에 있지만 newProps에서 사라진 prop 제거
-  Object.entries(oldProps).forEach(([key]) => {
-    if (key in newProps) return;
-    if (key.startsWith("on")) {
-      const eventName = key.slice(2).toLowerCase();
-      removeEvent(target, eventName);
-    } else {
-      target.removeAttribute(key);
-    }
-  });
+  Object.keys(oldProps)
+    .filter((key) => !(key in newProps))
+    .forEach((key) => {
+      if (key.startsWith("on")) {
+        const eventName = key.slice(2).toLowerCase();
+        removeEvent(target, eventName);
+      } else {
+        target.removeAttribute(key);
+      }
+    });
 }
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
