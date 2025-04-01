@@ -1,7 +1,8 @@
 export const applyProps = (element, props) => {
   Object.entries(props).forEach(([key, value]) => {
-    if (typeof value === "function") {
-      element.addEventListener(key, value);
+    if (key.startsWith("on") && typeof value === "function") {
+      const eventKey = key.slice(2).toLowerCase();
+      element.addEventListener(eventKey, value);
       return;
     }
 
@@ -23,9 +24,6 @@ export const applyProps = (element, props) => {
 
 export const appendChild = (element, children, createElement) => {
   children.forEach((child) => {
-    if (child === undefined) {
-      return;
-    }
     const node = createElement(child);
     element.appendChild(node);
   });
