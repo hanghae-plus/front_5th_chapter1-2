@@ -1,49 +1,39 @@
 import { createElement } from "./createElement.js";
 import { updateAttributes } from "./updateAttributes.js";
 
+// 텍스트 노드 업데이트
+function updateTextNode(parentElement, newNode, oldNode, index) {
+  const existingElement = parentElement.childNodes[index];
+  const newValue = String(newNode);
+
+  if (typeof oldNode === "string") {
+    if (newValue !== String(oldNode)) existingElement.nodeValue = newValue;
+    return;
+  }
+
+  parentElement.replaceChild(
+    document.createTextNode(newValue),
+    existingElement,
+  );
+}
+
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
   if (!parentElement) return;
-
   const existingElement = parentElement.childNodes[index];
 
-  // 새 노드만 있으면 추가
-  if (newNode && !oldNode) {
-    const newEl = createElement(newNode);
-    parentElement.appendChild(newEl);
-    return null;
-  }
-
-  // 기존 노드만 있으면 제거
-  if (!newNode && oldNode) {
-    parentElement.removeChild(existingElement);
-    return null;
-  }
-
-  // 텍스트 노드 비교
-  if (typeof newNode === "string") {
-    if (typeof oldNode === "string") {
-      // 기존 노드가 TextNode일 때는 nodeValue만 수정
-      const existingTextNode = parentElement.childNodes[index];
-      if (String(newNode) !== String(oldNode)) {
-        existingTextNode.nodeValue = String(newNode);
-      }
-    } else {
-      // 기존이 TextNode가 아니면 교체
-      const newTextNode = document.createTextNode(String(newNode));
-      parentElement.replaceChild(newTextNode, parentElement.childNodes[index]);
-    }
-
-    return null;
-  }
+  // 노드 추가/제거
+  if (newNode && !oldNode)
+    return parentElement.appendChild(createElement(newNode));
+  if (!newNode && oldNode) return parentElement.removeChild(existingElement);
+  if (typeof newNode === "string")
+    return updateTextNode(parentElement, newNode, oldNode, index);
 
   // 타입이 다르면 교체
   if (newNode.type !== oldNode.type) {
-    const newEl = createElement(newNode);
-    parentElement.replaceChild(newEl, existingElement);
-    return null;
+    return parentElement.replaceChild(createElement(newNode), existingElement);
   }
 
-  // 타입이 같으면 → props & children 비교
+  // props & children 업데이트
   updateAttributes(existingElement, newNode.props, oldNode.props);
 
   const newChildren = newNode.children || [];
