@@ -2,24 +2,46 @@ export function setupEventListeners(root) {
   console.log(root);
 }
 
-const eventListeners = {};
+class EventListenerStore {
+  constructor() {
+    if (EventListenerStore.instance) {
+      return EventListenerStore.instance;
+    }
+    this.listeners = {};
+    EventListenerStore.instance = this;
+  }
 
-function getEventListenerKey(eventType, element) {
-  return `${eventType}_${element.tagName}`;
+  getEventListenerKey(eventType, element) {
+    return `${eventType}_${element.tagName}`;
+  }
+
+  get(key) {
+    return this.listeners[key];
+  }
+
+  set(key, value) {
+    this.listeners[key] = value;
+  }
 }
+
+const eventListeners = new EventListenerStore();
+
 export function addEvent(element, eventType, handler) {
   function listener(event) {
     if (event.target.tagName === element.tagName) {
       handler();
     }
   }
-  eventListeners[getEventListenerKey(eventType, element)] = listener;
+  eventListeners.set(
+    eventListeners.getEventListenerKey(eventType, element),
+    listener,
+  );
   document.body.addEventListener(eventType, listener);
 }
 
 export function removeEvent(element, eventType) {
   document.body.removeEventListener(
     eventType,
-    eventListeners[getEventListenerKey(eventType, element)],
+    eventListeners.get(eventListeners.getEventListenerKey(eventType, element)),
   );
 }
