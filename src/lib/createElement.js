@@ -28,7 +28,14 @@ export function createElement(vNode) {
   if (props) {
     Object.keys(props).forEach((key) => {
       const attributeName = key === "className" ? "class" : key;
-      element.setAttribute(attributeName, props[key]);
+
+      // 이벤트라면 HTML 속성에 문자열을 추가하지 않도록 작업
+      if (key.startsWith("on")) {
+        const eventType = key.toLowerCase().slice(2);
+        element.addEventListener(eventType, props[key]);
+      } else {
+        element.setAttribute(attributeName, props[key]);
+      }
     });
   }
 
