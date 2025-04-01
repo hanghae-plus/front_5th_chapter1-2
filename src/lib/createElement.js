@@ -20,17 +20,16 @@ export function createElement(vNode) {
 
     if (vNode.props) {
       Object.entries(vNode.props).forEach(([key, value]) => {
-        // data-set 속성 처리
-        if (/data-/.test(key)) {
-          $el.dataset[key.replace("data-", "")] = value;
+        if (key === "className") {
+          $el.setAttribute("class", value);
         }
         // 이벤트 속성 처리
-        else if (/on[A-Z]/.test(key)) {
+        else if (key.startsWith("on")) {
           addEvent($el, key.replace("on", "").toLowerCase(), value);
         }
         // 일반 속성 처리
         else {
-          $el[key] = value;
+          $el.setAttribute(key, value);
         }
       });
     }

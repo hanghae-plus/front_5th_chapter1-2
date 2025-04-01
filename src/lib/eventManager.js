@@ -15,6 +15,7 @@ export function setupEventListeners(root) {
     event.root = root;
   }
 
+  // FIXME: 수정 필요
   event.types.forEach((eventType) => {
     root.addEventListener(eventType, (e) => {
       event.map.get(e.target)?.get(eventType)?.(e);

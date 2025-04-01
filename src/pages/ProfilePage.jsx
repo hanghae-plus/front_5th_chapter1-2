@@ -52,7 +52,7 @@ export const ProfilePage = () => {
               </div>
               <div className="mb-4">
                 <label
-                  htmlFor="email"
+                  for="email"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   이메일
@@ -68,7 +68,7 @@ export const ProfilePage = () => {
               </div>
               <div className="mb-6">
                 <label
-                  htmlFor="bio"
+                  for="bio"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   자기소개

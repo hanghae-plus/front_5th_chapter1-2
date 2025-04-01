@@ -13,7 +13,6 @@ function updateAttributes(target, newProps, oldProps) {
     if (oldProps[key] === value) return;
 
     if (key === "className") key = "class";
-    if (key === "htmlFor") key = "for";
 
     if (key.startsWith("on")) {
       return addEvent(target, key.replace("on", "").toLowerCase(), value);
