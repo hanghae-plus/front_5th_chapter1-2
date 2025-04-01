@@ -4,6 +4,7 @@ import {
   HTMLTagType,
   VNode,
 } from "@/types";
+import { isEmptyNodeValue, isValidVNode } from "./../utils/validator";
 import { addEvent } from "./eventManager";
 
 export function createElement(vNode: VNode | boolean | string | null) {
@@ -15,16 +16,15 @@ export function createElement(vNode: VNode | boolean | string | null) {
     });
     return fragment;
   }
-  if (
-    vNode === undefined ||
-    vNode === null ||
-    vNode === false ||
-    vNode === true
-  ) {
+  if (isEmptyNodeValue(vNode)) {
     return document.createTextNode("");
   }
   if (typeof vNode === "string" || typeof vNode === "number") {
     return document.createTextNode(String(vNode));
+  }
+
+  if (!isValidVNode(vNode)) {
+    return document.createTextNode("");
   }
 
   if (vNode.type === null && vNode.props && vNode.props.textContent) {
@@ -56,7 +56,7 @@ function updateAttributes(
       return;
     }
     if (key === "children") return;
-    if (key === "textContent") return; // textContent 속성은 건너뜁니다
+    if (key === "textContent") return;
     if (key === "className") {
       $el.setAttribute("class", props[key]);
 

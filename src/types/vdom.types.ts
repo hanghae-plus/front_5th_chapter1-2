@@ -17,7 +17,7 @@ export type HTMLTagType = keyof HTMLElementTagNameMap;
 // }
 export interface VNode<T = {}> {
   type: HTMLTagType | Function | null;
-  props: Record<string, any> | null;
+  props: Record<HTMLEventType | string, any> | null;
   children: Array<VNode<any> | string>;
   parent?: VNode | null;
 }

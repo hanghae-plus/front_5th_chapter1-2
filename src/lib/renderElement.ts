@@ -1,11 +1,12 @@
 import { ElementWithHandlers, VNode } from "@/types";
+import { isValidVNode } from "@/utils/validator";
 import { vDomStore } from "./../stores";
 import { createElement } from "./createElement";
 import { setupEventListeners } from "./eventManager";
 import { normalizeVNode } from "./normalizeVNode";
 import { updateElement } from "./updateElement";
 
-// * 테스트 코드를 위한 함수
+// * 테스트 코드를 위한 Observer
 // DOM에서 컨테이너가 제거될 때 vDomStore를 초기화하는 MutationObserver 설정
 const setupContainerRemovalObserver = (container: ElementWithHandlers) => {
   // 이미 설정된 observer가 있는지 확인
@@ -39,7 +40,7 @@ export function renderElement(vNode: VNode, container: ElementWithHandlers) {
   const normalizedVNode = normalizeVNode(vNode);
   setupContainerRemovalObserver(container);
 
-  const isVNodeObject = typeof normalizedVNode !== "string";
+  const isVNodeObject = isValidVNode(normalizedVNode);
 
   if (!vDomStore.hasVDom()) {
     container.innerHTML = "";
@@ -50,7 +51,7 @@ export function renderElement(vNode: VNode, container: ElementWithHandlers) {
     container.appendChild(element);
 
     if (isVNodeObject) {
-      vDomStore.saveVDom(normalizedVNode as VNode);
+      vDomStore.saveVDom(normalizedVNode);
     }
 
     return element;
@@ -59,7 +60,7 @@ export function renderElement(vNode: VNode, container: ElementWithHandlers) {
     updateElement(container, normalizedVNode, previousVNode);
 
     if (isVNodeObject) {
-      vDomStore.saveVDom(normalizedVNode as VNode);
+      vDomStore.saveVDom(normalizedVNode);
     }
 
     return container.firstChild;

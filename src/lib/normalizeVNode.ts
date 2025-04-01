@@ -1,14 +1,8 @@
+import { isEmptyNodeValue, isValidVNode } from "@/utils/validator";
 import { VNode } from "../types";
 
-export function normalizeVNode(
-  vNode: VNode | boolean | number | string,
-): VNode | string {
-  if (
-    vNode === null ||
-    vNode === undefined ||
-    vNode === true ||
-    vNode === false
-  ) {
+export function normalizeVNode(vNode: VNode | number | string): VNode | string {
+  if (isEmptyNodeValue(vNode)) {
     return "";
   }
   if (typeof vNode === "string" || typeof vNode === "number") {
@@ -24,7 +18,7 @@ export function normalizeVNode(
     return normalizeVNode(result);
   }
 
-  if (vNode.type) {
+  if (isValidVNode(vNode)) {
     return {
       type: vNode.type,
       props: vNode.props,

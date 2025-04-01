@@ -1,6 +1,26 @@
 import { ElementWithHandlers, HTMLEventType, VNode } from "@/types";
+import { isValidVNode } from "@/utils/validator";
 import { createElement } from "./createElement";
 import { addEvent, removeEvent } from "./eventManager";
+
+const shouldReplaceNode = (
+  newNode: VNode | string | null,
+  oldNode: VNode | string | null,
+): boolean => {
+  if (typeof oldNode !== typeof newNode) true;
+
+  if (typeof oldNode === "string" && oldNode !== newNode) true;
+
+  if (
+    isValidVNode(oldNode) &&
+    isValidVNode(newNode) &&
+    oldNode.type !== newNode.type
+  ) {
+    return true;
+  }
+
+  return false;
+};
 
 function updateAttributes(
   target: ElementWithHandlers,
@@ -11,8 +31,6 @@ function updateAttributes(
 
   if (oldProps) {
     Object.keys(oldProps).forEach((key) => {
-      if (key === "children") return;
-
       if (key.startsWith("on") && typeof oldProps[key] === "function") {
         const eventType = key.toLowerCase().substring(2) as HTMLEventType;
 
@@ -40,10 +58,10 @@ function updateAttributes(
       if (key === "textContent") return;
 
       if (key.startsWith("on") && typeof newProps[key] === "function") {
-        const eventType = key.toLowerCase().substring(2) as HTMLEventType;
+        const eventType = key.toLowerCase().substring(2);
 
         if (!oldProps || !oldProps[key] || oldProps[key] !== newProps[key]) {
-          addEvent(target, eventType, newProps[key]);
+          addEvent(target, eventType as HTMLEventType, newProps[key]);
         }
         return;
       }
@@ -77,20 +95,13 @@ export function updateElement(
     return;
   }
 
-  if (
-    typeof oldNode !== typeof newNode ||
-    (typeof oldNode === "string" && oldNode !== newNode) ||
-    (typeof oldNode !== "string" &&
-      typeof newNode !== "string" &&
-      (oldNode as VNode).type !== (newNode as VNode).type)
-  ) {
+  if (shouldReplaceNode(newNode, oldNode)) {
     const oldElement = parentElement.childNodes[index];
     const newElement = createElement(newNode);
     parentElement.replaceChild(newElement, oldElement);
     return;
   }
 
-  // 텍스트 노드인 경우
   if (typeof newNode === "string") {
     if (newNode !== oldNode) {
       const element = parentElement.childNodes[index];
@@ -98,16 +109,13 @@ export function updateElement(
     }
     return;
   }
-
-  // 객체 노드인 경우 (속성 및 이벤트 업데이트)
-  if (typeof oldNode !== "string" && typeof newNode !== "string") {
+  if (isValidVNode(newNode) && isValidVNode(oldNode)) {
     const element = parentElement.childNodes[index] as ElementWithHandlers;
     const typedNewNode = newNode as VNode;
     const typedOldNode = oldNode as VNode;
 
     updateAttributes(element, typedNewNode.props, typedOldNode.props);
 
-    // 자식 노드 업데이트
     const newLength = typedNewNode.children ? typedNewNode.children.length : 0;
     const oldLength = typedOldNode.children ? typedOldNode.children.length : 0;
     const maxLength = Math.max(newLength, oldLength);

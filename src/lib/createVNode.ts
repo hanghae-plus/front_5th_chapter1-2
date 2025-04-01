@@ -16,6 +16,6 @@ export function createVNode(
           child !== undefined &&
           child !== false &&
           child !== true,
-      ) as Array<VNode<any>>,
+      ) as Array<VNode>,
   };
 }
