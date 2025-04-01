@@ -1,4 +1,4 @@
-const inValidValues = [null, undefined, true, false, ""];
+import { inValidValues } from "./shared.js";
 
 /**
  * dom Element 노드인 경우 컴포넌트 정규화
