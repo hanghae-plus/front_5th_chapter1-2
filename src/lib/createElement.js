@@ -1,4 +1,5 @@
 import { isEmptyStrType, isNumericOrStr } from "../utils/typeUtils";
+import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
   if (isEmptyStrType(vNode))
@@ -26,17 +27,7 @@ export function createElement(vNode) {
   const element = document.createElement(type);
 
   if (props) {
-    Object.keys(props).forEach((key) => {
-      const attributeName = key === "className" ? "class" : key;
-
-      // 이벤트라면 HTML 속성에 문자열을 추가하지 않도록 작업
-      if (key.startsWith("on")) {
-        const eventType = key.toLowerCase().slice(2);
-        element.addEventListener(eventType, props[key]);
-      } else {
-        element.setAttribute(attributeName, props[key]);
-      }
-    });
+    updateAttributes(element, props);
   }
 
   if (children && Array.isArray(children)) {
@@ -51,4 +42,19 @@ export function createElement(vNode) {
   }
 
   return element;
+}
+
+function updateAttributes($el, props) {
+  Object.entries(props).forEach(([key, value]) => {
+    if (key === "className") {
+      $el.setAttribute("class", value);
+      return;
+    }
+    if (key.startsWith("on")) {
+      const event = key.toLowerCase().slice(2);
+      addEvent($el, event, value);
+      return;
+    }
+    $el.setAttribute(key, value);
+  });
 }
