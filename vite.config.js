@@ -4,7 +4,7 @@ import { defineConfig as defineTestConfig, mergeConfig } from "vitest/config";
 
 export default mergeConfig(
   defineConfig({
-    base: process.env.NODE_ENV === "production" ? "/front_5th_chapter1-1/" : "",
+    base: process.env.NODE_ENV === "production" ? "/front_5th_chapter1-2/" : "",
     esbuild: {
       jsxFactory: "createVNode",
     },

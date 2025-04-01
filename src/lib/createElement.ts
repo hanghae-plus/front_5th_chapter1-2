@@ -6,7 +6,7 @@ import {
 } from "@/types";
 import { addEvent } from "./eventManager";
 
-export function createElement(vNode: VNode | boolean | string) {
+export function createElement(vNode: VNode | boolean | string | null) {
   if (Array.isArray(vNode)) {
     const fragment = document.createDocumentFragment();
     vNode.forEach((child) => {
@@ -27,7 +27,6 @@ export function createElement(vNode: VNode | boolean | string) {
     return document.createTextNode(String(vNode));
   }
 
-  // normalizeVNode에서 생성된 텍스트 노드 처리
   if (vNode.type === null && vNode.props && vNode.props.textContent) {
     return document.createTextNode(vNode.props.textContent);
   }
@@ -66,3 +65,32 @@ function updateAttributes(
     $el.setAttribute(key, props[key]);
   });
 }
+
+// * preact/src/createElement.js
+// export function createElement(type, props, children) {
+// 	let normalizedProps = {},
+// 		key,
+// 		ref,
+// 		i;
+// 	for (i in props) {
+// 		if (i == 'key') key = props[i];
+// 		else if (i == 'ref') ref = props[i];
+// 		else normalizedProps[i] = props[i];
+// 	}
+
+// 	if (arguments.length > 2) {
+// 		normalizedProps.children =
+// 			arguments.length > 3 ? slice.call(arguments, 2) : children;
+// 	}
+
+// 	// If a Component VNode, check for and apply defaultProps
+// 	// Note: type may be undefined in development, must never error here.
+// 	if (typeof type == 'function' && type.defaultProps != NULL) {
+// 		for (i in type.defaultProps) {
+// 			if (normalizedProps[i] == UNDEFINED) {
+// 				normalizedProps[i] = type.defaultProps[i];
+// 			}
+// 		}
+// 	}
+
+// 	return createVNode(type, normalizedProps, key, ref, NULL);
