@@ -16,7 +16,7 @@ function updateAttributes(target, newProps, oldProps) {
     if (key === "htmlFor") key = "for";
 
     if (key.startsWith("on")) {
-      addEvent(target, key.replace("on", "").toLowerCase(), value);
+      return addEvent(target, key.replace("on", "").toLowerCase(), value);
     }
 
     target.setAttribute(key, value);
