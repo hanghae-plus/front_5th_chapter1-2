@@ -1,5 +1,5 @@
 /** @jsx createVNode */
-import { createVNode } from "../../lib";
+import { createVNode } from "../../lib/vdom";
 
 export const Footer = () => (
   <footer className="bg-gray-200 p-4 text-center">

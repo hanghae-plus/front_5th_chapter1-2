@@ -1,11 +1,16 @@
 /** @jsx createVNode */
-import { createVNode } from "../../lib";
+import { createVNode } from "../../lib/vdom";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
 
+const BASE_PATH =
+  process.env.NODE_ENV === "production" ? "/front_5th_chapter1-2" : "";
+
 const getNavItemClass = (path) => {
   const currentPath = window.location.pathname;
-  return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
+  return currentPath === BASE_PATH + path
+    ? "text-blue-600 font-bold"
+    : "text-gray-600";
 };
 
 function Link({ onClick, children, ...props }) {

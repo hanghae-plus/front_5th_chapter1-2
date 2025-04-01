@@ -1,4 +1,4 @@
-import { createObserver } from "./createObserver";
+import { createObserver } from "../observer";
 
 export const createHashRouter = (routes) => {
   const { subscribe, notify } = createObserver();
