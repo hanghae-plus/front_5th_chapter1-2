@@ -1,10 +1,6 @@
 import { normalizeVNode } from "./normalizeVNode.js";
 
 export function createElement(vNode) {
-  // console.log("vNode's type");
-  // console.log(typeof vNode);
-  // console.log("vNode's content");
-  // console.log(vNode);
   //테스트 케이스 1 (불리언, undefined, null 처리)
   if (
     typeof vNode === "boolean" ||
@@ -20,7 +16,6 @@ export function createElement(vNode) {
 
   //배열일때 처리
   if (Array.isArray(vNode)) {
-    console.log("vNode", vNode);
     const fragment = document.createDocumentFragment();
     fragment.append(...vNode.map(createElement));
     return fragment;
@@ -34,16 +29,16 @@ export function createElement(vNode) {
    * 함수일때 처리하기
    */
   if (typeof vNode.type === "function") {
-    console.log("함수형 컴포넌트 처리");
     // 컴포넌트 정규화 후 결과 사용
     const normalizedNode = normalizeVNode(vNode);
-    console.log("정규화된 컴포넌트:", normalizedNode);
-    // 정규화된 노드로 createElement 다시 호출
+    console.log("normalizedNode", normalizedNode);
+    // // 정규화된 노드로 createElement 다시 호출
     return createElement(normalizedNode);
   }
 
   // FuncitonComponent를 사용했을 때 InvalidCharaterError 발생
   const $el = document.createElement(vNode.type);
+
   // 속성 설정
   if (vNode.props) {
     updateAttributes($el, vNode.props);
@@ -51,30 +46,34 @@ export function createElement(vNode) {
 
   // 자식 요소 처리
   if (vNode.children) {
-    if (Array.isArray(vNode.children)) {
-      vNode.children.forEach((child) => {
-        const childEl = createElement(child);
-        if (childEl) $el.appendChild(childEl);
-      });
-    } else {
-      const childEl = createElement(vNode.children);
-      if (childEl) $el.appendChild(childEl);
-    }
+    // if (Array.isArray(vNode.children)) {
+    //   vNode.children.forEach((child) => {
+    //     const childEl = createElement(child);
+    //     console.log("childEl", childEl);
+    //     if (childEl) $el.appendChild(childEl);
+    //   });
+    // } else {
+    const childEl = createElement(vNode.children);
+    if (childEl) $el.appendChild(childEl);
   }
-
+  // }
   return $el;
 }
 
 function updateAttributes($el, props) {
   if (!props) return;
-  console.log("props", props);
-  // 객체형 props 처리
+
   Object.entries(props).forEach(([key, value]) => {
-    if (key === "className") {
+    //값이 falsy인 경우 처리 안함 (단, 0과 빈 문자열은 제외)
+    if (value === false || value === null || value === undefined) return;
+
+    //이벤트 핸들러 처리
+    if (key.startsWith("on") && typeof value === "function") {
+      const eventType = key.toLowerCase().substring(2);
+      $el.addEventListener(eventType, value);
+    } else if (key === "className") {
       $el.setAttribute("class", value);
-    }
-    // 일반 속성 처리
-    else if (value !== false && value !== null && value !== undefined) {
+    } else {
       $el.setAttribute(key, value);
     }
   });

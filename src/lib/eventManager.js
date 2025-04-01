@@ -18,14 +18,23 @@ function handleEvent(event) {
     handlers.forEach((handler) => handler(event));
   }
 }
+//type을 동적으로 가지고 오고 싶다.
+export function getRegisteredEventTypes() {
+  const eventTypesSet = new Set();
+
+  for (const [, elementHandlers] of eventHandlers) {
+    for (const eventType of elementHandlers.keys()) {
+      eventTypesSet.add(eventType);
+    }
+  }
+
+  return Array.from(eventTypesSet);
+}
 
 export function setupEventListeners(root) {
-  const eventTarget = ["click", "input", "change", "submit"];
-  eventTarget.forEach((eventType) => {
-    root.addEventListener(eventType, function (event) {
-      //함수를 만들어야한다. event를 등록하는 함수.
-      handleEvent(event);
-    });
+  const eventTypes = getRegisteredEventTypes();
+  eventTypes.forEach((eventType) => {
+    root.addEventListener(eventType, handleEvent);
   });
 }
 
@@ -43,5 +52,30 @@ export function addEvent(element, eventType, handler) {
 }
 
 export function removeEvent(element, eventType, handler) {
-  element.removeEventListener(eventType, handler);
+  //이렇게 지우면되나.?
+  eventHandlers.delete(element);
+
+  if (eventHandlers.has(element)) {
+    const typeHandlersMap = eventHandlers.get(element);
+
+    if (typeHandlersMap.has(eventType)) {
+      const handlers = typeHandlersMap.get(eventType);
+      const index = handlers.indexOf(handler);
+      if (index !== -1) {
+        handlers.splice(index, 1);
+      }
+
+      //모든 이벤트가 삭제 됬다면 eventType도 삭제
+      if (handlers.length === 0) {
+        typeHandlersMap.delete(eventType);
+      }
+
+      //이벤트 동작이 없다면 해당 element도 삭제
+      if (typeHandlersMap.size === 0) {
+        eventHandlers.delete(element);
+      }
+    }
+  }
+
+  //
 }
