@@ -1,20 +1,25 @@
 const eventManager = {};
 
 export function setupEventListeners(root) {
-  root.addEventListener("click", (e) => {
-    // 이벤트 발생 시, 해당 이벤트가 발생한 요소를 찾고 처리
-    const target = e.target;
-    const eventType = e.type;
-
-    // 등록된 핸들러 목록을 처리
-    if (eventManager[eventType]) {
-      eventManager[eventType].forEach(({ element, handler }) => {
-        if (element.contains(target)) {
-          handler(e);
-        }
-      });
-    }
+  // eventManager에 등록된 모든 이벤트 타입에 대해 리스너 등록
+  Object.keys(eventManager).forEach((eventType) => {
+    root.addEventListener(eventType, handleEvent);
   });
+}
+
+// 위임된 이벤트 처리
+function handleEvent(e) {
+  const target = e.target;
+  const eventType = e.type;
+
+  // 등록된 핸들러 목록을 처리
+  if (eventManager[eventType]) {
+    eventManager[eventType].forEach(({ element, handler }) => {
+      if (element.contains(target)) {
+        handler(e);
+      }
+    });
+  }
 }
 
 export function addEvent(element, eventType, handler) {
