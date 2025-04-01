@@ -1,4 +1,4 @@
-import { addEvent } from "./eventManager";
+// import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
   if (vNode === undefined || vNode === null || typeof vNode === "boolean") {
@@ -37,8 +37,8 @@ function updateAttributes($el, props) {
     if (key.startsWith("on")) {
       // 1. 이벤트 리스너
       const eventType = key.slice(2).toLowerCase();
-      //   $el.addEventListener(eventType, props[key]);
-      addEvent($el, eventType, props[key]);
+      $el.addEventListener(eventType, props[key]);
+      //   addEvent($el, eventType, props[key]);
     } else if (key === "className") {
       // 2. ClassName
       $el.className = props[key];
