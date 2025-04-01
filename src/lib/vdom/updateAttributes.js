@@ -1,41 +1,49 @@
 import { addEvent, removeEvent } from "../event";
 
+function handleEventAttribute(target, key, newValue, oldValue) {
+  const eventType = key.slice(2).toLowerCase();
+  if (oldValue !== newValue) {
+    addEvent(target, eventType, newValue);
+  }
+}
+
+function handleNormalAttribute(target, key, newValue, oldValue) {
+  const attrName = key === "className" ? "class" : key;
+  if (oldValue !== newValue) {
+    target.setAttribute(attrName, newValue);
+  }
+}
+
+function removeEventAttribute(target, key, oldValue) {
+  const eventType = key.slice(2).toLowerCase();
+  removeEvent(target, eventType, oldValue);
+}
+
+function removeNormalAttribute(target, key) {
+  const attrName = key === "className" ? "class" : key;
+  target.removeAttribute(attrName);
+}
+
 export function updateAttributes(
   target,
   originNewProps = {},
   originOldProps = {},
 ) {
-  if (originNewProps) {
-    // 새로운 props를 순회하면서 변경 또는 추가
+  originNewProps &&
     Object.entries(originNewProps).forEach(([key, value]) => {
-      if (key.startsWith("on")) {
-        const eventType = key.slice(2).toLowerCase();
-
-        if (originOldProps[key] !== value) {
-          addEvent(target, eventType, value);
-        }
-      } else {
-        const attrName = key === "className" ? "class" : key;
-
-        if (originOldProps[key] !== value) {
-          target.setAttribute(attrName, value);
-        }
-      }
+      const handler = key.startsWith("on")
+        ? handleEventAttribute
+        : handleNormalAttribute;
+      handler(target, key, value, originOldProps[key]);
     });
-  }
 
-  if (originOldProps) {
-    // 삭제된 props 제거
+  originOldProps &&
     Object.keys(originOldProps).forEach((key) => {
       if (!originNewProps || !(key in originNewProps)) {
-        if (key.startsWith("on")) {
-          const eventType = key.slice(2).toLowerCase();
-          removeEvent(target, eventType, originOldProps[key]);
-        } else {
-          const attrName = key === "className" ? "class" : key;
-          target.removeAttribute(attrName);
-        }
+        const handler = key.startsWith("on")
+          ? removeEventAttribute
+          : removeNormalAttribute;
+        handler(target, key, originOldProps[key]);
       }
     });
-  }
 }
