@@ -68,5 +68,21 @@ export const globalStore = createStore(
 
       return { ...state, posts: [...prevPosts, newPost] };
     },
+
+    toggleLikePost(state, payload) {
+      const { posts, currentUser } = state;
+      if (!currentUser) return state;
+      const { id } = payload;
+      const postIndex = posts.findIndex((post) => post.id === id);
+      const prevPost = posts.find((post) => post.id === id);
+      const newPost = {
+        ...prevPost,
+        likeUsers: prevPost.likeUsers.includes(currentUser.username)
+          ? prevPost.likeUsers.filter((user) => user !== currentUser.username)
+          : [...prevPost.likeUsers, currentUser.username],
+      };
+      const newPostList = posts.splice(postIndex, 1, newPost);
+      return { ...state, posts: newPostList };
+    },
   },
 );

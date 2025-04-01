@@ -4,6 +4,7 @@ import { globalStore } from "../../stores/globalStore.js";
 import { toTimeFormat } from "../../utils/index.js";
 
 export const Post = ({
+  id,
   author,
   time,
   content,
@@ -11,6 +12,12 @@ export const Post = ({
   activationLike = false,
 }) => {
   const { loggedIn } = globalStore.getState();
+  const onLikeClick = () => {
+    if (!loggedIn) {
+      return alert("로그인 후 이용해주세요");
+    }
+    globalStore.actions.toggleLikePost({ id });
+  };
 
   return (
     <div className="bg-white rounded-lg shadow p-4 mb-4">
@@ -23,11 +30,7 @@ export const Post = ({
       <p>{content}</p>
       <div className="mt-2 flex justify-between text-gray-500">
         <span
-          onClick={() => {
-            if (!loggedIn) {
-              alert("로그인 후 이용해주세요");
-            }
-          }}
+          onClick={onLikeClick}
           className={`like-button cursor-pointer${activationLike ? " text-blue-500" : ""}`}
         >
           좋아요 {likeUsers.length}
