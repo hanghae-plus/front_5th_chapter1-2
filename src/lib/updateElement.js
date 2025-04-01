@@ -3,6 +3,7 @@ import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
 
 function updateAttributes(target, originNewProps, originOldProps) {
+  if (!target) return;
   const newProps = originNewProps || {};
   const oldProps = originOldProps || {};
 
@@ -32,6 +33,7 @@ function updateAttributes(target, originNewProps, originOldProps) {
 }
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
+  if (!parentElement) return;
   if (!newNode && !oldNode) return;
 
   // 노드 제거 (newNode가 없고 oldNode가 있는 경우)
