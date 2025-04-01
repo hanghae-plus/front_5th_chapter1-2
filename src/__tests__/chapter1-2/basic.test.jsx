@@ -601,6 +601,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
           <button onClick={clickHandler}>Button</button>
         </div>
       );
+      console.log("render 1");
       renderElement(initialVNode, $container);
 
       const updatedVNode = (
@@ -608,6 +609,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
           <button>Button Without Handler</button>
         </div>
       );
+      console.log("render 2");
       renderElement(updatedVNode, $container);
 
       const button = $container.querySelector("button");

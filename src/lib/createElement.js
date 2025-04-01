@@ -1,4 +1,4 @@
-// import { addEvent } from "./eventManager";
+import { addEvent } from "./eventManager";
 
 import { isArray, isInvalidVNode, isValidVNode } from "../utils/typeCheck";
 
@@ -14,11 +14,11 @@ export function createElement(vNode) {
   if (isInvalidVNode(vNode)) {
     return document.createTextNode("");
   }
-
   if (isValidVNode(vNode)) {
     return document.createTextNode(vNode.toString());
   }
   if (isArray(vNode)) {
+    console.log("isArray");
     const fragment = new DocumentFragment();
 
     for (let node of vNode) {
@@ -26,7 +26,6 @@ export function createElement(vNode) {
     }
     return fragment;
   }
-
   const $el = document.createElement(vNode.type);
 
   Object.entries(vNode.props || {})
@@ -43,6 +42,12 @@ export function createElement(vNode) {
 }
 
 const updateAttributes = ($el, attr, value) => {
+  if (attr.toLocaleLowerCase().includes("on")) {
+    let newAttr = attr.toLocaleLowerCase().replace("on", "");
+    console.log(newAttr);
+    addEvent($el, newAttr, value);
+    return;
+  }
   attr === "className"
     ? $el.setAttribute("class", value)
     : $el.setAttribute(attr, value);
