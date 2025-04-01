@@ -8,12 +8,12 @@ export function createElement(vNode) {
   } else if (is("string") || is("number")) {
     return document.createTextNode(String(vNode));
   } else if (Array.isArray(vNode)) {
-    const fragment = document.createDocumentFragment();
+    const $fragment = document.createDocumentFragment();
     vNode.forEach((n) => {
-      const el = createElement(n);
-      if (el instanceof Node) fragment.appendChild(el);
+      const $el = createElement(n);
+      if ($el instanceof Node) $fragment.appendChild($el);
     });
-    return fragment;
+    return $fragment;
   }
   // nomalize하지 않은 컴포넌트 처리
   if (typeof vNode.type === "function") throw new Error();
