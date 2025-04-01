@@ -15,11 +15,23 @@ export function createElement(vNode) {
   if (isEmpty(vNode)) {
     return document.createTextNode("");
   }
+  // 배열이 들어올때 fragment 처리
+  if (Array.isArray(vNode)) {
+    const fragment = document.createDocumentFragment();
+    vNode.forEach((item) => {
+      const $el = createElement(item);
+      if ($el) {
+        fragment.appendChild($el);
+      }
+    });
+    return fragment;
+  }
   const $el = document.createElement(vNode.type);
-  const fragment = document.createDocumentFragment();
+
   if (vNode.props) {
     updateAttributes($el, vNode.props);
   }
+  const fragment = document.createDocumentFragment();
   if (vNode.children) {
     if (Array.isArray(vNode.children)) {
       const children = vNode.children.map(createElement).flat();
@@ -27,6 +39,7 @@ export function createElement(vNode) {
         fragment.appendChild(child);
       });
     }
+    return;
   }
   $el.appendChild(fragment);
   return $el;
