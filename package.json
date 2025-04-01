@@ -8,6 +8,7 @@
   },
   "type": "module",
   "scripts": {
+    "start": "node test.js",
     "dev": "vite",
     "dev:hash": "vite --open ./index.hash.html",
     "build": "vite build",
