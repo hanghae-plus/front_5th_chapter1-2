@@ -1,3 +1,4 @@
+import { extractEventTypeFromKey } from "../utils";
 import { isNullishOrBoolean } from "./createVNode";
 import { addEvent } from "./eventManager";
 
@@ -42,8 +43,8 @@ function updateAttributes($el, props) {
       if (key === "className") {
         $el.setAttribute("class", value);
       } else if (key.startsWith("on")) {
-        const eventName = key.slice(2).toLowerCase();
-        addEvent($el, eventName, value);
+        const eventType = extractEventTypeFromKey(key);
+        addEvent($el, eventType, value);
       } else {
         $el.setAttribute(key, value);
       }

@@ -1,6 +1,7 @@
 import { addEvent, removeEvent } from "./eventManager";
 
 import { createElement } from "./createElement.js";
+import { extractEventTypeFromKey } from "../utils/eventUtils.js";
 
 function updateAttributes(target, originNewProps, originOldProps) {
   if (!target) return;
@@ -12,7 +13,7 @@ function updateAttributes(target, originNewProps, originOldProps) {
     if (key === "className") {
       target.setAttribute("class", value);
     } else if (key.startsWith("on")) {
-      const eventType = key.slice(2).toLowerCase();
+      const eventType = extractEventTypeFromKey(key);
       addEvent(target, eventType, value);
     } else {
       target.setAttribute(key, value);
@@ -24,7 +25,7 @@ function updateAttributes(target, originNewProps, originOldProps) {
     .filter((key) => !(key in newProps))
     .forEach((key) => {
       if (key.startsWith("on")) {
-        const eventName = key.slice(2).toLowerCase();
+        const eventName = extractEventTypeFromKey(key);
         removeEvent(target, eventName);
       } else {
         target.removeAttribute(key);
