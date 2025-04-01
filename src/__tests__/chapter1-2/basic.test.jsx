@@ -248,7 +248,6 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
       );
 
       const normalized = normalizeVNode(<TestComponent />);
-
       expect(normalized).toEqual(
         <ul {...{}}>
           <li id="item-1" className="list-item ">
@@ -322,6 +321,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
       const result = createElement([<div>첫 번째</div>, <span>두 번째</span>]);
 
       expect(result.nodeType).toBe(Node.DOCUMENT_FRAGMENT_NODE);
+      console.log("result", result);
       expect(result.childNodes.length).toBe(2);
       expect(result.childNodes[0].tagName).toBe("DIV");
       expect(result.childNodes[1].tagName).toBe("SPAN");

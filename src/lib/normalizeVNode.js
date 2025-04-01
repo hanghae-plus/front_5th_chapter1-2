@@ -8,11 +8,11 @@ export function normalizeVNode(vNode) {
   }
 
   if (typeof vNode.type === "function") {
-    const result = vNode.type({
+    const vNodeResult = vNode.type({
       ...vNode.props,
       children: normalizeChildren(vNode.children),
     });
-    return normalizeVNode(result);
+    return normalizeVNode(vNodeResult);
   }
 
   function normalizeChildren(children) {
