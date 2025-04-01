@@ -1,11 +1,12 @@
+import { isEmptyVNode, isTextVNode } from "../utils/\bvNode";
 import { appendChild, applyProps } from "../utils/dom";
 
 export function createElement(vNode) {
-  if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
+  if (isEmptyVNode(vNode)) {
     return document.createTextNode("");
   }
 
-  if (typeof vNode === "string" || typeof vNode === "number") {
+  if (isTextVNode(vNode)) {
     return document.createTextNode(vNode);
   }
 
@@ -14,10 +15,7 @@ export function createElement(vNode) {
 
     vNode.forEach((child) => {
       const node = createElement(child);
-
-      if (node instanceof Node) {
-        fragment.appendChild(node);
-      }
+      fragment.appendChild(node);
     });
     return fragment;
   }

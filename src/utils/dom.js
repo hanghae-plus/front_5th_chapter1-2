@@ -27,9 +27,6 @@ export const appendChild = (element, children, createElement) => {
       return;
     }
     const node = createElement(child);
-
-    if (node instanceof Node) {
-      element.appendChild(node);
-    }
+    element.appendChild(node);
   });
 };

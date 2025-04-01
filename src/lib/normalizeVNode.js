@@ -1,17 +1,24 @@
+import {
+  isEmptyVNode,
+  isFunctionalComponent,
+  isTextVNode,
+} from "../utils/\bvNode";
+
 export function normalizeVNode(vNode) {
-  if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
+  if (isEmptyVNode(vNode)) {
     return "";
   }
 
-  if (typeof vNode === "string" || typeof vNode === "number") {
+  if (isTextVNode(vNode)) {
     return String(vNode);
   }
 
-  if (typeof vNode.type === "function") {
+  if (isFunctionalComponent(vNode)) {
     const vNodeResult = vNode.type({
       ...vNode.props,
       children: normalizeChildren(vNode.children),
     });
+
     return normalizeVNode(vNodeResult);
   }
 
