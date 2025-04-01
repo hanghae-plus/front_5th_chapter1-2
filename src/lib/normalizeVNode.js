@@ -24,6 +24,11 @@ export function normalizeVNode(vNode) {
     // return createVNode(vNode.type, vNode.type.props, vNode.children);
 
     // 함수형 컴포넌트가 반환하는 객체 처리
+    // @_PURE_ 어쩌구일때는 파라미터가 function을 추가해주면 예외를 방지할 수 있다.
+    // if (typeof component === 'function') {
+    //   return component({ ...props, children });
+    // }
+
     const element = vNode.type({
       ...vNode.props, // props 전달
       children: vNode.children, // chidren 전달
