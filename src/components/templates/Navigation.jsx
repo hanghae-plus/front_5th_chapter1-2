@@ -3,8 +3,15 @@ import { createVNode } from "../../lib";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
 
+const getCurrentPath = () => {
+  const isHashRouter = window.location.pathname.includes("index.hash.html");
+  return isHashRouter
+    ? window.location.hash.slice(1)
+    : window.location.pathname;
+}
+
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  const currentPath = getCurrentPath();
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 

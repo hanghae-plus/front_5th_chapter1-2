@@ -27,8 +27,8 @@ router.set(
 );
 
 function main() {
-  router.get().subscribe(render);
-  globalStore.subscribe(render);
+  router.get().subscribe(render); // 라우터 변경시 render 함수 호출
+  globalStore.subscribe(render); // 상태 변경시 render 함수 호출
 
   render();
 }
