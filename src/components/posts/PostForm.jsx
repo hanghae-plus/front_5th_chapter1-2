@@ -1,7 +1,10 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
+import PostService from "./PostService";
 
 export const PostForm = () => {
+  const { submitAddPost } = PostService();
+
   return (
     <div className="mb-4 bg-white rounded-lg shadow p-4">
       <textarea
@@ -11,6 +14,11 @@ export const PostForm = () => {
       />
       <button
         id="post-submit"
+        onClick={() => {
+          const textEl = document.getElementById("post-content");
+          submitAddPost(textEl.value);
+          textEl.value = "";
+        }}
         className="mt-2 bg-blue-600 text-white px-4 py-2 rounded"
       >
         게시
