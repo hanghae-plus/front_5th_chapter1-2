@@ -12,6 +12,8 @@ export default mergeConfig(
         jsxFactory: "createVNode",
       },
     },
+    base:
+      process.env.NODE_ENV === "production" ? "/front_5th_chapter1-2/" : "/",
   }),
   defineTestConfig({
     test: {

@@ -2,9 +2,15 @@
 import { createVNode } from "../../lib";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
+import { BASE_PATH } from "../../utils/config";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  let currentPath = window.location.pathname;
+
+  if (BASE_PATH !== "/" && currentPath.startsWith(BASE_PATH)) {
+    currentPath = currentPath.slice(BASE_PATH.length - 1) || "/";
+  }
+
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 
