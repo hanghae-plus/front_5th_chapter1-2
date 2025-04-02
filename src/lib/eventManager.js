@@ -1,9 +1,10 @@
 const eventStore = new WeakMap();
-const eventTypes = new Set();
+export const eventTypes = new Set();
 
 // TODO: refactor as like react event system
 export function setupEventListeners(root) {
   eventTypes.forEach((eventType) => {
+    root.removeEventListener(eventType, eventHandler);
     root.addEventListener(eventType, eventHandler);
   });
 }
@@ -21,6 +22,7 @@ export function addEvent(element, eventType, handler) {
   console.log("addEvent", element, eventType, handler);
 }
 
+//TODO: 이벤트 제거 필요
 export function removeEvent(element, eventType, handler) {
   if (!eventStore.has(element)) {
     return;

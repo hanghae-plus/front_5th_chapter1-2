@@ -4,7 +4,6 @@
  * @param {...any} children - element의 자식 요소
  */
 export function createVNode(type, props, ...children) {
-  console.log("createVNode", type, props, children);
   // TODO: 중첩구조에서도 flat이 필요
   // filter 추가 v가 null, undefined 인 경우 제외해야함.
   return {

@@ -26,8 +26,10 @@ export const HomePage = () => {
           <div id="posts-container" className="space-y-4">
             {[...posts]
               .sort((a, b) => b.time - a.time)
-              .map((props) => {
-                return <Post {...props} activationLike={false} />;
+              .map((props, index) => {
+                return (
+                  <Post {...props} activationLike={false} key={index + 1} />
+                );
               })}
           </div>
         </main>

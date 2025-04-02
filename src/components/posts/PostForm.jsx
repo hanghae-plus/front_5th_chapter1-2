@@ -24,6 +24,7 @@ export const PostForm = () => {
 
   const handlePostChange = (e) => {
     postContent = e.target.value;
+    e.target.value = "";
   };
 
   return (

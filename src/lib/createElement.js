@@ -1,5 +1,6 @@
 // TODO: 각각의 조건에 대해 element를 만드는 코드가 필요함
 import { addEvent } from "./eventManager";
+import { isEvent } from "../utils/eventUtils";
 
 export function createElement(vNode) {
   console.log("createElement", vNode);
@@ -26,12 +27,11 @@ export function createElement(vNode) {
   Object.entries(vNode.props || {})
     .filter(([, value]) => value)
     .forEach(([attr, value]) => {
-      // TODO: attr format하는 함수 만들기
-      // addEvent 실행.
       updateAttributes($el, { attr, value });
     });
 
   updateAttributes($el, vNode.props);
+  console.log("vNode.children", vNode, vNode.children);
 
   vNode.children.map(createElement).forEach((child) => $el.appendChild(child));
 
@@ -39,7 +39,7 @@ export function createElement(vNode) {
 }
 
 function updateAttributes($el, props) {
-  if (!props) {
+  if (!props || props.attr === undefined || props.value === undefined) {
     return;
   }
 
@@ -47,7 +47,7 @@ function updateAttributes($el, props) {
 
   if (attr === "className") {
     $el.setAttribute("class", value);
-  } else if (attr && attr.startsWith("on") && typeof value === "function") {
+  } else if (attr && isEvent(attr) && typeof value === "function") {
     //event attribute는 el에 직접 등록하는게 아니라 eventManager에 등록해야함
     addEvent($el, attr.slice(2).toLowerCase(), value);
   } else {

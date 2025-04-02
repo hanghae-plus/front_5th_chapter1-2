@@ -33,3 +33,5 @@ export const addEvent = (eventType, selector, handler) => {
   }
   eventHandlers[eventType][selector] = handler;
 };
+
+export const isEvent = (name) => name.startsWith("on");
