@@ -9,6 +9,9 @@ export const Header = () => {
   );
 };
 
+// const root = document.getElementById('root');
+// root.appendChild(Header);
+
 // createVNode 보통 h함수로 작성한다.
 // 자식요소가 하나일 경우, [] 생략해도 된다.
 
