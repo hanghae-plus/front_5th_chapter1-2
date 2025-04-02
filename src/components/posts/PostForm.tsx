@@ -1,9 +1,10 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib/vdom";
-import { globalStore } from "../../stores";
+import { userStore, postStore } from "../../stores";
 
 export const PostForm = () => {
-  const currentUser = globalStore.getState().currentUser;
+  const currentUser = userStore.getState().currentUser;
+  const { posts } = postStore.getState();
 
   const handleSubmit = (e: Event) => {
     e.preventDefault();
@@ -18,15 +19,15 @@ export const PostForm = () => {
     const content = contentElement.value;
 
     const post = {
-      id: globalStore.getState().posts.length + 1,
+      id: posts.length + 1,
       author: currentUser.username,
       time: Date.now(),
       content,
       likeUsers: [],
     };
 
-    globalStore.setState({
-      posts: [...globalStore.getState().posts, post],
+    postStore.setState({
+      posts: [...posts, post],
     });
 
     contentElement.value = "";

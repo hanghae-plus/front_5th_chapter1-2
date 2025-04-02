@@ -1,11 +1,11 @@
 /** @jsx createVNode */
 import { createVNode } from "../lib/vdom";
-import { globalStore } from "../stores";
+import { userStore } from "../stores";
 import { userStorage } from "../storages";
 
 function login(username: string) {
   const user = { username, email: "", bio: "" };
-  globalStore.setState({
+  userStore.setState({
     currentUser: user,
     loggedIn: true,
   });

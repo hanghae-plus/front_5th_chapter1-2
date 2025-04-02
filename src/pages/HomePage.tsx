@@ -2,10 +2,11 @@
 import { createVNode } from "../lib/vdom";
 
 import { Footer, Header, Navigation, Post, PostForm } from "../components";
-import { globalStore } from "../stores";
+import { userStore, postStore } from "../stores";
 
 export const HomePage = () => {
-  const { posts, loggedIn } = globalStore.getState();
+  const { loggedIn } = userStore.getState();
+  const { posts } = postStore.getState();
 
   return (
     <div className="bg-gray-100 min-h-screen flex justify-center">

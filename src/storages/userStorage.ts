@@ -1,9 +1,4 @@
 import { createStorage } from "../lib/storage";
-
-export type User = {
-  username: string;
-  email: string;
-  bio: string;
-};
+import { User } from "../types/user";
 
 export const userStorage = createStorage<User>("user");

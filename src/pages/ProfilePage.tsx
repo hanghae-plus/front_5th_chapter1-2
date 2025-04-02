@@ -1,31 +1,26 @@
 /** @jsx createVNode */
 import { createVNode } from "../lib/vdom";
 import { Footer, Header, Navigation } from "../components";
-import { globalStore } from "../stores";
+import { userStore } from "../stores";
 import { userStorage } from "../storages";
+import { User } from "../types/user";
 
-interface Profile {
-  username: string;
-  email: string;
-  bio: string;
-}
-
-function updateProfile(profile: Profile) {
-  const user = { ...globalStore.getState().currentUser, ...profile };
-  globalStore.setState({ currentUser: user });
+function updateProfile(profile: User) {
+  const user = { ...userStore.getState().currentUser, ...profile };
+  userStore.setState({ currentUser: user });
   userStorage.set(user);
   alert("프로필이 업데이트되었습니다.");
 }
 
 export const ProfilePage = () => {
-  const { loggedIn, currentUser } = globalStore.getState();
+  const { loggedIn, currentUser } = userStore.getState();
   const { username = "", email = "", bio = "" } = currentUser ?? {};
 
   const handleSubmit = (e: Event) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const updatedProfile = Object.fromEntries(formData);
-    updateProfile(updatedProfile as unknown as Profile);
+    updateProfile(updatedProfile as unknown as User);
   };
 
   return (

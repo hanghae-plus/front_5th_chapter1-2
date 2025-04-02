@@ -1,7 +1,7 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib/vdom";
 import { router } from "../../router";
-import { globalStore } from "../../stores";
+import { userStore } from "../../stores";
 import { BASE_PATH } from "../../consts/path";
 import { VNode } from "../../lib/vdom";
 
@@ -33,8 +33,8 @@ function Link({ onClick, children, ...props }: LinkProps) {
 }
 
 export const Navigation = () => {
-  const { loggedIn } = globalStore.getState();
-  const { logout } = globalStore.actions;
+  const { loggedIn } = userStore.getState();
+  const { logout } = userStore.actions;
   return (
     <nav className="bg-white shadow-md p-2 sticky top-14">
       <ul className="flex justify-around">

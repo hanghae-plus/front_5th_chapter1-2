@@ -2,7 +2,7 @@
 import { createHashRouter } from "./lib/router";
 import { createVNode } from "./lib/vdom";
 import { HomePage, LoginPage, ProfilePage } from "./pages";
-import { globalStore } from "./stores";
+import { userStore, postStore } from "./stores";
 import { ForbiddenError, UnauthorizedError } from "./errors";
 import { router } from "./router";
 import { render } from "./render";
@@ -11,14 +11,14 @@ router.set(
   createHashRouter({
     "/": HomePage,
     "/login": () => {
-      const { loggedIn } = globalStore.getState();
+      const { loggedIn } = userStore.getState();
       if (loggedIn) {
         throw new ForbiddenError();
       }
       return <LoginPage />;
     },
     "/profile": () => {
-      const { loggedIn } = globalStore.getState();
+      const { loggedIn } = userStore.getState();
       if (!loggedIn) {
         throw new UnauthorizedError();
       }
@@ -29,7 +29,8 @@ router.set(
 
 function main() {
   router.get()?.subscribe(render);
-  globalStore.subscribe(render);
+  userStore.subscribe(render);
+  postStore.subscribe(render);
 
   render();
 }

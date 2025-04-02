@@ -1,7 +1,7 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib/vdom/index";
 import { toTimeFormat } from "../../utils/index";
-import { globalStore } from "../../stores/index";
+import { userStore, postStore } from "../../stores";
 
 interface PostProps {
   id: number;
@@ -12,7 +12,8 @@ interface PostProps {
 }
 
 export const Post = ({ id, author, time, content, likeUsers }: PostProps) => {
-  const { loggedIn, posts, currentUser } = globalStore.getState();
+  const { loggedIn, currentUser } = userStore.getState();
+  const { posts } = postStore.getState();
 
   const handleLike = () => {
     if (!loggedIn || !currentUser) {
@@ -38,7 +39,7 @@ export const Post = ({ id, author, time, content, likeUsers }: PostProps) => {
       return post;
     });
 
-    globalStore.setState({
+    postStore.setState({
       posts: newPosts,
     });
   };
