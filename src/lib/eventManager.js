@@ -14,6 +14,7 @@ const handleEvent = (e) => {
   const handler = handlerMap?.get(e.type);
   if (handler) handler.call(e.target, e);
 };
+// TODO 이벤트 버블링 커스텀 구현하기 >> onClick, onClickCapture
 
 export function addEvent(element, eventType, handler) {
   if (!eventTypes.includes(eventType)) eventTypes.push(eventType);
