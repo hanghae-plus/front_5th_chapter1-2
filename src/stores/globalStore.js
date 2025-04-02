@@ -53,5 +53,19 @@ export const globalStore = createStore(
       userStorage.reset();
       return { ...state, currentUser: null, loggedIn: false };
     },
+    addPost(state, payload) {
+      const { content } = payload;
+      const prevPosts = state.posts;
+
+      const newPost = {
+        id: prevPosts.length + 1,
+        author: state.currentUser.username,
+        time: Date.now(),
+        content,
+        likeUsers: [],
+      };
+
+      return { ...state, posts: [...prevPosts, newPost] };
+    },
   },
 );
