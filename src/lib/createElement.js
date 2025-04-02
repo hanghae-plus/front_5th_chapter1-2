@@ -1,3 +1,4 @@
+import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
@@ -11,17 +12,34 @@ export function createElement(vNode) {
     return document.createTextNode(vNode);
   }
 
-  //배열 입력에 대해 DocumentFragment를 생성 TODO
+  //배열 입력에 대해 DocumentFragment를 생성
   if (Array.isArray(vNode)) {
     const fragment = document.createDocumentFragment();
     fragment.append(...vNode.map(createElement));
     return fragment;
   }
+
   const el = document.createElement(vNode.type);
-  updateAttributes(el, vNode.props);
+
+  if (vNode.props) {
+    updateAttributes(el, vNode.props);
+  }
+  vNode.children.forEach((item) => {
+    el.appendChild(createElement(item));
+  });
   return el;
 }
 
+//컴포넌트를 정규화한 다음에 createElement로 생성할 수 있다.
 function updateAttributes($el, props) {
-  $el;
+  Object.entries(props).forEach(([key, value]) => {
+    if (key.startsWith("on") && typeof value === "function") {
+      const eventType = key.slice(2).toLowerCase();
+      addEvent($el, eventType, value);
+    } else if (key === "className") {
+      $el.setAttribute("class", value);
+    } else {
+      $el.setAttribute(key, value);
+    }
+  });
 }

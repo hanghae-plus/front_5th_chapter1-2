@@ -9,9 +9,12 @@ export function normalizeVNode(vNode) {
     return String(vNode);
   }
 
-  //TODO 컴포넌트 정규화
-  if (typeof vNode === "function") {
-    const node = vNode.type({ ...vNode.props, children: vNode.children });
+  //컴포넌트 정규화
+  if (typeof vNode.type === "function") {
+    const node = vNode.type({
+      ...vNode.props,
+      children: vNode.children,
+    });
     return normalizeVNode(node);
   }
 
