@@ -19,15 +19,24 @@ export const Post = ({
       return;
     }
 
+    const updatedPosts = posts.map((post) => {
+      if (post.author === author) {
+        const isLiked = post.likeUsers.includes(user.username);
+        activationLike = isLiked;
+        return {
+          ...post,
+          likeUsers: isLiked
+            ? post.likeUsers.filter((username) => username !== user.username) // 이미 있다면 제거
+            : [...post.likeUsers, user.username],
+          isLiked: !isLiked,
+        };
+      }
+      // 대상이 아니라면 그대로 유지
+      return post;
+    });
+
     globalStore.setState({
-      posts: [
-        ...posts,
-        ,
-        {
-          ...posts.find((post) => post.content === content),
-          likeUsers: [...likeUsers, user.username],
-        },
-      ],
+      posts: updatedPosts,
     });
   };
 

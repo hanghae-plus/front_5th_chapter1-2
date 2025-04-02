@@ -28,7 +28,11 @@ export const HomePage = () => {
               .sort((a, b) => b.time - a.time)
               .map((props, index) => {
                 return (
-                  <Post {...props} activationLike={false} key={index + 1} />
+                  <Post
+                    {...props}
+                    activationLike={props.isLiked}
+                    key={index + 1}
+                  />
                 );
               })}
           </div>
