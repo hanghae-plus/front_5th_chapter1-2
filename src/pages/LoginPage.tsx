@@ -1,24 +1,9 @@
 /** @jsx createVNode */
 import { createVNode } from "../lib/vdom";
-import { userStore } from "../stores";
-import { userStorage } from "../storages";
-
-function login(username: string) {
-  const user = { username, email: "", bio: "" };
-  userStore.setState({
-    currentUser: user,
-    loggedIn: true,
-  });
-  userStorage.set(user);
-}
+import { loginFormHandler } from "../lib/form/loginFormHandler";
 
 export const LoginPage = () => {
-  const handleSubmit = (e: Event) => {
-    e.preventDefault();
-    const username = (document.getElementById("username") as HTMLInputElement)
-      .value;
-    login(username);
-  };
+  const { handleSubmit } = loginFormHandler();
 
   return (
     <div className="bg-gray-100 flex items-center justify-center min-h-screen">
