@@ -53,7 +53,7 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
       createElement(newNode),
       parentElement.childNodes[index],
     );
-  } else if (newNode.type === "string" && oldNode.type === "string") {
+  } else if (typeof newNode === "string" && typeof oldNode === "string") {
     if (newNode === oldNode) {
       return;
     }

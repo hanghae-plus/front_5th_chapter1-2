@@ -2,20 +2,22 @@ import { isEmptyStrType, isNumericOrStr } from "../utils/typeUtils";
 import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
-  if (isEmptyStrType(vNode))
-    return { nodeType: Node.TEXT_NODE, textContent: "" };
-  if (isNumericOrStr(vNode))
-    return { nodeType: Node.TEXT_NODE, textContent: String(vNode) };
+  if (isEmptyStrType(vNode)) {
+    return document.createTextNode("");
+  }
+  if (isNumericOrStr(vNode)) {
+    return document.createTextNode(vNode);
+  }
 
   if (Array.isArray(vNode)) {
-    const childNodes = vNode.map((item) => ({
-      tagName: item.type.toUpperCase(),
-    }));
+    const fragment = document.createDocumentFragment();
 
-    return {
-      nodeType: Node.DOCUMENT_FRAGMENT_NODE,
-      childNodes: childNodes,
-    };
+    vNode.forEach((item) => {
+      const element = document.createElement(item.type);
+      fragment.appendChild(element);
+    });
+
+    return fragment;
   }
 
   if (typeof vNode.type === "function") {
