@@ -15,8 +15,10 @@ export function createElement(vNode) {
   if (Array.isArray(vNode)) {
     const fragment = document.createDocumentFragment();
     vNode.forEach((child) => {
-      const childElement = createElement(child);
-      fragment.appendChild(childElement);
+      if (child !== null && child !== undefined && child !== false) {
+        const childElement = createElement(child);
+        fragment.appendChild(childElement);
+      }
     });
     return fragment;
   }
@@ -51,6 +53,9 @@ function updateAttributes(element, props) {
   if (!props) return;
 
   Object.entries(props).forEach(([key, value]) => {
+    // key와 같은 내부 속성 무시
+    if (key === "key") return;
+
     // 이벤트 핸들러 처리 (onClick, onMouseOver 등)
     if (key.startsWith("on") && typeof value === "function") {
       const eventType = key.toLowerCase().substring(2);
@@ -68,13 +73,26 @@ function updateAttributes(element, props) {
     if (typeof value === "boolean") {
       if (value) {
         element.setAttribute(key, "");
+        // 속성 값도 DOM 프로퍼티로 설정
+        if (key in element) {
+          element[key] = true;
+        }
       } else {
         element.removeAttribute(key);
+        // 속성 값도 DOM 프로퍼티로 설정
+        if (key in element) {
+          element[key] = false;
+        }
       }
       return;
     }
 
     // 일반 속성 처리
     element.setAttribute(key, value);
+
+    // 특정 속성은 DOM 프로퍼티로도 설정 (value, checked 등)
+    if (key in element) {
+      element[key] = value;
+    }
   });
 }
