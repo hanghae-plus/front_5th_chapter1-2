@@ -42,7 +42,7 @@ export function reconcile(workInProgressRoot, newVNode, oldVNode, index = 0) {
   if (typeof newVNode === "string" && typeof oldVNode === "string") {
     console.log("newVNode.nodeValue", newVNode, oldVNode);
     if (newVNode !== oldVNode) {
-      workInProgressRoot.replaceChild(createElement(newVNode), currentDom);
+      replaceChildNode(workInProgressRoot, newVNode, currentDom);
     }
     return;
   }
@@ -62,13 +62,10 @@ export function reconcile(workInProgressRoot, newVNode, oldVNode, index = 0) {
     return replaceChildNode(workInProgressRoot, newVNode, currentDom);
   }
 
-  // 5. 동일한 타입의 일반 DOM 요소의 경우
-  //    - 먼저 속성(attributes, 이벤트 등)을 업데이트합니다.
   updateAttributes(currentDom, newVNode, oldVNode);
 
   // --- Commit Phase (재귀적으로 자식 노드에 대해 동일한 diffing 수행) ---
   const newChildren = newVNode.children || [];
-  console.log("newChildren", newChildren[0]);
   const oldChildren = oldVNode.children || [];
   const max = Math.max(newChildren.length, oldChildren.length);
   for (let i = 0; i < max; i++) {
@@ -81,8 +78,6 @@ function updateAttributes(dom, newVNode, oldVNode) {
   const newNodeProps = { ...newVNode.props };
   const oldNodeProps = { ...oldVNode.props };
   for (const [attr, value] of Object.entries(newNodeProps)) {
-    // console.log("updateAttributes", attr, value);
-
     if (oldNodeProps[attr] === newNodeProps[attr]) continue;
     if (attr === "className") {
       dom.setAttribute("class", value);
@@ -95,9 +90,7 @@ function updateAttributes(dom, newVNode, oldVNode) {
 
   for (const attr of Object.keys(oldNodeProps)) {
     if (newNodeProps[attr] !== undefined) continue;
-    console.log("attrattr", attr);
     if (isEvent(attr)) {
-      //   console.log("attrattr", attr, value);
       removeEvent(dom, attr.slice(2).toLowerCase(), oldNodeProps[attr]);
     }
     dom.removeAttribute(attr);

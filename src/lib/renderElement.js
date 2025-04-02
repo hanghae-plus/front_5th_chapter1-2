@@ -15,7 +15,6 @@ import { reconcile } from "./updateElement";
 // 렌더링이 완료되면 container에 이벤트를 등록한다.
 
 const currentVDom = new Map();
-console.log("renderElement", currentVDom);
 
 export function renderElement(vNode, container) {
   const normalizedVNode = normalizeVNode(vNode);
@@ -26,7 +25,6 @@ export function renderElement(vNode, container) {
   } else {
     // 기존 DOM이 있을 경우 diffing을 수행하여 업데이트
     const oldVDom = currentVDom.get(container);
-    console.log("oldVDom", oldVDom);
     reconcile(container, normalizedVNode, oldVDom);
   }
   setupEventListeners(container);
