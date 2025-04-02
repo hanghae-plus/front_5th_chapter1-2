@@ -54,8 +54,14 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
   }
 
   // 3. 텍스트 노드 업데이트
-  if (typeof newNode === "string" && typeof oldNode === "string") {
-    parentElement.childNodes[index].textContent = newNode;
+  if (typeof newNode === "string" || typeof oldNode === "string") {
+    if (newNode !== oldNode) {
+      parentElement.replaceChild(
+        document.createTextNode(newNode),
+        parentElement.childNodes[index],
+      );
+    }
+    return;
   }
 
   // 4. 노드 교체 (newNode와 oldNode의 타입이 다른 경우)
@@ -63,17 +69,14 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     const oldDOMNode = parentElement.childNodes[index]; // 실제 DOM 노드 가져오기
     parentElement.replaceChild(createElement(newNode), oldDOMNode);
 
-    // const el = createElement(newNode);
-    // parentElement.childNodes[index].replaceWith(el);
-
     return;
   }
   // 5. 같은 타입의 노드 업데이트
   //     - 속성 업데이트
   updateAttributes(
     parentElement.childNodes[index],
-    newNode.props,
-    oldNode.props,
+    newNode.props || {},
+    oldNode.props || {},
   );
   //     - 자식 노드 재귀적 업데이트
   const newChildren = newNode.children || [];

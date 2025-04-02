@@ -3,53 +3,36 @@ const eventStorage = new Map();
 
 // 특정 요소에 이벤트 저장
 export function addEvent(element, eventType, handler) {
-  if (!eventStorage.has(element)) eventStorage.set(element, new Map());
+  if (!element || typeof handler !== "function") return;
+  if (!eventStorage.has(eventType)) {
+    eventStorage.set(eventType, new WeakMap());
+  }
 
-  const elementEvents = eventStorage.get(element);
-
-  if (!elementEvents.has(eventType)) elementEvents.set(eventType, new Set());
-
-  elementEvents.get(eventType).add(handler);
+  eventStorage.get(eventType).set(element, handler);
 }
 
 // 특정 요소에서 이벤트 제거
 export function removeEvent(element, eventType, handler) {
-  if (eventStorage.has(element)) {
-    const elementEvents = eventStorage.get(element);
+  const handlers = eventStorage.get(eventType);
 
-    if (elementEvents.has(eventType)) {
-      const handlers = elementEvents.get(eventType);
-      handlers.delete(handler);
-
-      if (handlers.size === 0) {
-        elementEvents.delete(eventType);
-      }
-    }
-
-    if (elementEvents.size === 0) {
-      eventStorage.delete(element);
-    }
+  if (handlers && handlers.get(element) === handler) {
+    handlers.delete(element);
   }
 }
 
 // 이벤트 위임 처리
 export function setupEventListeners(root) {
-  root.addEventListener("click", (event) => handleEvent(event, "click"));
-  root.addEventListener("input", (event) => handleEvent(event, "input"));
-  root.addEventListener("change", (event) => handleEvent(event, "change"));
+  for (const eventType of eventStorage.keys()) {
+    root.removeEventListener(eventType, handleEvents);
+    root.addEventListener(eventType, handleEvents);
+  }
 }
 
 // 이벤트 전파 처리
-function handleEvent(event, eventType) {
-  let target = event.target;
+export function handleEvents(e) {
+  const handlers = eventStorage.get(e.type);
 
-  while (target) {
-    if (eventStorage.has(target) && eventStorage.get(target).has(eventType)) {
-      eventStorage
-        .get(target)
-        .get(eventType)
-        .forEach((handler) => handler(event));
-    }
-    target = target.parentElement; // 부모 요소로 이동 (Event Delegation)
+  if (handlers && handlers.has(e.target)) {
+    handlers.get(e.target)(e);
   }
 }
