@@ -11,9 +11,8 @@ class EventListenerStore {
     return this.listeners[key];
   }
 
-  set(key, listener) {
-    this.listeners[key] = { ...this.listeners[key], listener };
-    console.log(this.listeners[key]);
+  set(key, listener, root) {
+    this.listeners[key] = { listener, root };
   }
 
   updateDelegatedRoot(key, root) {
@@ -35,52 +34,68 @@ class EventListenerStore {
   }
 
   deleteEvent(key, root) {
-    if ((this.listeners[key].root = root)) {
-      // this.listeners[key] = {};
+    if (this.listeners[key]?.root === root) {
+      delete this.listeners[key];
     }
   }
 }
 
 const eventListeners = new EventListenerStore();
+
 export function removeEventListeners(root) {
   const allEvents = eventListeners.getAllDelegatedEvents(root);
 
   allEvents?.forEach((event) => {
-    const [eventType, { listener }] = event;
+    const [key, { listener }] = event;
+    const eventType = key.split("_")[1];
     root.removeEventListener(eventType, listener);
-    eventListeners.deleteEvent(eventType, root);
+    eventListeners.deleteEvent(key, root);
   });
-
-  console.log("root에 딸린 이벤트", eventListeners.getAllDelegatedEvents(root));
 }
+
 export function setupEventListeners(root) {
   const allEvents = eventListeners.getAllEvents();
 
-  allEvents.forEach(([eventType, { root: delegatedRoot, listener }]) => {
+  allEvents.forEach(([key, { root: delegatedRoot, listener }]) => {
     if (delegatedRoot === root) {
       return;
     }
 
-    const parsedEventType = eventType.split("_")[1];
-    root.addEventListener(parsedEventType, listener);
-    eventListeners.updateDelegatedRoot(eventType, root);
+    const eventType = key.split("_")[1];
+    root.addEventListener(eventType, listener);
+    eventListeners.updateDelegatedRoot(key, root);
   });
 }
 
 export function addEvent(element, eventType, handler) {
   function listener(event) {
-    if (event.target.tagName === element.tagName) {
+    if (event.target === element || event.target.tagName === element.tagName) {
       handler();
     }
   }
 
-  eventListeners.set(`${element.tagName}_${eventType}`, listener);
+  const key = `${element.tagName}_${eventType}`;
+  const existingEvent = eventListeners.get(key);
+
+  if (existingEvent) {
+    const { root } = existingEvent;
+    if (root) {
+      const existingEventType = key.split("_")[1];
+      root.removeEventListener(existingEventType, existingEvent.listener);
+    }
+  }
+
+  eventListeners.set(key, listener, null);
 }
 
 export function removeEvent(element, eventType) {
-  const event = eventListeners.get(`${element.tagName}_${eventType}`);
+  const key = `${element.tagName}_${eventType}`;
+  const event = eventListeners.get(key);
   if (event) {
     const { listener, root } = event;
-    root.removeEventListener(eventType, listener);
+    if (root) {
+      root.removeEventListener(eventType, listener);
+    }
+    eventListeners.deleteEvent(key, root);
   }
 }
