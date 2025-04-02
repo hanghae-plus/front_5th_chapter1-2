@@ -1,8 +1,8 @@
 const eventStore = new WeakMap();
 const eventTypes = new Set();
 
+// TODO: refactor as like react event system
 export function setupEventListeners(root) {
-  // eventStore에 저장된 각 이벤트를 순회하며, root 내부에 있는 요소에 이벤트를 등록합니다.
   eventTypes.forEach((eventType) => {
     root.addEventListener(eventType, eventHandler);
   });

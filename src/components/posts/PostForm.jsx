@@ -3,7 +3,9 @@ import { createVNode } from "../../lib";
 import { globalStore } from "../../stores";
 
 export const PostForm = () => {
+  //TODO: state으로 구현해보기.
   let postContent = "";
+
   const handlePostSubmit = (e) => {
     globalStore.setState({
       posts: [

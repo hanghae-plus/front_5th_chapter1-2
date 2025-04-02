@@ -28,14 +28,7 @@ export function createElement(vNode) {
     .forEach(([attr, value]) => {
       // TODO: attr format하는 함수 만들기
       // addEvent 실행.
-      if (attr === "className") {
-        $el.setAttribute("class", value);
-      } else if (attr.startsWith("on") && typeof value === "function") {
-        //event attribute는 el에 직접 등록하는게 아니라 eventManager에 등록해야함
-        addEvent($el, attr.slice(2).toLowerCase(), value);
-      } else {
-        $el.setAttribute(attr, value);
-      }
+      updateAttributes($el, { attr, value });
     });
 
   updateAttributes($el, vNode.props);
@@ -46,5 +39,18 @@ export function createElement(vNode) {
 }
 
 function updateAttributes($el, props) {
-  console.log($el, props);
+  if (!props) {
+    return;
+  }
+
+  const { attr, value } = props;
+
+  if (attr === "className") {
+    $el.setAttribute("class", value);
+  } else if (attr && attr.startsWith("on") && typeof value === "function") {
+    //event attribute는 el에 직접 등록하는게 아니라 eventManager에 등록해야함
+    addEvent($el, attr.slice(2).toLowerCase(), value);
+  } else {
+    $el.setAttribute(attr, value);
+  }
 }

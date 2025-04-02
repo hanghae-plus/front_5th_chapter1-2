@@ -3,4 +3,6 @@
 
 // function updateAttributes(target, originNewProps, originOldProps) {}
 
-// export function updateElement(parentElement, newNode, oldNode, index = 0) {}
+export function updateElement(parentElement, newNode, oldNode, index = 0) {
+  console.log("updateElement", parentElement, newNode, oldNode, index);
+}

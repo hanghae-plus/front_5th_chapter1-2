@@ -10,6 +10,7 @@ export const Post = ({
   activationLike = false,
 }) => {
   const user = globalStore.getState().currentUser;
+  const { posts } = globalStore.getState();
 
   const handleLikeClick = () => {
     if (!user) {
@@ -17,8 +18,18 @@ export const Post = ({
       return;
     }
 
-    console.log("likeUsers", likeUsers);
+    globalStore.setState({
+      posts: [
+        ...posts,
+        ,
+        {
+          ...posts.find((post) => post.content === content),
+          likeUsers: [...likeUsers, user.username],
+        },
+      ],
+    });
   };
+
   return (
     <div className="bg-white rounded-lg shadow p-4 mb-4">
       <div className="flex items-center mb-2">
