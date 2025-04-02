@@ -1,8 +1,4 @@
 export function createVNode(type, props, ...children) {
-  // console.log("createVNodeß");
-
-  console.log(`createVNode > children: ${children}`);
-  // console.log(children);
   return {
     type,
     props,
