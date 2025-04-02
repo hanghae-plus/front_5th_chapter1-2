@@ -23,6 +23,7 @@ function setupEventListenerForType(eventType) {
       path.push(target);
       target = target.parentNode;
     }
+    path.push(rootElement);
 
     // 경로를 따라 핸들러 실행
     /**
