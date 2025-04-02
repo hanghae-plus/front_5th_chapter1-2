@@ -3,7 +3,7 @@ const 분 = 초 * 60;
 const 시간 = 분 * 60;
 const 일 = 시간 * 24;
 
-export const toTimeFormat = (time) => {
+export const toTimeFormat = (time: number) => {
   const diff = Date.now() - time;
   if (diff < 분) {
     return "방금 전";

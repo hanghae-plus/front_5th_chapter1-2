@@ -1,11 +1,14 @@
-const eventHandlers = {};
+const eventHandlers: Record<
+  string,
+  Record<string, (event: Event) => void>
+> = {};
 
-const handleGlobalEvents = (e) => {
+const handleGlobalEvents = (e: Event) => {
   const handlers = eventHandlers[e.type];
   if (!handlers) return;
 
   for (const selector in handlers) {
-    if (e.target.matches(selector)) {
+    if (e.target instanceof HTMLElement && e.target.matches(selector)) {
       handlers[selector](e);
       break;
     }
@@ -27,7 +30,11 @@ export const registerGlobalEvents = (() => {
   };
 })();
 
-export const addEvent = (eventType, selector, handler) => {
+export const addEvent = (
+  eventType: string,
+  selector: string,
+  handler: (event: Event) => void,
+) => {
   if (!eventHandlers[eventType]) {
     eventHandlers[eventType] = {};
   }
