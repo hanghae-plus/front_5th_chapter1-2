@@ -39,7 +39,11 @@ function setupEventListenerForType(eventType) {
       if (handlers) {
         const handler = handlers.get(currentTarget);
         if (handler) {
-          handler(e);
+          try {
+            handler(e);
+          } catch (error) {
+            console.error("Error in event handler:", error);
+          }
           if (e.isPropagationStopped) break;
         }
       }
