@@ -25,7 +25,7 @@ function updateAttributes(target, newProps, oldProps) {
   for (const [key, value] of Object.entries(oldProps || {})) {
     if (typeof value !== "function") continue;
     const eventType = key.replace("on", "").toLowerCase();
-    removeEvent(target, eventType);
+    removeEvent(target, eventType, value);
   }
 
   // 새로운 이벤트 핸들러 추가
