@@ -1,7 +1,9 @@
 import { setupEventListeners } from "./eventManager";
 import { createElement } from "./createElement";
 import { normalizeVNode } from "./normalizeVNode";
-// import { updateElement } from "./updateElement";
+import { updateElement } from "./updateElement";
+
+let previousNode = null;
 
 /**
  * 최초 렌더링시에는 createElement로 DOM을 생성하고
@@ -11,18 +13,19 @@ import { normalizeVNode } from "./normalizeVNode";
  * @param {*} container 렌더링할 컨테이너
  */
 export function renderElement(vNode, container) {
-  // const isInitialRender = vNode.children.length === 0;
-
-  // if (isInitialRender) {
   const normalizedNode = normalizeVNode(vNode);
-  const element = createElement(normalizedNode);
 
-  container.innerHTML = "";
+  if (!container.firstChild) {
+    // 초기 렌더링인 경우
+    const element = createElement(normalizedNode);
+    container.innerHTML = "";
+    container.appendChild(element);
+    previousNode = normalizedNode;
+  } else {
+    // 업데이트 렌더링인 경우
+    updateElement(container, normalizedNode, previousNode);
+    previousNode = normalizedNode;
+  }
 
-  container.appendChild(element);
   setupEventListeners(container);
-  // } else {
-  //   updateElement(vNode, container);
-  //   setupEventListeners(container);
-  // }
 }
