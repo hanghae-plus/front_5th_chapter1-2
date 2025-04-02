@@ -18,7 +18,7 @@ export class FormHandler {
     };
   }
 
-  getFormData(form: HTMLFormElement) {
-    return Object.fromEntries(new FormData(form));
+  protected getFormData<T>(form: HTMLFormElement): T {
+    return Object.fromEntries(new FormData(form)) as T;
   }
 }

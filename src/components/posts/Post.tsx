@@ -4,15 +4,9 @@ import { toTimeFormat } from "../../utils/index";
 import { userStore, postStore } from "../../stores";
 import { notification } from "../../lib/notification";
 import { MESSAGES } from "../../consts/messages";
-interface PostProps {
-  id: number;
-  author: string;
-  time: number;
-  content: string;
-  likeUsers: string[];
-}
+import { Post as PostType } from "../../types/post";
 
-export const Post = ({ id, author, time, content, likeUsers }: PostProps) => {
+export const Post = ({ id, author, time, content, likeUsers }: PostType) => {
   const { loggedIn, currentUser } = userStore.getState();
   const { posts } = postStore.getState();
 

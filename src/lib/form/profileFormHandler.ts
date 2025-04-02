@@ -16,7 +16,7 @@ class ProfileFormHandlerClass extends FormHandler {
     return Object.fromEntries(formData);
   }
 
-  private updateProfile(updatedProfile: Record<string, any>) {
+  private updateProfile(updatedProfile: Partial<User>) {
     const user = {
       ...userStore.getState().currentUser,
       ...updatedProfile,
