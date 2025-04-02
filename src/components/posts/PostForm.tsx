@@ -5,10 +5,17 @@ import { globalStore } from "../../stores";
 export const PostForm = () => {
   const currentUser = globalStore.getState().currentUser;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: Event) => {
     e.preventDefault();
+    if (!currentUser) {
+      alert("로그인 후 이용해주세요");
+      return;
+    }
 
-    const content = document.getElementById("post-content").value;
+    const contentElement = document.getElementById(
+      "post-content",
+    ) as HTMLTextAreaElement;
+    const content = contentElement.value;
 
     const post = {
       id: globalStore.getState().posts.length + 1,
@@ -22,7 +29,7 @@ export const PostForm = () => {
       posts: [...globalStore.getState().posts, post],
     });
 
-    document.getElementById("post-content").value = "";
+    contentElement.value = "";
   };
 
   return (
