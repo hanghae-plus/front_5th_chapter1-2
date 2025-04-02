@@ -4,6 +4,7 @@ import { createElement } from "./createElement.js";
 function updateAttributes($target, originNewProps, originOldProps) {
   if (originOldProps !== null && typeof originOldProps !== "undefined") {
     Object.entries(originOldProps).forEach(([key, value]) => {
+      if (originNewProps[key] === originOldProps[key]) return;
       if (key.startsWith("on") && typeof value === "function") {
         removeEvent($target, key.replace("on", "").toLowerCase(), value);
       }
@@ -12,7 +13,6 @@ function updateAttributes($target, originNewProps, originOldProps) {
   }
   if (originNewProps !== null && typeof originNewProps !== "undefined") {
     Object.entries(originNewProps).forEach(([key, value]) => {
-      if (key === "className") key = "class";
       if (key.startsWith("on") && typeof value === "function") {
         const eventType = key.replace("on", "").toLowerCase();
         if (typeof originOldProps[key] === "function") {
@@ -20,6 +20,7 @@ function updateAttributes($target, originNewProps, originOldProps) {
         }
         addEvent($target, eventType, value);
       } else {
+        if (key === "className") key = "class";
         $target.setAttribute(key, value);
       }
     });
@@ -40,10 +41,9 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
   }
   // node가 string일 경우
   if (typeof newNode === "string" && typeof oldNode === "string") {
-    if (newNode !== oldNode) {
-      parentElement.textContent = newNode;
-      return;
-    }
+    if (newNode === oldNode) return;
+    parentElement.textContent = newNode;
+    return;
   }
 
   // 같은 타입이면 props 업데이트
