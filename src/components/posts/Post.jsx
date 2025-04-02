@@ -6,6 +6,9 @@ import { globalStore } from "../../stores/index.js";
 function makeNewPostState(id) {
   const { posts, currentUser } = globalStore.getState();
   return posts.map((post) => {
+    if (post.id !== id) {
+      return post;
+    }
     const newLikeUsers = post.likeUsers.includes(currentUser.username)
       ? post.likeUsers.filter((username) => username !== currentUser.username)
       : [...post.likeUsers, currentUser.username];
@@ -31,7 +34,7 @@ export const Post = ({
       return;
     }
     globalStore.setState({
-      posts: makeNewPostState(),
+      posts: makeNewPostState(id),
     });
   }
   return (
