@@ -1,6 +1,7 @@
 import { createObserver } from "./createObserver";
 
 export const createRouter = (routes) => {
+  console.log("routes", routes);
   const { subscribe, notify } = createObserver();
 
   const getPath = () => window.location.pathname;
