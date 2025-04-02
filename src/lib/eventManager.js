@@ -3,39 +3,39 @@ class EventListenerStore {
     if (EventListenerStore.instance) {
       return EventListenerStore.instance;
     }
-    this.listeners = {};
+    this.listeners = new Map();
     EventListenerStore.instance = this;
   }
 
   get(key) {
-    return this.listeners[key];
+    return this.listeners.get(key);
   }
 
   set(key, listener, root) {
-    this.listeners[key] = { listener, root };
+    this.listeners.set(key, { listener, root });
   }
 
   updateDelegatedRoot(key, root) {
-    this.listeners[key] = {
-      ...this.listeners[key],
-      root,
-    };
+    const event = this.listeners.get(key);
+    if (event) {
+      event.root = root;
+    }
   }
 
   getAllEvents() {
-    return Object.entries(this.listeners);
+    return Array.from(this.listeners.entries());
   }
 
   getAllDelegatedEvents(delegatedRoot) {
-    return Object.entries(this.listeners).filter((event) => {
-      const { root } = event[1];
-      return root === delegatedRoot;
+    return Array.from(this.listeners.entries()).filter(([, event]) => {
+      return event.root === delegatedRoot;
     });
   }
 
   deleteEvent(key, root) {
-    if (this.listeners[key]?.root === root) {
-      delete this.listeners[key];
+    const event = this.listeners.get(key);
+    if (event?.root === root) {
+      this.listeners.delete(key);
     }
   }
 }
@@ -45,8 +45,7 @@ const eventListeners = new EventListenerStore();
 export function removeEventListeners(root) {
   const allEvents = eventListeners.getAllDelegatedEvents(root);
 
-  allEvents?.forEach((event) => {
-    const [key, { listener }] = event;
+  allEvents?.forEach(([key, { listener }]) => {
     const eventType = key.split("_")[1];
     root.removeEventListener(eventType, listener);
     eventListeners.deleteEvent(key, root);
