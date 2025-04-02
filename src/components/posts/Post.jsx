@@ -30,7 +30,6 @@ export const Post = ({
       <p>{content}</p>
       <div className="mt-2 flex justify-between text-gray-500">
         <span
-          id="like"
           className={`like-button cursor-pointer${activationLike ? " text-blue-500" : ""}`}
           onClick={clickLike}
         >
