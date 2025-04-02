@@ -16,7 +16,6 @@ const setupContainerRemovalObserver = (container: ElementWithHandlers) => {
     for (const mutation of mutations) {
       if (mutation.type === "childList") {
         mutation.removedNodes.forEach((node) => {
-          // 제거된 노드가 우리가 관찰하는 컨테이너인지 확인
           if (node === container) {
             vDomStore.clear();
             observer.disconnect();
@@ -38,11 +37,13 @@ export function renderElement(vNode: VNode, container: ElementWithHandlers) {
   // 이후에는 updateElement로 기존 DOM을 업데이트한다.
   // 렌더링이 완료되면 container에 이벤트를 등록한다.
   const normalizedVNode = normalizeVNode(vNode);
-  setupContainerRemovalObserver(container);
+  // ! 확인
+  // setupContainerRemovalObserver(container);
 
   const isVNodeObject = isValidVNode(normalizedVNode);
 
-  if (!vDomStore.hasVDom()) {
+  if (!vDomStore.hasVDom() || container.childNodes.length === 0) {
+    // * if (!vDomStore.hasVDom()) {
     container.innerHTML = "";
     const element = createElement(normalizedVNode);
 

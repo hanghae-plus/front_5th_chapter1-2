@@ -109,11 +109,14 @@ export function updateElement(
     }
     return;
   }
+  // * 여기에 해당
   if (isValidVNode(newNode) && isValidVNode(oldNode)) {
+    // * undefined
     const element = parentElement.childNodes[index] as ElementWithHandlers;
     const typedNewNode = newNode as VNode;
     const typedOldNode = oldNode as VNode;
 
+    // * element == undefined
     updateAttributes(element, typedNewNode.props, typedOldNode.props);
 
     const newLength = typedNewNode.children ? typedNewNode.children.length : 0;

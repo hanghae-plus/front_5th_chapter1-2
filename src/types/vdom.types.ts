@@ -22,7 +22,7 @@ export interface VNode<T = {}> {
   parent?: VNode | null;
 }
 
-export interface ElementWithHandlers extends HTMLElement {
+export interface ElementWithHandlers extends Element {
   handlers?: {
     [eventType in HTMLEventType]?: Array<(event: Event) => void>;
   };
