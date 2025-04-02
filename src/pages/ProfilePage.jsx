@@ -36,7 +36,7 @@ export const ProfilePage = () => {
             <form id="profile-form" onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label
-                  for="username"
+                  htmlFor="username"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   사용자 이름
@@ -52,7 +52,7 @@ export const ProfilePage = () => {
               </div>
               <div className="mb-4">
                 <label
-                  for="email"
+                  htmlFor="email"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   이메일
@@ -68,7 +68,7 @@ export const ProfilePage = () => {
               </div>
               <div className="mb-6">
                 <label
-                  for="bio"
+                  htmlFor="bio"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   자기소개
