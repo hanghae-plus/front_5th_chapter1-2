@@ -3,7 +3,7 @@ import { createVNode } from "../lib/vdom";
 import { globalStore } from "../stores";
 import { userStorage } from "../storages";
 
-function login(username) {
+function login(username: string) {
   const user = { username, email: "", bio: "" };
   globalStore.setState({
     currentUser: user,
@@ -13,9 +13,10 @@ function login(username) {
 }
 
 export const LoginPage = () => {
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: Event) => {
     e.preventDefault();
-    const username = document.getElementById("username").value;
+    const username = (document.getElementById("username") as HTMLInputElement)
+      .value;
     login(username);
   };
 
