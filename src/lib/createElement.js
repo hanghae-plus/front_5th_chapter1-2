@@ -1,5 +1,3 @@
-// import { addEvent } from "./eventManager";
-
 import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
@@ -59,11 +57,9 @@ function updateAttributes($el, props) {
       return;
     } else if (k.startsWith("on")) {
       const eventName = k.substring(2).toLowerCase();
-      // $el.addEventListener(eventName, props[k]);
       addEvent($el, eventName, props[k]);
     } else {
       $el.setAttribute(k, props[k]);
     }
   });
-  // 여기서 k 중에 on을 포함하는게 있으면 addEvent를 해주면 될 것 같은데
 }
