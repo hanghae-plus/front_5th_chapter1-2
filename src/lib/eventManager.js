@@ -10,11 +10,20 @@ export function setupEventListeners(root) {
   Object.keys(events).forEach((eventType) =>
     root.addEventListener(eventType, (e) => {
       /** 이벤트가 발생한 요소  */
-      const targetElement = e.target;
+      let targetElement = e.target;
+
+      while (targetElement && targetElement !== root) {
+        const handler = events[eventType].get(targetElement);
+        if (handler) {
+          handler(e);
+          break; // handler 있으면 더 안 올라가도 됨
+        }
+        targetElement = targetElement.parentNode;
+      }
       /** 이벤트가 발생한 요소에 대해, 전역 events에서 찾은 hadler */
-      const handler = events[eventType].get(targetElement);
-      // handler가 존재한다면 실행
-      handler && handler();
+      // const handler = events[eventType].get(targetElement);
+      // // handler가 존재한다면 실행
+      // handler && handler(e);
     }),
   );
 }

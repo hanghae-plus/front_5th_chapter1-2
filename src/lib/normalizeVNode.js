@@ -19,13 +19,11 @@ export function normalizeVNode(vNode) {
   // 오브젝트
   if (typeof vNode == "object") {
     const { type, props = {}, children = [] } = vNode;
-    // 1. type: function
+
     if (typeof vNode.type == "function") {
-      // 함수형 컴포넌트를 사용하듯이, props와 children 추가
       return normalizeVNode(vNode.type({ ...props, children }));
     }
 
-    // 2. type: string
     if (typeof vNode.type == "string") {
       const normalizedChildren = [];
       if (Array.isArray(children)) {
@@ -35,7 +33,6 @@ export function normalizeVNode(vNode) {
             normalizedChildren.push(normalizeVNode(child)),
         );
       }
-      // Object 타입의 VNode 반환
       return { type, props, children: normalizedChildren };
     }
   }

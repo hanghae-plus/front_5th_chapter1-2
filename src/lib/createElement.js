@@ -1,4 +1,4 @@
-// import { addEvent } from "./eventManager";
+import { addEvent } from "./eventManager";
 const isValidateNode = (node) => {
   if (node === null || node === undefined || node === true || node === false) {
     return false;
@@ -35,10 +35,7 @@ export function createElement(vNode) {
 
     // console.log("props?", vNode.props); // class를 이렇게 손수 포맷팅하는게 맞는것인가?
     if (props) {
-      Object.entries(props).forEach(([key, value]) => {
-        const filteredKey = key === "className" ? "class" : key;
-        el.setAttribute(filteredKey, value);
-      });
+      updateAttributes(el, props);
     }
 
     if (children && children.length) {
@@ -48,4 +45,16 @@ export function createElement(vNode) {
     return el;
   }
 }
-// function updateAttributes($el, props) {}
+function updateAttributes($el, props) {
+  Object.entries(props).forEach(([key, value]) => {
+    // 1. function인 경우
+    if (typeof value == "function" && key.startsWith("on")) {
+      addEvent($el, key.replace("on", "").toLocaleLowerCase(), value); // 2차
+    }
+    // 2. 그 외
+    else {
+      const filteredKey = key === "className" ? "class" : key;
+      $el.setAttribute(filteredKey, value);
+    }
+  });
+}
