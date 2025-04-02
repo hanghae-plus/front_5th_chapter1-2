@@ -27,8 +27,8 @@ export const Post = ({
   activationLike = false,
   id,
 }) => {
-  const { currentUser, loggedIn } = globalStore.getState();
-  function onClickLike(e) {
+  const { loggedIn } = globalStore.getState();
+  function onClickLike() {
     if (!loggedIn) {
       alert("로그인 후 이용해주세요");
       return;
