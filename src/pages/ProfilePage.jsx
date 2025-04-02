@@ -6,9 +6,13 @@ import { userStorage } from "../storages";
 
 function updateProfile(profile) {
   const user = { ...globalStore.getState().currentUser, ...profile };
-  globalStore.setState({ currentUser: user });
   userStorage.set(user);
-  alert("프로필이 업데이트되었습니다.");
+  globalStore.setState({ currentUser: user });
+
+  // 단일 알림만 표시
+  setTimeout(() => {
+    alert("프로필이 업데이트되었습니다.");
+  }, 100);
 }
 
 export const ProfilePage = () => {
