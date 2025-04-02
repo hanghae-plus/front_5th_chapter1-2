@@ -8,11 +8,12 @@ export function normalizeVNode(vNode) {
   }
 
   if (typeof vNode.type === "function") {
-    const props = { ...(vNode.props || {}), children: vNode.children };
-    return normalizeVNode(vNode.type(props));
+    const { type, props, children } = vNode;
+    return normalizeVNode(type({ ...props, children }));
   }
 
-  const normalizedChildren = vNode.children.map(normalizeVNode);
-
-  return { ...vNode, children: normalizedChildren };
+  return {
+    ...vNode,
+    children: vNode.children.map(normalizeVNode).filter(Boolean),
+  };
 }

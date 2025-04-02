@@ -9,7 +9,7 @@ export function setupEventListeners(root) {
   const rootEvents = rootEventMap.get(root);
 
   eventMap.forEach((typeEvents, eventType) => {
-    if (!rootEvents.has(eventType)) return;
+    if (rootEvents.has(eventType)) return;
 
     rootEvents.add(eventType);
 
