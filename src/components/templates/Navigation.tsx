@@ -3,19 +3,27 @@ import { createVNode } from "../../lib/vdom";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
 import { BASE_PATH } from "../../consts/path";
+import { VNode } from "../../lib/vdom";
 
-const getNavItemClass = (path) => {
+const getNavItemClass = (path: string) => {
   const currentPath = window.location.pathname;
   return currentPath === BASE_PATH + path
     ? "text-blue-600 font-bold"
     : "text-gray-600";
 };
 
-function Link({ onClick, children, ...props }) {
-  const handleClick = (e) => {
+interface LinkProps {
+  onClick?: () => void;
+  children?: VNode | VNode[];
+  [key: string]: unknown;
+}
+
+function Link({ onClick, children, ...props }: LinkProps) {
+  const handleClick = (e: Event) => {
     e.preventDefault();
     onClick?.();
-    router.get().push(e.target.href.replace(window.location.origin, ""));
+    const target = e.target as HTMLAnchorElement;
+    router.get()?.push(target.href.replace(window.location.origin, ""));
   };
   return (
     <a onClick={handleClick} {...props}>
@@ -55,7 +63,7 @@ export const Navigation = () => {
               href="#"
               id="logout"
               className="text-gray-600"
-              onClick={(e) => {
+              onClick={(e: Event) => {
                 e.preventDefault();
                 logout();
               }}
