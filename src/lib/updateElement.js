@@ -8,33 +8,38 @@ import { getEventType, isAttrEventHandler } from "../utils";
  * @param {*} originOldProps 이전 속성
  */
 function updateAttributes(target, originNewProps, originOldProps) {
+  // 제거된 속성 처리
+  for (const attr of Object.keys(originOldProps)) {
+    if (originNewProps[attr] !== undefined) continue;
+
+    if (isAttrEventHandler(attr, originOldProps[attr])) {
+      const eventType = getEventType(attr);
+      removeEvent(target, eventType, originOldProps[attr]);
+      continue;
+    }
+
+    if (attr === "className") {
+      target.removeAttribute("class");
+      continue;
+    }
+
+    target.removeAttribute(attr);
+    continue;
+  }
+
+  // 속성 업데이트
   for (const [attr, value] of Object.entries(originNewProps)) {
     // 이미 같은 값이면 처리하지 않음
     if (originOldProps[attr] === value) continue;
 
-    // 제거된 속성 처리
-    if (originNewProps[attr] === undefined) {
-      if (isAttrEventHandler(attr, originOldProps[attr])) {
-        const eventType = getEventType(attr);
-        removeEvent(target, eventType, originOldProps[attr]);
-        continue;
-      }
-
-      if (attr === "className") {
-        target.removeAttribute("class");
-        continue;
-      }
-
-      target.removeAttribute(attr);
-      continue;
-    }
-
+    // 이벤트 핸들러 처리
     if (isAttrEventHandler(attr, value)) {
       const eventType = getEventType(attr);
       if (originOldProps[attr]) {
         removeEvent(target, eventType, originOldProps[attr]);
       }
       addEvent(target, eventType, value);
+      continue;
     }
 
     // className을 class로 변환
@@ -43,6 +48,7 @@ function updateAttributes(target, originNewProps, originOldProps) {
       continue;
     }
 
+    // 일반 속성 처리
     target.setAttribute(attr, value);
   }
 }
