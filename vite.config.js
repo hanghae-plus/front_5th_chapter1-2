@@ -7,6 +7,7 @@ export default mergeConfig(
   defineConfig({
     base: BASE_PATH + "/",
     build: {
+      target: "es2020",
       outDir: "dist",
       rollupOptions: {
         input: {
