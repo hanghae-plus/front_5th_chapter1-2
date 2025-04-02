@@ -4,6 +4,7 @@ import {
   getType,
   toStringType,
 } from "./normalizeVNode.js";
+import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
   const vNodeType = getType(vNode);
@@ -26,6 +27,10 @@ export function createElement(vNode) {
         if (key === "className") {
           // el.classList.add(value);
           el.className = value;
+        } else if (key.startsWith("on")) {
+          // 이벤트 핸들러 onXXX 처리
+          const eventName = key.slice(2).toLowerCase();
+          addEvent(el, eventName, value);
         } else {
           el.setAttribute(key, value);
         }
