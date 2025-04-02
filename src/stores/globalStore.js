@@ -67,5 +67,40 @@ export const globalStore = createStore(
 
       return { ...state, posts: [...prevPosts, newPost] };
     },
+    likePost(state, payload) {
+      const { postId } = payload;
+      const { loggedIn, currentUser, posts } = state;
+
+      if (!loggedIn || !currentUser) {
+        alert("로그인이 필요합니다.");
+        return { ...state };
+      }
+
+      const username = currentUser.username;
+      const prevPosts = posts;
+
+      const updatedPosts = prevPosts.map((post) => {
+        if (post.id === postId) {
+          const userLiked = post.likeUsers.includes(username);
+
+          if (userLiked) {
+            // 좋아요 취소
+            return {
+              ...post,
+              likeUsers: post.likeUsers.filter((user) => user !== username),
+            };
+          } else {
+            // 좋아요 추가
+            return {
+              ...post,
+              likeUsers: [...post.likeUsers, username],
+            };
+          }
+        }
+        return post;
+      });
+
+      return { ...state, posts: updatedPosts };
+    },
   },
 );
