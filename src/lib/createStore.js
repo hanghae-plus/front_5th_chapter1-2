@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createObserver } from "./createObserver.js";
 
 export const createStore = (initialState, initialActions) => {

@@ -1,22 +1,24 @@
 /** @jsx createVNode */
+import { ForbiddenError, UnauthorizedError } from "./errors";
 import { createRouter, createVNode } from "./lib";
 import { HomePage, LoginPage, ProfilePage } from "./pages";
-import { globalStore } from "./stores";
-import { ForbiddenError, UnauthorizedError } from "./errors";
-import { router } from "./router";
 import { render } from "./render";
+import { router } from "./router";
+import { globalStore } from "./stores";
 
+const base =
+  process.env.NODE_ENV === "production" ? "/front_5th_chapter1-2" : "";
 router.set(
   createRouter({
-    "/": HomePage,
-    "/login": () => {
+    [`${base}/`]: HomePage,
+    [`${base}/login`]: () => {
       const { loggedIn } = globalStore.getState();
       if (loggedIn) {
         throw new ForbiddenError();
       }
       return <LoginPage />;
     },
-    "/profile": () => {
+    [`${base}/profile`]: () => {
       const { loggedIn } = globalStore.getState();
       if (!loggedIn) {
         throw new UnauthorizedError();
