@@ -4,7 +4,13 @@ import { Footer, Header, Navigation } from "../components";
 import { globalStore } from "../stores";
 import { userStorage } from "../storages";
 
-function updateProfile(profile) {
+interface Profile {
+  username: string;
+  email: string;
+  bio: string;
+}
+
+function updateProfile(profile: Profile) {
   const user = { ...globalStore.getState().currentUser, ...profile };
   globalStore.setState({ currentUser: user });
   userStorage.set(user);
@@ -15,11 +21,11 @@ export const ProfilePage = () => {
   const { loggedIn, currentUser } = globalStore.getState();
   const { username = "", email = "", bio = "" } = currentUser ?? {};
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: Event) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.target as HTMLFormElement);
     const updatedProfile = Object.fromEntries(formData);
-    updateProfile(updatedProfile);
+    updateProfile(updatedProfile as unknown as Profile);
   };
 
   return (
