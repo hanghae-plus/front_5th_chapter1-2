@@ -33,3 +33,8 @@ export const addEvent = (eventType, selector, handler) => {
   }
   eventHandlers[eventType][selector] = handler;
 };
+
+export const extractEventTypeFromKey = (key) => {
+  const eventName = key.slice(2).toLowerCase();
+  return eventName;
+};
