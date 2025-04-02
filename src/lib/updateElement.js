@@ -19,8 +19,7 @@ function updateAttributes(target, originNewProps, originOldProps) {
   });
   // 기존을 기준으로 삭제를 체크한다.
   Object.entries(originOldProps).forEach(([key, value]) => {
-    if (originNewProps[key] !== undefined || originNewProps[key] !== null)
-      return;
+    if (originNewProps[key] !== undefined) return;
     if (key === "className") {
       target.removeAttribute("class");
       return;
@@ -30,19 +29,17 @@ function updateAttributes(target, originNewProps, originOldProps) {
       removeEvent(target, key.slice(2).toLowerCase(), value);
       return;
     }
-    target.removeAttribute(key);
+    target.removeAttribute(key.slice(2).toLowerCase());
   });
 }
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
   if (oldNode && !newNode) {
-    parentElement.removeChild(parentElement.childNodes[index]);
+    return parentElement.removeChild(parentElement.childNodes[index]);
   }
-
   if (!oldNode && newNode) {
-    parentElement.appendChild(createElement(newNode));
+    return parentElement.appendChild(createElement(newNode));
   }
-
   if (typeof oldNode === "string" && typeof newNode === "string") {
     if (oldNode === newNode) return;
     return parentElement.replaceChild(
@@ -50,8 +47,6 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
       parentElement.childNodes[index],
     );
   }
-  console.log("oldNode", oldNode);
-  console.log("newNode", newNode);
   if (oldNode.type !== newNode.type) {
     return parentElement.replaceChild(
       createElement(newNode),
