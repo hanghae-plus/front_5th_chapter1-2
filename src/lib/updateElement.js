@@ -39,39 +39,44 @@ function updateAttributes(target, originNewProps, originOldProps) {
 }
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
-  const { type: newType, props: newProps, children: newChildren } = newNode;
-  const { type: oldType, props: oldProps, children: oldChildren } = oldNode;
-  if (newType !== oldType) {
-    parentElement.replaceChild(
+  if (!newNode && oldNode) {
+    return parentElement.removeChild(parentElement.childNode[index]);
+  }
+
+  // 2. newNode만 있는 경우
+  if (newNode && !oldNode) {
+    return parentElement.appendChild(createElement(newNode));
+  }
+
+  // 3. oldNode와 newNode 모두 text 타입일 경우
+  if (typeof newNode === "string" && typeof oldNode === "string") {
+    if (newNode === oldNode) return;
+    return parentElement.replaceChild(
       createElement(newNode),
       parentElement.childNodes[index],
     );
-    return;
-  }
-  if (typeof newType === "string") {
-    if (newType !== oldType) {
-      parentElement.replaceChild(
-        document.createTextNode(newNode),
-        parentElement.childNodes[index],
-      );
-      return;
-    }
   }
 
-  if (newType === oldType) {
-    updateAttributes(parentElement.childNodes[index], newProps, oldProps);
+  // 4. oldNode와 newNode의 태그 이름(type)이 다를 경우
+  if (newNode.type !== oldNode.type) {
+    return parentElement.replaceChild(
+      createElement(newNode),
+      parentElement.childNodes[index],
+    );
   }
 
-  console.log("??dkdkdkk", newChildren, oldChildren);
-
-  const childLength = Math.max(
-    (newChildren || []).length,
-    (oldChildren || []).length,
+  // 5. oldNode와 newNode의 태그 이름(type)이 같을 경우
+  updateAttributes(
+    parentElement.childNodes[index],
+    newNode.props || {},
+    oldNode.props || {},
   );
 
-  for (let i = 0; i < childLength; i++) {
+  // 6. newNode와 oldNode의 모든 자식 태그를 순회하며 1 ~ 5의 내용을 반복한다.
+  const maxLength = Math.max(newNode.children.length, oldNode.children.length);
+  for (let i = 0; i < maxLength; i++) {
     updateElement(
-      parentElement.children[index],
+      parentElement.childNodes[index],
       newNode.children[i],
       oldNode.children[i],
       i,
