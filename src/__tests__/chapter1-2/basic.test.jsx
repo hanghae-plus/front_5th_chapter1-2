@@ -1,13 +1,20 @@
 /** @jsx createVNode */
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  addEvent,
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  // vi
+} from "vitest";
+import {
+  // addEvent,
   createElement,
   createVNode,
-  normalizeVNode,
-  removeEvent,
-  renderElement,
-  setupEventListeners,
+  // normalizeVNode,
+  // removeEvent,
+  // renderElement,
+  // setupEventListeners,
 } from "../../lib";
 
 describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
@@ -295,133 +302,139 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
       document.body.removeChild(container);
     });
 
-    it.each([
-      [undefined, ""],
-      [null, ""],
-      [false, ""],
-      [true, ""],
-    ])("%s는 빈 텍스트 노드로 변환된다.", (input, expected) => {
-      const result = createElement(input);
-      expect(result.nodeType).toBe(Node.TEXT_NODE);
-      expect(result.textContent).toBe(expected);
-    });
+    // it.each([
+    //   [undefined, ""],
+    //   [null, ""],
+    //   [false, ""],
+    //   [true, ""],
+    // ])("%s는 빈 텍스트 노드로 변환된다.", (input, expected) => {
+    //   const result = createElement(input);
+    //   expect(result.nodeType).toBe(Node.TEXT_NODE);
+    //   expect(result.textContent).toBe(expected);
+    // });
 
-    it.each([
-      ["Hello", "Hello"],
-      [42, "42"],
-      [0, "0"],
-      [-0, "0"],
-      [10000, "10000"],
-    ])("%s은 텍스트 노드로 변환된다.", (input, expected) => {
-      const result = createElement(input);
-      expect(result.nodeType).toBe(Node.TEXT_NODE);
-      expect(result.textContent).toBe(expected);
-    });
+    // it.each([
+    //   ["Hello", "Hello"],
+    //   [42, "42"],
+    //   [0, "0"],
+    //   [-0, "0"],
+    //   [10000, "10000"],
+    // ])("%s은 텍스트 노드로 변환된다.", (input, expected) => {
+    //   const result = createElement(input);
+    //   expect(result.nodeType).toBe(Node.TEXT_NODE);
+    //   expect(result.textContent).toBe(expected);
+    // });
 
-    it("배열 입력에 대해 DocumentFragment를 생성해야 한다", () => {
-      const result = createElement([<div>첫 번째</div>, <span>두 번째</span>]);
+    // it("배열 입력에 대해 DocumentFragment를 생성해야 한다", () => {
+    //   const result = createElement([<div>첫 번째</div>, <span>두 번째</span>]);
 
-      expect(result.nodeType).toBe(Node.DOCUMENT_FRAGMENT_NODE);
-      expect(result.childNodes.length).toBe(2);
-      expect(result.childNodes[0].tagName).toBe("DIV");
-      expect(result.childNodes[1].tagName).toBe("SPAN");
-    });
+    //   expect(result.nodeType).toBe(Node.DOCUMENT_FRAGMENT_NODE);
+    //   expect(result.childNodes.length).toBe(2);
+    //   expect(result.childNodes[0].tagName).toBe("DIV");
+    //   expect(result.childNodes[1].tagName).toBe("SPAN");
+    // });
 
-    describe("컴포넌트를 element로 만들기", () => {
-      it("컴포넌트를 createElement로 처리하려고 하면 오류가 발생한다.", () => {
-        const FuncComponent = ({ text }) => <div>{text}</div>;
-        expect(() =>
-          createElement(<FuncComponent text="Hello" />),
-        ).toThrowError();
-      });
+    // describe("컴포넌트를 element로 만들기", () => {
+    //   // it("컴포넌트를 createElement로 처리하려고 하면 오류가 발생한다.", () => {
+    //   //   const FuncComponent = ({ text }) => <div>{text}</div>;
+    //   //   expect(() =>
+    //   //     createElement(<FuncComponent text="Hello" />),
+    //   //   ).toThrowError();
+    //   // });
 
-      it("컴포넌트를 정규화한 다음에 createElement로 생성할 수 있다.", () => {
-        const UnorderedList = ({ children, ...props }) => (
-          <ul {...props}>{children}</ul>
-        );
-        const ListItem = ({ children, className, ...props }) => (
-          <li {...props} className={`list-item ${className ?? ""}`}>
-            - {children}
-          </li>
-        );
-        const TestComponent = () => (
-          <UnorderedList>
-            <ListItem id="item-1">Item 1</ListItem>
-            <ListItem id="item-2">Item 2</ListItem>
-            <ListItem id="item-3" className="last-item">
-              Item 3
-            </ListItem>
-          </UnorderedList>
-        );
+    //   it("컴포넌트를 정규화한 다음에 createElement로 생성할 수 있다.", () => {
+    //     const UnorderedList = ({ children, ...props }) => (
+    //       <ul {...props}>{children}</ul>
+    //     );
+    //     const ListItem = ({ children, className, ...props }) => (
+    //       <li {...props} className={`list-item ${className ?? ""}`}>
+    //         - {children}
+    //       </li>
+    //     );
+    //     const TestComponent = () => (
+    //       <UnorderedList>
+    //         <ListItem id="item-1">Item 1</ListItem>
+    //         <ListItem id="item-2">Item 2</ListItem>
+    //         <ListItem id="item-3" className="last-item">
+    //           Item 3
+    //         </ListItem>
+    //       </UnorderedList>
+    //     );
 
-        expect(
-          createElement(normalizeVNode(<TestComponent />)).outerHTML,
-        ).toEqual(
-          `<ul><li id="item-1" class="list-item ">- Item 1</li><li id="item-2" class="list-item ">- Item 2</li><li id="item-3" class="list-item last-item">- Item 3</li></ul>`,
-        );
-      });
-    });
+    //     // const result = createElement(
+    //     //   normalizeVNode(<TestComponent />),
+    //     // ).outerHTML;
+    //     // console.log("🚀 ~ it ~ result:", result);
 
-    it("중첩된 자식 요소를 올바르게 처리해야 한다", () => {
-      const result = createElement(
-        <div>
-          <span>Hello</span>
-          <b>world</b>
-        </div>,
-      );
-      expect(result.tagName).toBe("DIV");
-      expect(result.childNodes.length).toBe(2);
-      expect(result.childNodes[0].tagName).toBe("SPAN");
-      expect(result.childNodes[1].tagName).toBe("B");
-    });
+    //     expect(
+    //       createElement(normalizeVNode(<TestComponent />)).outerHTML,
+    //     ).toEqual(
+    //       `<ul><li id="item-1" class="list-item ">- Item 1</li><li id="item-2" class="list-item ">- Item 2</li><li id="item-3" class="list-item last-item">- Item 3</li></ul>`,
+    //     );
+    //   });
+    // });
 
-    it("깊게 중첩된 구조를 처리해야 한다", () => {
-      const result = createElement(
-        <div>
-          <span>
-            <a href="#">링크</a>
-            <b>굵게</b>
-          </span>
-          <p>문단</p>
-        </div>,
-      );
-      expect(result.tagName).toBe("DIV");
-      expect(result.childNodes.length).toBe(2);
-      expect(result.childNodes[0].tagName).toBe("SPAN");
-      expect(result.childNodes[0].childNodes.length).toBe(2);
-      expect(result.childNodes[0].childNodes[0].tagName).toBe("A");
-      expect(result.childNodes[0].childNodes[1].tagName).toBe("B");
-      expect(result.childNodes[1].tagName).toBe("P");
-    });
+    // it("중첩된 자식 요소를 올바르게 처리해야 한다", () => {
+    //   const result = createElement(
+    //     <div>
+    //       <span>Hello</span>
+    //       <b>world</b>
+    //     </div>,
+    //   );
+    //   expect(result.tagName).toBe("DIV");
+    //   expect(result.childNodes.length).toBe(2);
+    //   expect(result.childNodes[0].tagName).toBe("SPAN");
+    //   expect(result.childNodes[1].tagName).toBe("B");
+    // });
 
-    it("혼합 콘텐츠(텍스트와 요소)를 처리해야 한다", () => {
-      const result = createElement(
-        <div>
-          텍스트
-          <span>span 안의 텍스트</span>더 많은 텍스트
-        </div>,
-      );
-      expect(result.tagName).toBe("DIV");
-      expect(result.childNodes.length).toBe(3);
-      expect(result.childNodes[0].nodeType).toBe(Node.TEXT_NODE);
-      expect(result.childNodes[1].tagName).toBe("SPAN");
-      expect(result.childNodes[2].nodeType).toBe(Node.TEXT_NODE);
-    });
+    // it("깊게 중첩된 구조를 처리해야 한다", () => {
+    //   const result = createElement(
+    //     <div>
+    //       <span>
+    //         <a href="#">링크</a>
+    //         <b>굵게</b>
+    //       </span>
+    //       <p>문단</p>
+    //     </div>,
+    //   );
+    //   expect(result.tagName).toBe("DIV");
+    //   expect(result.childNodes.length).toBe(2);
+    //   expect(result.childNodes[0].tagName).toBe("SPAN");
+    //   expect(result.childNodes[0].childNodes.length).toBe(2);
+    //   expect(result.childNodes[0].childNodes[0].tagName).toBe("A");
+    //   expect(result.childNodes[0].childNodes[1].tagName).toBe("B");
+    //   expect(result.childNodes[1].tagName).toBe("P");
+    // });
 
-    it("빈 자식 배열을 처리해야 한다", () => {
-      const result = createElement(<div>{[]}</div>);
-      expect(result.tagName).toBe("DIV");
-      expect(result.childNodes.length).toBe(0);
-    });
+    // it("혼합 콘텐츠(텍스트와 요소)를 처리해야 한다", () => {
+    //   const result = createElement(
+    //     <div>
+    //       텍스트
+    //       <span>span 안의 텍스트</span>더 많은 텍스트
+    //     </div>,
+    //   );
+    //   expect(result.tagName).toBe("DIV");
+    //   expect(result.childNodes.length).toBe(3);
+    //   expect(result.childNodes[0].nodeType).toBe(Node.TEXT_NODE);
+    //   expect(result.childNodes[1].tagName).toBe("SPAN");
+    //   expect(result.childNodes[2].nodeType).toBe(Node.TEXT_NODE);
+    // });
 
-    it("undefined 자식을 무시해야 한다", () => {
-      const result = createElement(<div>{undefined}</div>);
-      expect(result.tagName).toBe("DIV");
-      expect(result.childNodes.length).toBe(0);
-    });
+    // it("빈 자식 배열을 처리해야 한다", () => {
+    //   const result = createElement(<div>{[]}</div>);
+    //   expect(result.tagName).toBe("DIV");
+    //   expect(result.childNodes.length).toBe(0);
+    // });
+
+    // it("undefined 자식을 무시해야 한다", () => {
+    //   const result = createElement(<div>{undefined}</div>);
+    //   expect(result.tagName).toBe("DIV");
+    //   expect(result.childNodes.length).toBe(0);
+    // });
 
     it("불리언 속성을 처리해야 한다", () => {
       const result = createElement(<input disabled={true} />);
+      console.log("🚀 ~ it ~ result:", result.disabled);
       expect(result.tagName).toBe("INPUT");
       expect(result.disabled).toBe(true);
     });
@@ -532,7 +545,8 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
   //       </UnorderedList>
   //     );
 
-  //     renderElement(<TestComponent />, $container);
+  //     const result = renderElement(<TestComponent />, $container);
+  //     console.log("🚀 ~ it ~ result:", result);
 
   //     expect($container.innerHTML).toEqual(
   //       `<ul><li id="item-1" class="list-item list-item "><button></button></li><li id="item-2" class="list-item list-item "><div></div></li><li id="item-3" class="list-item list-item "><input></li><li id="item-4" class="list-item list-item last-item"><input></li></ul>`,

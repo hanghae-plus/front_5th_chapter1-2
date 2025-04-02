@@ -33,16 +33,30 @@ export function createElement(vNode) {
     );
   }
 
-  const $el = document.createElement(vNode.type);
+  const { type, props, children } = vNode;
+  // vNode 가 컴포넌트인 경우.
+  const $el = document.createElement(type);
+  // $el에 속성값 주입
+  updateAttributes($el, props);
 
-  Object.entries(vNode.props || {})
-    .filter(([, value]) => value)
-    .forEach(([attr, value]) => $el.setAttribute(attr, value));
+  // 자식 컴포넌트도 element로 변환
 
-  const _children = vNode.children.map(createElement);
-  _children.forEach((child) => $el.appendChild(child));
-
+  children.forEach((child) => {
+    const $child = createElement(child);
+    // $child에 속성값 주입.
+    updateAttributes($child, child?.props);
+    $el.appendChild($child);
+  });
   return $el;
 }
 
-// function updateAttributes($el, props) {}
+function updateAttributes($el, props) {
+  Object.entries(props || {}).forEach(([key, value]) => {
+    if (key.toLowerCase() === "classname") {
+      $el.setAttribute("class", value);
+    } else {
+      $el.setAttribute(key, value);
+    }
+  });
+  return $el;
+}
