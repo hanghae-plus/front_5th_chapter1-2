@@ -1,11 +1,12 @@
 import { FormHandler } from "./formHandler";
 import { postStore, userStore } from "../../stores";
+import { notification } from "../notification";
 
 class PostFormHandlerClass extends FormHandler {
   private handlePostSubmit = (e: Event) => {
     const currentUser = userStore.getState().currentUser;
     if (!currentUser) {
-      alert("로그인 후 이용해주세요");
+      notification.error("로그인 후 이용해주세요");
       return;
     }
 
