@@ -67,10 +67,6 @@ export const globalStore = createStore(
         content,
         likeUsers: [],
       };
-
-      // textarea 초기화
-      document.getElementById("post-content").value = "";
-
       return {
         ...state,
         posts: [...state.posts, newPost],
