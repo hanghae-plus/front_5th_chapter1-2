@@ -1,4 +1,4 @@
-import { normalizeVNode } from "./normalizeVNode.js";
+import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
   //테스트 케이스 1 (불리언, undefined, null 처리)
@@ -28,14 +28,11 @@ export function createElement(vNode) {
    * 현재는 type이 [Funtion: TestComponent]임
    * 함수일때 처리하기
    */
+
   if (typeof vNode.type === "function") {
     // 컴포넌트 정규화 후 결과 사용
-    const normalizedNode = normalizeVNode(vNode);
-    console.log("normalizedNode", normalizedNode);
-    // // 정규화된 노드로 createElement 다시 호출
-    return createElement(normalizedNode);
+    document.createElement(vNode.type);
   }
-
   // FuncitonComponent를 사용했을 때 InvalidCharaterError 발생
   const $el = document.createElement(vNode.type);
 
@@ -70,7 +67,7 @@ function updateAttributes($el, props) {
     //이벤트 핸들러 처리
     if (key.startsWith("on") && typeof value === "function") {
       const eventType = key.toLowerCase().substring(2);
-      $el.addEventListener(eventType, value);
+      addEvent($el, eventType, value);
     } else if (key === "className") {
       $el.setAttribute("class", value);
     } else {

@@ -1,15 +1,9 @@
 // 이벤트 핸들러 맵 (전역 상태 관리)
-// 이벤트위임의 핵심개념
-// 1. document.addEventListener
-// 2. 위임하고 자하는 태그를 가져와서 이벤트를 주입한다.
-
-//저장하는 곳이 필요해. 왜 저장하는 곳이 필요한가?
-// 이벤트 핸들러를 저장해야해, 그래야 원하는 곳에 부모요소가 전파를 해주겠지.
-// 이벤트 위임은 각요소에 리스너를 붙이는 대신, 그 요소들의 부모에만 리스너를 붙인다. 버블링되서 전파된다.
-
-// 이벤트 핸들러를 저장할 객체
 const eventHandlers = new Map();
 
+/**
+ * 이벤트 발생 시 실행되는 핸들러
+ */
 function handleEvent(event) {
   const target = event.target;
 
@@ -18,19 +12,25 @@ function handleEvent(event) {
     handlers.forEach((handler) => handler(event));
   }
 }
-//type을 동적으로 가지고 오고 싶다.
+
+/**
+ * 등록된 모든 이벤트 타입을 가져오는 함수
+ */
 export function getRegisteredEventTypes() {
-  const eventTypesSet = new Set();
+  const eventTypes = {};
 
   for (const [, elementHandlers] of eventHandlers) {
     for (const eventType of elementHandlers.keys()) {
-      eventTypesSet.add(eventType);
+      eventTypes[eventType] = true;
     }
   }
 
-  return Array.from(eventTypesSet);
+  return Object.keys(eventTypes);
 }
 
+/**
+ * 이벤트 위임 설정
+ */
 export function setupEventListeners(root) {
   const eventTypes = getRegisteredEventTypes();
   eventTypes.forEach((eventType) => {
@@ -38,44 +38,59 @@ export function setupEventListeners(root) {
   });
 }
 
+/**
+ * 요소에 이벤트 핸들러 추가
+ */
 export function addEvent(element, eventType, handler) {
+  // 요소에 대한 이벤트 맵이 없으면 생성
   if (!eventHandlers.has(element)) {
     eventHandlers.set(element, new Map());
   }
 
+  // 이벤트 타입에 대한 핸들러 배열이 없으면 생성
   const elementHandlers = eventHandlers.get(element);
   if (!elementHandlers.has(eventType)) {
     elementHandlers.set(eventType, []);
   }
 
+  // 핸들러 추가
   elementHandlers.get(eventType).push(handler);
 }
 
+/**
+ * 요소에서 이벤트 핸들러 제거
+ */
 export function removeEvent(element, eventType, handler) {
-  //이렇게 지우면되나.?
-  eventHandlers.delete(element);
+  if (!eventHandlers.has(element)) return;
 
-  if (eventHandlers.has(element)) {
-    const typeHandlersMap = eventHandlers.get(element);
+  const elementHandlers = eventHandlers.get(element);
+  if (!elementHandlers.has(eventType)) return;
 
-    if (typeHandlersMap.has(eventType)) {
-      const handlers = typeHandlersMap.get(eventType);
-      const index = handlers.indexOf(handler);
-      if (index !== -1) {
-        handlers.splice(index, 1);
-      }
+  const handlers = elementHandlers.get(eventType);
+  const index = handlers.indexOf(handler);
 
-      //모든 이벤트가 삭제 됬다면 eventType도 삭제
-      if (handlers.length === 0) {
-        typeHandlersMap.delete(eventType);
-      }
+  if (index !== -1) {
+    handlers.splice(index, 1);
 
-      //이벤트 동작이 없다면 해당 element도 삭제
-      if (typeHandlersMap.size === 0) {
+    // 핸들러 배열이 비었으면 이벤트 타입 제거
+    if (handlers.length === 0) {
+      elementHandlers.delete(eventType);
+
+      // 요소에 등록된 이벤트가 없으면 요소 제거
+      if (elementHandlers.size === 0) {
         eventHandlers.delete(element);
       }
     }
   }
+}
 
-  //
+/**
+ * 요소에 등록된 모든 이벤트 핸들러 제거
+ */
+export function removeAllEvents(element) {
+  if (eventHandlers.has(element)) {
+    const elementHandlers = eventHandlers.get(element);
+    elementHandlers.clear();
+    eventHandlers.delete(element);
+  }
 }
