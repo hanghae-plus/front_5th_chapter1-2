@@ -2,7 +2,6 @@ import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
 import { getAttributeName, getEventType, isEventAttribute } from "./utils.js";
 
-// TODO: 로직 간소화 리팩토링 필요
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
   if (!parentElement) {
     throw new Error("updateElement: parentElement가 정의되어 있지 않습니다.");
@@ -21,13 +20,13 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
   const currentElement = parentElement.childNodes[index];
 
   if (isNodeChanged(newNode, oldNode)) {
-    const newElement = createElement(newNode);
-    parentElement.replaceChild(newElement, currentElement);
+    const element = createElement(newNode);
+    parentElement.replaceChild(element, currentElement);
     return;
   }
   if (isTextNode(newNode) && newNode !== oldNode) {
-    const newTextElement = createElement(newNode);
-    parentElement.replaceChild(newTextElement, currentElement);
+    const textElement = createElement(newNode);
+    parentElement.replaceChild(textElement, currentElement);
     return;
   }
 
@@ -64,6 +63,12 @@ function updateSameNode(targetElement, newNode, oldNode) {
   updateChildren(targetElement, newNode.children || [], oldNode.children || []);
 }
 
+/** DOM 요소(target)의 속성을 새 props와 이전 props를 비교하여 업데이트(props, event, attribute) */
+function updateAttributes(target, newProps = {}, oldProps = {}) {
+  removeOldAttributes(target, newProps, oldProps);
+  addNewAttributes(target, newProps, oldProps);
+}
+
 /** 자식 노드를 업데이트 (newChildren와 oldChildren의 최대 길이만큼 재귀 호출) */
 function updateChildren(parent, newChildren, oldChildren) {
   const maxLength = Math.max(newChildren.length, oldChildren.length);
@@ -72,12 +77,6 @@ function updateChildren(parent, newChildren, oldChildren) {
     /** updateElement: i는 자식을 재귀적으로 업데이트할 때 사용 */
     updateElement(parent, newChildren[i], oldChildren[i], i);
   }
-}
-
-/** DOM 요소(target)의 속성을 새 props와 이전 props를 비교하여 업데이트(props, event, attribute) */
-function updateAttributes(target, newProps = {}, oldProps = {}) {
-  removeOldAttributes(target, newProps, oldProps);
-  addNewAttributes(target, newProps, oldProps);
 }
 
 function removeOldAttributes(target, newProps = {}, oldProps = {}) {
