@@ -8,6 +8,7 @@ export const Post = ({
   content,
   likeUsers,
   activationLike = false,
+  onPostLike,
 }) => {
   return (
     <div className="bg-white rounded-lg shadow p-4 mb-4">
@@ -18,7 +19,10 @@ export const Post = ({
         </div>
       </div>
       <p>{content}</p>
-      <div className="mt-2 flex justify-between text-gray-500">
+      <div
+        className="mt-2 flex justify-between text-gray-500"
+        onclick={onPostLike}
+      >
         <span
           className={`like-button cursor-pointer${activationLike ? " text-blue-500" : ""}`}
         >

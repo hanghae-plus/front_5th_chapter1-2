@@ -3,6 +3,8 @@ import { defineConfig } from "vite";
 
 export default mergeConfig(
   defineConfig({
+    base:
+      process.env.NODE_ENV === "production" ? "/front_5th_chapter1-2/" : "/",
     esbuild: {
       jsxFactory: "createVNode",
     },
