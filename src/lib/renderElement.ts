@@ -6,44 +6,14 @@ import { setupEventListeners } from "./eventManager";
 import { normalizeVNode } from "./normalizeVNode";
 import { updateElement } from "./updateElement";
 
-// * 테스트 코드를 위한 Observer
-// DOM에서 컨테이너가 제거될 때 vDomStore를 초기화하는 MutationObserver 설정
-const setupContainerRemovalObserver = (container: ElementWithHandlers) => {
-  // 이미 설정된 observer가 있는지 확인
-  if ((container as any).__observer) return;
-
-  const observer = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.type === "childList") {
-        mutation.removedNodes.forEach((node) => {
-          if (node === container) {
-            vDomStore.clear();
-            observer.disconnect();
-          }
-        });
-      }
-    }
-  });
-
-  // document.body를 관찰하여 컨테이너가 제거되는지 감지
-  observer.observe(document.body, { childList: true });
-
-  // 컨테이너에 observer 참조 저장
-  (container as any).__observer = observer;
-};
-
 export function renderElement(vNode: VNode, container: ElementWithHandlers) {
   // 최초 렌더링시에는 createElement로 DOM을 생성하고
   // 이후에는 updateElement로 기존 DOM을 업데이트한다.
   // 렌더링이 완료되면 container에 이벤트를 등록한다.
   const normalizedVNode = normalizeVNode(vNode);
-  // ! 확인
-  // setupContainerRemovalObserver(container);
-
   const isVNodeObject = isValidVNode(normalizedVNode);
 
   if (!vDomStore.hasVDom() || container.childNodes.length === 0) {
-    // * if (!vDomStore.hasVDom()) {
     container.innerHTML = "";
     const element = createElement(normalizedVNode);
 

@@ -38,7 +38,7 @@ export const Post = ({
   };
 
   return (
-    <div>
+    <div className="bg-white rounded-lg shadow p-4 mb-4">
       <div className="flex items-center mb-2">
         <div>
           <div className="font-bold">{author}</div>
