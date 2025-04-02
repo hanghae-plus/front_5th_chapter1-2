@@ -29,11 +29,14 @@ export default [
     rules: {
       ...pluginTs.configs.recommended.rules,
       "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": ["warn"],
+      "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-explicit-any": "warn",
     },
   },
-  pluginJs.configs.recommended,
+  {
+    files: ["**/*.js", "**/*.jsx"],
+    ...pluginJs.configs.recommended,
+  },
   eslintPluginPrettier,
   eslintConfigPrettier,
 ];

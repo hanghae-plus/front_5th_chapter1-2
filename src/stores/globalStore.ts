@@ -22,6 +22,7 @@ interface GlobalState {
 interface GlobalActions {
   logout: (state: GlobalState) => GlobalState;
 }
+
 const initialState: GlobalState = {
   currentUser: userStorage.get(),
   loggedIn: Boolean(userStorage.get()),
