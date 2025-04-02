@@ -1,5 +1,5 @@
 /** @jsx createVNode */
-import { createRouter } from "./lib/router";
+import { createHashRouter } from "./lib/router";
 import { createVNode } from "./lib/vdom";
 import { HomePage, LoginPage, ProfilePage } from "./pages";
 import { globalStore } from "./stores";
@@ -8,7 +8,7 @@ import { router } from "./router";
 import { render } from "./render";
 
 router.set(
-  createRouter({
+  createHashRouter({
     "/": HomePage,
     "/login": () => {
       const { loggedIn } = globalStore.getState();
@@ -28,7 +28,7 @@ router.set(
 );
 
 function main() {
-  router.get().subscribe(render);
+  router.get()?.subscribe(render);
   globalStore.subscribe(render);
 
   render();

@@ -1,9 +1,9 @@
 import { VNode } from "./lib/vdom";
 
-type Router = {
+export type Router = {
   path: string;
   push: (path: string) => void;
-  subscribe: (callback: () => void) => () => void;
+  subscribe: (callback: () => void) => Set<() => void>;
   getTarget: () => () => VNode;
 };
 
