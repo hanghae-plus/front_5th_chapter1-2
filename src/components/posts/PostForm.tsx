@@ -1,41 +1,15 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib/vdom";
-import { globalStore } from "../../stores";
+import { postFormHandler } from "../../lib/form";
+import { ELEMENT_IDS } from "../../consts/elements";
 
 export const PostForm = () => {
-  const currentUser = globalStore.getState().currentUser;
-
-  const handleSubmit = (e: Event) => {
-    e.preventDefault();
-    if (!currentUser) {
-      alert("로그인 후 이용해주세요");
-      return;
-    }
-
-    const contentElement = document.getElementById(
-      "post-content",
-    ) as HTMLTextAreaElement;
-    const content = contentElement.value;
-
-    const post = {
-      id: globalStore.getState().posts.length + 1,
-      author: currentUser.username,
-      time: Date.now(),
-      content,
-      likeUsers: [],
-    };
-
-    globalStore.setState({
-      posts: [...globalStore.getState().posts, post],
-    });
-
-    contentElement.value = "";
-  };
+  const { handleSubmit } = postFormHandler();
 
   return (
     <div className="mb-4 bg-white rounded-lg shadow p-4">
       <textarea
-        id="post-content"
+        id={ELEMENT_IDS.POST_CONTENT}
         placeholder="무슨 생각을 하고 계신가요?"
         className="w-full p-2 border rounded"
       />
