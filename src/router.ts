@@ -1,7 +1,11 @@
-import { createRouter } from "./lib/router";
-import { createHashRouter } from "./lib/router";
+import { VNode } from "./lib/vdom";
 
-type Router = typeof createRouter | typeof createHashRouter;
+type Router = {
+  path: string;
+  push: (path: string) => void;
+  subscribe: (callback: () => void) => () => void;
+  getTarget: () => () => VNode;
+};
 
 export const router = {
   value: null as Router | null,
