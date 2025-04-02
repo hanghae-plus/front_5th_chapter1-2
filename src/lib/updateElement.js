@@ -42,7 +42,7 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
   // node가 string일 경우
   if (typeof newNode === "string" && typeof oldNode === "string") {
     if (newNode === oldNode) return;
-    parentElement.textContent = newNode;
+    parentElement.replaceChild(createElement(newNode), $oldEl);
     return;
   }
 

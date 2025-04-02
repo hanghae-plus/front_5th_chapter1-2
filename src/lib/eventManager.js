@@ -33,5 +33,7 @@ export function removeEvent(element, eventType, handler) {
   if (elementHandlers?.has(eventType)) {
     elementHandlers.delete(eventType);
   }
-  console.log(handler);
+  if (typeof handler !== "function") {
+    console.log("wow");
+  }
 }
