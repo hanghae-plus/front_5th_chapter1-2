@@ -26,12 +26,12 @@ export function createElement(vNode) {
     });
     return fragment;
   }
-  const $el = document.createElement(vNode.type);
 
+  const $el = document.createElement(vNode.type);
+  const fragment = document.createDocumentFragment();
   if (vNode.props) {
     updateAttributes($el, vNode.props);
   }
-  const fragment = document.createDocumentFragment();
   if (vNode.children) {
     if (Array.isArray(vNode.children)) {
       const children = vNode.children.map(createElement).flat();
@@ -39,7 +39,6 @@ export function createElement(vNode) {
         fragment.appendChild(child);
       });
     }
-    return;
   }
   $el.appendChild(fragment);
   return $el;
