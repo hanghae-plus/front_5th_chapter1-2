@@ -1,9 +1,6 @@
 let _root = null;
 
-const elementSet = new Set();
-const eventListenerMap = new WeakMap();
-
-// TODO: 로직 간소화 리팩토링 필요
+const listeners = new Map();
 
 export function setupEventListeners(root) {
   if (!root) {
@@ -12,54 +9,54 @@ export function setupEventListeners(root) {
 
   _root = root;
 
-  for (const element of elementSet) {
-    const typeMap = eventListenerMap.get(element);
-    if (!typeMap) continue;
-
-    for (const [eventType, handlerMap] of typeMap.entries()) {
-      for (const boundFunc of handlerMap.values()) {
+  listeners.forEach((eventTypeMap) => {
+    eventTypeMap.forEach((handlerMap, eventType) => {
+      handlerMap.forEach((boundFunc) => {
         _root.addEventListener(eventType, boundFunc);
-      }
-    }
-  }
+      });
+    });
+  });
 }
 
 export function addEvent(element, eventType, handler) {
-  elementSet.add(element);
+  let eventTypeMap = listeners.get(element);
+  if (!eventTypeMap) {
+    eventTypeMap = new Map();
+    listeners.set(element, eventTypeMap);
+  }
 
-  const typeMap = eventListenerMap.get(element) ?? new Map();
-  eventListenerMap.set(element, typeMap);
-
-  const handlerMap = typeMap.get(eventType) ?? new Map();
-  typeMap.set(eventType, handlerMap);
+  let handlerMap = eventTypeMap.get(eventType);
+  if (!handlerMap) {
+    handlerMap = new Map();
+    eventTypeMap.set(eventType, handlerMap);
+  }
 
   if (!handlerMap.has(handler)) {
-    const boundFunc = getBoundFunction(element, handler);
-    handlerMap.set(handler, boundFunc);
+    const boundFunction = getBoundFunction(element, handler);
 
-    if (_root) _root.addEventListener(eventType, boundFunc);
+    handlerMap.set(handler, boundFunction);
+    if (_root) _root.addEventListener(eventType, boundFunction);
   }
 }
 
 function getBoundFunction(element, handler) {
-  return (event) => {
-    if (event.target === element) handler(event);
+  return (e) => {
+    if (e.target === element) handler(e);
   };
 }
 
 export function removeEvent(element, eventType, handler) {
-  const typeMap = eventListenerMap.get(element);
-  if (!typeMap) return;
+  const eventTypeMap = listeners.get(element);
+  if (!eventTypeMap) return;
 
-  const handlerMap = typeMap.get(eventType);
+  const handlerMap = eventTypeMap.get(eventType);
   if (!handlerMap) return;
 
   const boundFunc = handlerMap.get(handler);
-  if (boundFunc && _root) {
-    _root.removeEventListener(eventType, boundFunc);
-  }
+
+  if (boundFunc && _root) _root.removeEventListener(eventType, boundFunc);
   handlerMap.delete(handler);
 
-  if (handlerMap.size === 0) typeMap.delete(eventType);
-  if (typeMap.size === 0) elementSet.delete(element);
+  if (handlerMap.size === 0) eventTypeMap.delete(eventType);
+  if (eventTypeMap.size === 0) listeners.delete(element);
 }
