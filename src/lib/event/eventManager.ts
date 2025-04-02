@@ -54,8 +54,15 @@ class EventManager {
 
 export const eventManager = new EventManager();
 
-export const setupEventListeners = (...args: any[]) =>
-  eventManager.setupEventListeners(...args);
-export const addEvent = (...args: any[]) => eventManager.addEvent(...args);
-export const removeEvent = (...args: any[]) =>
-  eventManager.removeEvent(...args);
+export const setupEventListeners = (element: HTMLElement) =>
+  eventManager.setupEventListeners(element);
+export const addEvent = (
+  element: HTMLElement,
+  eventType: string,
+  handler: (event: Event) => void,
+) => eventManager.addEvent(element, eventType, handler);
+export const removeEvent = (
+  element: HTMLElement,
+  eventType: string,
+  handler: (event: Event) => void,
+) => eventManager.removeEvent(element, eventType, handler);
