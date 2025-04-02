@@ -1,7 +1,8 @@
 import { createObserver } from "../observer";
 import { BASE_PATH } from "../../consts/path";
+import { VNode } from "../vdom/types";
 
-export const createRouter = (routes) => {
+export const createRouter = (routes: Record<string, () => VNode>) => {
   const { subscribe, notify } = createObserver();
 
   const getPath = () => {
@@ -11,9 +12,9 @@ export const createRouter = (routes) => {
 
   const getTarget = () => routes[getPath()];
 
-  const push = (path) => {
+  const push = (path: string) => {
     const fullPath = BASE_PATH + path;
-    window.history.pushState(null, null, fullPath);
+    window.history.pushState(null, "", fullPath);
     notify();
   };
 

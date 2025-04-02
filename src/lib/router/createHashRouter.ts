@@ -1,6 +1,7 @@
 import { createObserver } from "../observer";
+import { VNode } from "../vdom/types";
 
-export const createHashRouter = (routes) => {
+export const createHashRouter = (routes: Record<string, () => VNode>) => {
   const { subscribe, notify } = createObserver();
 
   // 현재 해시 경로를 가져오는 함수
@@ -11,7 +12,7 @@ export const createHashRouter = (routes) => {
 
   const getTarget = () => routes[getPath()];
 
-  const push = (path) => {
+  const push = (path: string) => {
     window.location.hash = path;
   };
 
