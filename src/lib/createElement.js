@@ -1,5 +1,5 @@
-import { isEmptyVNode, isTextVNode } from "../utils/\bvNode";
 import { appendChild, applyProps } from "../utils/dom";
+import { isEmptyVNode, isTextVNode } from "../utils/vNode";
 
 export function createElement(vNode) {
   if (isEmptyVNode(vNode)) {
