@@ -69,7 +69,8 @@ export function setupEventListeners(root) {
 export function addEvent(element, eventType, handler) {
   function listener(event) {
     if (event.target === element || event.target.tagName === element.tagName) {
-      handler();
+      // event.preventDefault();
+      handler(event);
     }
   }
 
