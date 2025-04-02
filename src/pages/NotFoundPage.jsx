@@ -1,5 +1,19 @@
 /** @jsx createVNode */
 import { createVNode } from "../lib";
+import { router } from "../router";
+
+function Link({ onClick, children, ...props }) {
+  const handleClick = (e) => {
+    e.preventDefault();
+    onClick?.();
+    router.get().push(e.target.href.replace(window.location.origin, ""));
+  };
+  return (
+    <a onClick={handleClick} {...props}>
+      {children}
+    </a>
+  );
+}
 
 export const NotFoundPage = () => (
   <main className="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -13,13 +27,13 @@ export const NotFoundPage = () => (
       <p className="text-gray-600 mb-8">
         요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.
       </p>
-      <a
+      <Link
         href="/"
         data-link=""
         className="bg-blue-600 text-white px-4 py-2 rounded font-bold"
       >
         홈으로 돌아가기
-      </a>
+      </Link>
     </div>
   </main>
 );
