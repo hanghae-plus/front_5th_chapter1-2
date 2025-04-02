@@ -25,6 +25,10 @@ function updateAttributes(target, originNewProps, originOldProps) {
 }
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
+  if (!parentElement) {
+    return;
+  }
+
   if (!newNode && oldNode) {
     return parentElement.removeChild(parentElement.childNodes[index]);
   }
@@ -49,7 +53,7 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     return parentElement.append(createElement(newNode));
   }
 
-  const $el = parentElement.childNodes[index];
+  const $el = parentElement.childNodes?.[index];
   updateAttributes($el, newNode.props || {}, oldNode.props || {});
 
   const newNodeChildren = newNode.children || [];
