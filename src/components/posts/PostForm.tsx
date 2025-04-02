@@ -1,37 +1,9 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib/vdom";
-import { userStore, postStore } from "../../stores";
+import { postFormHandler } from "../../lib/form";
 
 export const PostForm = () => {
-  const currentUser = userStore.getState().currentUser;
-  const { posts } = postStore.getState();
-
-  const handleSubmit = (e: Event) => {
-    e.preventDefault();
-    if (!currentUser) {
-      alert("로그인 후 이용해주세요");
-      return;
-    }
-
-    const contentElement = document.getElementById(
-      "post-content",
-    ) as HTMLTextAreaElement;
-    const content = contentElement.value;
-
-    const post = {
-      id: posts.length + 1,
-      author: currentUser.username,
-      time: Date.now(),
-      content,
-      likeUsers: [],
-    };
-
-    postStore.setState({
-      posts: [...posts, post],
-    });
-
-    contentElement.value = "";
-  };
+  const { handleSubmit } = postFormHandler();
 
   return (
     <div className="mb-4 bg-white rounded-lg shadow p-4">
