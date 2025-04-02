@@ -10,6 +10,10 @@ export function renderElement(vNode, container) {
 
   const normalizedVNode = normalizeVNode(vNode);
 
+  // const element = createElement(normalizedVNode);
+  // container.replaceChildren(element);
+  // setupEventListeners(container);
+
   if (isFirst) {
     // 최초 렌더링시에는 createElement로 DOM을 생성하고
     const element = createElement(normalizedVNode);
