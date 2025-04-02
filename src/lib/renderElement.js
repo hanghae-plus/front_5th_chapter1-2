@@ -9,6 +9,7 @@ export function renderElement(vNode, container) {
   const normalizedVNode = normalizeVNode(vNode);
   if (container.childNodes.length) {
     updateElement(container, normalizedVNode, oldNodes["node"]);
+    oldNodes.node = normalizedVNode;
   } else {
     const getCreateElement = createElement(normalizedVNode);
     container.appendChild(getCreateElement);
