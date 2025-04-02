@@ -3,7 +3,7 @@ import { createObserver } from "./createObserver";
 export const createRouter = (routes) => {
   const { subscribe, notify } = createObserver();
 
-  const basePath = import.meta.env.VITE_BASE_PATH;
+  const basePath = import.meta.env.VITE_BASE_PATH || "/";
 
   const getPath = () => window.location.pathname.replace(basePath, "/");
 
