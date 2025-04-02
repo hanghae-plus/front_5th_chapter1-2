@@ -1,7 +1,11 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
+import { globalStore } from "../../stores";
 
 export const PostForm = () => {
+  const { loggedIn } = globalStore.getState();
+  if (!loggedIn) return null;
+
   return (
     <div className="mb-4 bg-white rounded-lg shadow p-4">
       <textarea

@@ -1,6 +1,16 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
 import { toTimeFormat } from "../../utils/index.js";
+import { globalStore } from "../../stores/globalStore.js";
+
+function clickLike() {
+  const { loggedIn } = globalStore.getState();
+
+  if (!loggedIn) {
+    alert("로그인 후 이용해주세요");
+    return false;
+  }
+}
 
 export const Post = ({
   author,
@@ -20,7 +30,9 @@ export const Post = ({
       <p>{content}</p>
       <div className="mt-2 flex justify-between text-gray-500">
         <span
+          id="like"
           className={`like-button cursor-pointer${activationLike ? " text-blue-500" : ""}`}
+          onClick={clickLike}
         >
           좋아요 {likeUsers.length}
         </span>
