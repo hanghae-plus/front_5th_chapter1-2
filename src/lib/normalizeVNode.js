@@ -1,12 +1,9 @@
 export function normalizeVNode(vNode) {
-  if (
-    vNode === null ||
-    vNode === undefined ||
-    vNode === false ||
-    vNode === true
-  ) {
+  if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
     return "";
-  } else if (typeof vNode === "string" || typeof vNode === "number") {
+  } else if (typeof vNode === "string") {
+    return vNode;
+  } else if (typeof vNode === "number") {
     return vNode.toString();
   }
 
