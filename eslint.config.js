@@ -35,6 +35,7 @@ export default [
   },
   {
     files: ["**/*.js", "**/*.jsx"],
+    ignores: ["**/__tests__/**", "**/*.test.js", "**/*.test.jsx"],
     ...pluginJs.configs.recommended,
   },
   eslintPluginPrettier,
