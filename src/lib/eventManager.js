@@ -9,6 +9,7 @@ const eventHandler = (e) => {
   // console.log('e.type', e.type); // event
   const currentElement = e.target;
   const currentHandlerMap = eventMap.get(currentElement);
+  if (!currentHandlerMap) return;
   const currentHandler = currentHandlerMap.get(e.type);
   // console.log('currentHandler', currentHandler);
   if (currentHandler) currentHandler(e);
