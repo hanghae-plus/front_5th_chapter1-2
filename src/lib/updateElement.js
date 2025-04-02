@@ -15,8 +15,8 @@ function updateAttributes(target, originNewProps, originOldProps) {
   if (!target.__eventHandlers) {
     target.__eventHandlers = {};
   }
-  const currentEventHandlers = target.__eventHandlers;
 
+  const currentEventHandlers = target.__eventHandlers;
   const currentEventHandlerKeys =
     Object.getOwnPropertyNames(currentEventHandlers);
 
