@@ -72,15 +72,15 @@ export const globalStore = createStore(
           const isLike = post.likeUsers.some(
             (user) => user.username === state.currentUser.username,
           );
-          const updateLikeUsers = new Set(post.likeUsers);
 
-          if (isLike) {
-            updateLikeUsers.delete(state.currentUser);
-          } else {
-            updateLikeUsers.add(state.currentUser);
-          }
-
-          return { ...post, likeUsers: [...updateLikeUsers] };
+          return {
+            ...post,
+            likeUsers: isLike
+              ? post.likeUsers.filter(
+                  (user) => user.username !== state.currentUser.username,
+                )
+              : [...post.likeUsers, state.currentUser],
+          };
         }
         return post;
       });
