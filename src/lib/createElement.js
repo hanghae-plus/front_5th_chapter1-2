@@ -1,3 +1,5 @@
+import { addEvent } from "./eventManager.js";
+
 export function createElement(vNode) {
   if (vNode == null || typeof vNode === "boolean")
     return document.createTextNode("");
@@ -23,6 +25,12 @@ export function createElement(vNode) {
 function updateAttributes($el, props = {}) {
   for (const [key, value] of Object.entries(props)) {
     if (key === "children") continue;
+
+    if (key.startsWith("on") && typeof value === "function") {
+      const eventType = key.slice(2).toLowerCase();
+      addEvent($el, eventType, value);
+      continue;
+    }
 
     const attr = key === "className" ? "class" : key;
 
