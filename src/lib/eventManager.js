@@ -23,7 +23,7 @@ export function addEvent(element, eventType, handler) {
 
 export function removeEvent(element, eventType, handler) {
   const handlers = eventMap.get(eventType);
-  if (handlers.get(element)) {
+  if (handlers && handlers.get(element)) {
     handlers.delete(element);
     rootElement.removeEventListener(eventType, handler);
   }

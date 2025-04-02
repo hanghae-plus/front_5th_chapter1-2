@@ -1,5 +1,7 @@
 // import { addEvent } from "./eventManager";
 
+import { addEvent } from "./eventManager";
+
 export function createElement(vNode) {
   if (
     vNode === null ||
@@ -57,7 +59,8 @@ function updateAttributes($el, props) {
       return;
     } else if (k.startsWith("on")) {
       const eventName = k.substring(2).toLowerCase();
-      $el.addEventListener(eventName, props[k]);
+      // $el.addEventListener(eventName, props[k]);
+      addEvent($el, eventName, props[k]);
     } else {
       $el.setAttribute(k, props[k]);
     }
