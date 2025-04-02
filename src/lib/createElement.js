@@ -1,13 +1,14 @@
 // import { addEvent } from "./eventManager";
+const isValidateNode = (node) => {
+  if (node === null || node === undefined || node === true || node === false) {
+    return false;
+  }
+  return true;
+};
 
 export function createElement(vNode) {
   // 빈 문자열
-  if (
-    vNode === null ||
-    vNode === undefined ||
-    vNode === true ||
-    vNode === false
-  ) {
+  if (!isValidateNode(vNode)) {
     return document.createTextNode("");
   }
 
@@ -32,8 +33,12 @@ export function createElement(vNode) {
     const props = vNode.props ? vNode.props : {};
     const children = vNode.children;
 
-    if (props && props.length) {
-      props.forEach((prop) => el.setAttribute(prop.key, prop.value));
+    // console.log("props?", vNode.props); // class를 이렇게 손수 포맷팅하는게 맞는것인가?
+    if (props) {
+      Object.entries(props).forEach(([key, value]) => {
+        const filteredKey = key === "className" ? "class" : key;
+        el.setAttribute(filteredKey, value);
+      });
     }
 
     if (children && children.length) {
