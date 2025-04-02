@@ -9,18 +9,36 @@ export const Post = ({
   content,
   likeUsers,
   activationLike = false,
+  id,
 }) => {
-  const { loggedIn } = globalStore.getState();
+  const { loggedIn, currentUser } = globalStore.getState();
+
   const handleLike = () => {
     if (!loggedIn) {
       alert("로그인 후 이용해주세요");
       return;
     } else {
+      globalStore.setState({
+        ...globalStore.getState(),
+        posts: globalStore.getState().posts.map((post) => {
+          if (post.id === id) {
+            const updatedLikeUsers = activationLike
+              ? post.likeUsers.filter((user) => user !== currentUser.username)
+              : [...post.likeUsers, currentUser.username];
+
+            return {
+              ...post,
+              likeUsers: updatedLikeUsers,
+            };
+          }
+          return post;
+        }),
+      });
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 mb-4">
+    <div>
       <div className="flex items-center mb-2">
         <div>
           <div className="font-bold">{author}</div>
