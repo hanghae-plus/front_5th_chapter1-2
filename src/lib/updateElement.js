@@ -27,8 +27,6 @@ export function reconcile(workInProgressRoot, newVNode, oldVNode, index = 0) {
   // parentElement의 실제 자식 DOM (oldNode와 매핑)
   const currentDom = workInProgressRoot.childNodes[index];
 
-  console.log("currentDom", currentDom, newVNode, oldVNode);
-
   // --- Diffing Phase ---
   // 1. 새 노드가 존재하는데 이전 노드가 없으면 (PLACEMENT)
   if (!oldVNode && newVNode) {
