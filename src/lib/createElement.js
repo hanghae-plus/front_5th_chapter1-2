@@ -1,3 +1,6 @@
+import { extractEventTypeFromKey } from "../utils/eventUtils";
+import { addEvent } from "./eventManager";
+
 export function createElement(vNode) {
   if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
     return document.createTextNode("");
@@ -35,7 +38,11 @@ function updateAttributes($el, props) {
     if (key === "className") {
       $el.setAttribute("class", value);
       return;
+    } else if (key.startsWith("on")) {
+      const eventType = extractEventTypeFromKey(key);
+      addEvent($el, eventType, value);
+    } else {
+      $el.setAttribute(key, value);
     }
-    $el.setAttribute(key, value);
   });
 }

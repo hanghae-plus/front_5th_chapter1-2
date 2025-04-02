@@ -12,9 +12,7 @@ export function normalizeVNode(vNode) {
     return normalizeVNode(vNode.type(props));
   }
 
-  const normalizedChildren = vNode.children
-    .map((it) => normalizeVNode(it))
-    .filter((child) => !!child);
+  const normalizedChildren = vNode.children.map(normalizeVNode);
 
   return { ...vNode, children: normalizedChildren };
 }
