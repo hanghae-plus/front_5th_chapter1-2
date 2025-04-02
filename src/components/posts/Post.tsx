@@ -1,12 +1,21 @@
 /** @jsx createVNode */
-import { createVNode } from "../../lib/vdom";
-import { toTimeFormat } from "../../utils/index.js";
-import { globalStore } from "../../stores";
-export const Post = ({ id, author, time, content, likeUsers }) => {
+import { createVNode } from "../../lib/vdom/index";
+import { toTimeFormat } from "../../utils/index";
+import { globalStore } from "../../stores/index";
+
+interface PostProps {
+  id: number;
+  author: string;
+  time: number;
+  content: string;
+  likeUsers: string[];
+}
+
+export const Post = ({ id, author, time, content, likeUsers }: PostProps) => {
   const { loggedIn, posts, currentUser } = globalStore.getState();
 
   const handleLike = () => {
-    if (!loggedIn) {
+    if (!loggedIn || !currentUser) {
       alert("로그인 후 이용해주세요");
       return null;
     }
