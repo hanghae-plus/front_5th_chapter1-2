@@ -6,16 +6,19 @@ function updateAttributes($target, originNewProps, originOldProps) {
     Object.entries(originOldProps).forEach(([key, value]) => {
       if (key.startsWith("on") && typeof value === "function") {
         removeEvent($target, key.replace("on", "").toLowerCase(), value);
-      } else {
-        $target.removeAttribute(key);
       }
+      $target.removeAttribute(key);
     });
   }
   if (originNewProps !== null && typeof originNewProps !== "undefined") {
     Object.entries(originNewProps).forEach(([key, value]) => {
       if (key === "className") key = "class";
       if (key.startsWith("on") && typeof value === "function") {
-        addEvent($target, key.replace("on", "").toLowerCase(), value);
+        const eventType = key.replace("on", "").toLowerCase();
+        if (typeof originOldProps[key] === "function") {
+          removeEvent($target, eventType, originOldProps[key]);
+        }
+        addEvent($target, eventType, value);
       } else {
         $target.setAttribute(key, value);
       }
@@ -24,6 +27,7 @@ function updateAttributes($target, originNewProps, originOldProps) {
 }
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
+  if (!parentElement) return;
   const $oldEl = parentElement.childNodes[index];
   // newNode vs oldNode
   if (newNode && !oldNode) {
@@ -35,7 +39,7 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     return;
   }
   // node가 string일 경우
-  if (typeof newNode === "string") {
+  if (typeof newNode === "string" && typeof oldNode === "string") {
     if (newNode !== oldNode) {
       parentElement.textContent = newNode;
       return;
@@ -43,12 +47,11 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
   }
 
   // 같은 타입이면 props 업데이트
-  updateAttributes($oldEl, newNode.props, oldNode.props);
+  updateAttributes($oldEl, newNode?.props || {}, oldNode?.props || {});
 
   // node가 다른 타입으로 교체된 경우
   if (newNode.type !== oldNode.type) {
-    parentElement.removeChild($oldEl);
-    parentElement.append(createElement(newNode));
+    parentElement.replaceChild(createElement(newNode), $oldEl);
     return;
   }
 
