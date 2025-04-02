@@ -1,12 +1,14 @@
 import { FormHandler } from "./formHandler";
 import { postStore, userStore } from "../../stores";
 import { notification } from "../notification";
+import { MESSAGES } from "../../consts/messages";
+import { ELEMENT_IDS } from "../../consts/elements";
 
 class PostFormHandlerClass extends FormHandler {
   private handlePostSubmit = (e: Event) => {
     const currentUser = userStore.getState().currentUser;
     if (!currentUser) {
-      notification.error("로그인 후 이용해주세요");
+      notification.error(MESSAGES.LOGIN_REQUIRED);
       return;
     }
 
@@ -16,7 +18,7 @@ class PostFormHandlerClass extends FormHandler {
 
   private getPostContent() {
     const contentElement = document.getElementById(
-      "post-content",
+      ELEMENT_IDS.POST_CONTENT,
     ) as HTMLTextAreaElement;
     return contentElement.value;
   }
@@ -36,7 +38,7 @@ class PostFormHandlerClass extends FormHandler {
     });
   }
   handleSubmit = this.withPreventDefault(
-    this.withInputClear("post-content")(this.handlePostSubmit),
+    this.withInputClear(ELEMENT_IDS.POST_CONTENT)(this.handlePostSubmit),
   );
 }
 

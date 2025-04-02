@@ -3,6 +3,7 @@ import { createVNode } from "../../lib/vdom/index";
 import { toTimeFormat } from "../../utils/index";
 import { userStore, postStore } from "../../stores";
 import { notification } from "../../lib/notification";
+import { MESSAGES } from "../../consts/messages";
 interface PostProps {
   id: number;
   author: string;
@@ -17,7 +18,7 @@ export const Post = ({ id, author, time, content, likeUsers }: PostProps) => {
 
   const handleLike = () => {
     if (!loggedIn || !currentUser) {
-      notification.error("로그인 후 이용해주세요");
+      notification.error(MESSAGES.LOGIN_REQUIRED);
       return null;
     }
 

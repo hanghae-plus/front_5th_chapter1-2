@@ -1,6 +1,7 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib/vdom";
 import { postFormHandler } from "../../lib/form";
+import { ELEMENT_IDS } from "../../consts/elements";
 
 export const PostForm = () => {
   const { handleSubmit } = postFormHandler();
@@ -8,7 +9,7 @@ export const PostForm = () => {
   return (
     <div className="mb-4 bg-white rounded-lg shadow p-4">
       <textarea
-        id="post-content"
+        id={ELEMENT_IDS.POST_CONTENT}
         placeholder="무슨 생각을 하고 계신가요?"
         className="w-full p-2 border rounded"
       />

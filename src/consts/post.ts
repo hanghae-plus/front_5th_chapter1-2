@@ -38,4 +38,4 @@ export const MOCK_POSTS = [
     content: "새로 나온 영화 재미있대요. 같이 보러 갈 사람?",
     likeUsers: [],
   },
-];
+] as const;

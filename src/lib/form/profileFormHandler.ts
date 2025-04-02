@@ -3,6 +3,7 @@ import { userStore } from "../../stores";
 import { userStorage } from "../../storages";
 import { User } from "../../types/user";
 import { notification } from "../notification";
+import { MESSAGES } from "../../consts/messages";
 
 class ProfileFormHandlerClass extends FormHandler {
   private handleProfileSubmit = (e: Event) => {
@@ -23,7 +24,7 @@ class ProfileFormHandlerClass extends FormHandler {
 
     userStore.setState({ currentUser: user });
     userStorage.set(user);
-    notification.success("프로필이 업데이트되었습니다.");
+    notification.success(MESSAGES.PROFILE_UPDATED);
   }
 
   handleSubmit = this.withPreventDefault(this.handleProfileSubmit);
