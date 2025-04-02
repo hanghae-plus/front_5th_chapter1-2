@@ -18,7 +18,6 @@ export function createElement(vNode) {
     return document.createTextNode(vNode.toString());
   }
   if (isArray(vNode)) {
-    console.log("isArray");
     const fragment = new DocumentFragment();
 
     for (let node of vNode) {
@@ -44,7 +43,6 @@ export function createElement(vNode) {
 const updateAttributes = ($el, attr, value) => {
   if (attr.toLocaleLowerCase().includes("on")) {
     let newAttr = attr.toLocaleLowerCase().replace("on", "");
-    console.log(newAttr);
     addEvent($el, newAttr, value);
     return;
   }

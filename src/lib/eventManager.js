@@ -3,12 +3,8 @@ const handlerMap = new Map(); //$el, handler
 let eventBundle = [];
 
 export function setupEventListeners($root) {
-  console.log("eventTypeMap", eventTypeMap);
-  console.log("handlerMap", handlerMap);
-
   eventBundle.forEach((eventType) => {
     let el = eventTypeMap.get(eventType);
-    // document.hasChildNodes
 
     $root.addEventListener(eventType, function (e) {
       if (e.target.isEqualNode(el)) {
