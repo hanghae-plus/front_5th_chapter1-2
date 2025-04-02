@@ -6,7 +6,7 @@ import { ELEMENT_IDS } from "../../consts/elements";
 import { getValue } from "../dom";
 
 class PostFormHandlerClass extends FormHandler {
-  private handlePostSubmit = (e: Event) => {
+  private handlePostSubmit = (e: SubmitEvent) => {
     const currentUser = userStore.getState().currentUser;
     if (!currentUser) {
       notification.error(MESSAGES.LOGIN_REQUIRED);

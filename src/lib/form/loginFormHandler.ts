@@ -5,7 +5,7 @@ import { getValue } from "../dom";
 import { ELEMENT_IDS } from "../../consts/elements";
 
 class LoginFormHandlerClass extends FormHandler {
-  private handleLoginSubmit = (e: Event) => {
+  private handleLoginSubmit = (e: SubmitEvent) => {
     const username = getValue(ELEMENT_IDS.USERNAME);
     const user = { username, email: "", bio: "" };
 

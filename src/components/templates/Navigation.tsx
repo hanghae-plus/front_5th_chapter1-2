@@ -19,7 +19,7 @@ interface LinkProps {
 }
 
 function Link({ onClick, children, ...props }: LinkProps) {
-  const handleClick = (e: Event) => {
+  const handleClick = (e: MouseEvent) => {
     e.preventDefault();
     onClick?.();
     const target = e.target as HTMLAnchorElement;
@@ -63,7 +63,7 @@ export const Navigation = () => {
               href="#"
               id="logout"
               className="text-gray-600"
-              onClick={(e: Event) => {
+              onClick={(e: MouseEvent) => {
                 e.preventDefault();
                 logout();
               }}

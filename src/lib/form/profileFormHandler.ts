@@ -6,12 +6,12 @@ import { notification } from "../notification";
 import { MESSAGES } from "../../consts/messages";
 
 class ProfileFormHandlerClass extends FormHandler {
-  private handleProfileSubmit = (e: Event) => {
+  private handleProfileSubmit = (e: SubmitEvent) => {
     const updatedProfile = this.getProfileData(e);
     this.updateProfile(updatedProfile);
   };
 
-  private getProfileData(e: Event) {
+  private getProfileData(e: SubmitEvent) {
     const formData = new FormData(e.target as HTMLFormElement);
     return Object.fromEntries(formData);
   }

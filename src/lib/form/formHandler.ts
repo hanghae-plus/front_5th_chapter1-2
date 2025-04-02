@@ -1,16 +1,16 @@
 import { clearValue } from "../dom";
 
 export class FormHandler {
-  withPreventDefault(handler: (e: Event) => void) {
-    return (e: Event) => {
+  withPreventDefault(handler: (e: SubmitEvent) => void) {
+    return (e: SubmitEvent) => {
       e.preventDefault();
       handler(e);
     };
   }
 
   withInputClear(elementId: string) {
-    return (handler: (e: Event) => void) => {
-      return (e: Event) => {
+    return (handler: (e: SubmitEvent) => void) => {
+      return (e: SubmitEvent) => {
         handler(e);
         clearValue(elementId);
       };
