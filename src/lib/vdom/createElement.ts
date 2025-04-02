@@ -1,6 +1,7 @@
-import { updateAttributes } from "./updateAttributes.js";
+import { RawVNode } from "./types";
+import { updateAttributes } from "./updateAttributes";
 
-export function createElement(vNode) {
+export function createElement(vNode: RawVNode) {
   // 배열: DocumentFragment를 생성해서 각 요소를 재귀적으로 추가
   if (Array.isArray(vNode)) {
     const fragment = document.createDocumentFragment();
@@ -20,11 +21,9 @@ export function createElement(vNode) {
     return document.createTextNode(vNode.toString());
   }
 
-  // 객체 타입(VNode)
+  // HTML 엘리먼트 처리
   const element = document.createElement(vNode.type);
-
   updateAttributes(element, vNode.props);
-
   vNode.children.forEach((child) => {
     element.appendChild(createElement(child));
   });

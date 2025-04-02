@@ -1,11 +1,13 @@
-export type VNodeChild = string | number | boolean | null | undefined | VNode;
+export type RawVNode = string | number | boolean | null | undefined | VNode;
 
 export type Props = Record<string, any> | null;
 
 export type Component = (props: Props) => VNode | string;
 
+export type ElementType = keyof HTMLElementTagNameMap | Component;
+
 export interface VNode {
-  type: string | Component;
+  type: ElementType;
   props: Props;
-  children: VNodeChild[];
+  children: RawVNode[];
 }

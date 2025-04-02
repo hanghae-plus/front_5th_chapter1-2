@@ -1,49 +1,66 @@
 import { addEvent, removeEvent } from "../event";
+import { Props } from "./types";
 
-function handleEventAttribute(target, key, newValue, oldValue) {
+function handleEventAttribute(
+  target: HTMLElement,
+  key: string,
+  newValue: string,
+  oldValue: string,
+) {
   const eventType = key.slice(2).toLowerCase();
   if (oldValue !== newValue) {
     addEvent(target, eventType, newValue);
   }
 }
 
-function handleNormalAttribute(target, key, newValue, oldValue) {
+function handleNormalAttribute(
+  target: HTMLElement,
+  key: string,
+  newValue: string,
+  oldValue: string,
+) {
   const attrName = key === "className" ? "class" : key;
   if (oldValue !== newValue) {
     target.setAttribute(attrName, newValue);
   }
 }
 
-function removeEventAttribute(target, key, oldValue) {
+function removeEventAttribute(
+  target: HTMLElement,
+  key: string,
+  oldValue: string,
+) {
   const eventType = key.slice(2).toLowerCase();
   removeEvent(target, eventType, oldValue);
 }
 
-function removeNormalAttribute(target, key) {
+function removeNormalAttribute(target: HTMLElement, key: string) {
   const attrName = key === "className" ? "class" : key;
   target.removeAttribute(attrName);
 }
 
 export function updateAttributes(
-  target,
-  originNewProps = {},
-  originOldProps = {},
+  target: HTMLElement,
+  originNewProps: Props,
+  originOldProps: Props,
 ) {
-  originNewProps &&
+  if (originNewProps) {
     Object.entries(originNewProps).forEach(([key, value]) => {
       const handler = key.startsWith("on")
         ? handleEventAttribute
         : handleNormalAttribute;
-      handler(target, key, value, originOldProps[key]);
+      handler(target, key, value, originOldProps?.[key] || "");
     });
+  }
 
-  originOldProps &&
+  if (originOldProps) {
     Object.keys(originOldProps).forEach((key) => {
-      if (!originNewProps || !(key in originNewProps)) {
+      if (!(originNewProps && key in originNewProps)) {
         const handler = key.startsWith("on")
           ? removeEventAttribute
           : removeNormalAttribute;
         handler(target, key, originOldProps[key]);
       }
     });
+  }
 }

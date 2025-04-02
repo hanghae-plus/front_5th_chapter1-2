@@ -2,16 +2,19 @@ import { setupEventListeners } from "../event";
 import { createElement } from "./createElement";
 import { normalizeVNode } from "./normalizeVNode";
 import { updateElement } from "./updateElement";
+import { RawVNode } from "./types";
 
 const prevVNodeMap = new WeakMap();
 
-export function renderElement(vNode, container) {
+export function renderElement(vNode: RawVNode, container: HTMLElement) {
   const normalizedNode = normalizeVNode(vNode);
   const prevVNode = prevVNodeMap.get(container);
 
-  prevVNode
-    ? updateElement(container, normalizedNode, prevVNode)
-    : container.replaceChildren(createElement(normalizedNode));
+  if (prevVNode) {
+    updateElement(container, normalizedNode, prevVNode);
+  } else {
+    container.replaceChildren(createElement(normalizedNode));
+  }
 
   prevVNodeMap.set(container, normalizedNode);
   setupEventListeners(container);

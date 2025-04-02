@@ -1,4 +1,6 @@
-export function normalizeVNode(vNode) {
+import { RawVNode, VNode } from "./types";
+
+export function normalizeVNode(vNode: RawVNode): string | VNode {
   if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
     return "";
   }
@@ -8,9 +10,9 @@ export function normalizeVNode(vNode) {
   }
 
   if (typeof vNode.type === "function") {
-    const Component = vNode.type;
+    const component = vNode.type;
     return normalizeVNode(
-      Component({
+      component({
         ...vNode.props,
         children: vNode.children,
       }),

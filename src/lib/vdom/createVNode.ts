@@ -1,9 +1,9 @@
-import { VNodeChild, Props, Component } from "./types";
+import { RawVNode, Props, Component } from "./types";
 
 export function createVNode(
   type: string | Component,
   props: Props,
-  ...children: VNodeChild[]
+  ...children: RawVNode[]
 ) {
   return {
     type,
@@ -12,8 +12,8 @@ export function createVNode(
   };
 }
 
-function flattenChildren(children: VNodeChild[]): VNodeChild[] {
-  return children.reduce<VNodeChild[]>((flat, child) => {
+function flattenChildren(children: RawVNode[]): RawVNode[] {
+  return children.reduce<RawVNode[]>((flat, child) => {
     if (child === null || child === undefined || child === false) return flat;
     return flat.concat(Array.isArray(child) ? flattenChildren(child) : child);
   }, []);
