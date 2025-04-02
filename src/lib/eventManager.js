@@ -1,5 +1,5 @@
-const handlers = new WeakMap(); // 엘리먼트별 이벤트 핸들러 저장
-const allEvents = new Set(); // 모든 이벤트 저장
+export const handlers = new WeakMap(); // 엘리먼트별 이벤트 핸들러 저장
+export const allEvents = new Set(); // 모든 이벤트 저장
 
 /**
  * 이벤트 위임 설정
@@ -12,6 +12,29 @@ export function setupEventListeners(root) {
     root.addEventListener(eventType, handleEvent);
   });
 }
+
+/**
+ * 새로운 함수 추가 : 모든 이벤트에 대한 공통 핸들러
+ * @param {Event} e - 발생한 이벤트 객체
+ */
+const handleEvent = (e) => {
+  let element = e.target;
+  const eventType = e.type;
+
+  // 이벤트 버블링: 클릭된 엘리먼트부터 부모로 올라가며 검사
+  while (element) {
+    const elementHandlers = handlers.get(element);
+
+    // 이벤트 핸들러가 있으면 실행하고 종료
+    if (elementHandlers?.has(eventType)) {
+      elementHandlers.get(eventType)(e);
+      break;
+    }
+
+    // 핸들러가 없으면 부모 엘리먼트로 이동
+    element = element.parentElement;
+  }
+};
 
 /**
  * 이벤트 핸들러를 WeakMap에 저장
@@ -52,49 +75,10 @@ export function removeEvent(element, eventType) {
 }
 
 /**
- * 새로운 함수 추가 : 모든 이벤트에 대한 공통 핸들러
- * @param {Event} e - 발생한 이벤트 객체
- */
-const handleEvent = (e) => {
-  let element = e.target;
-  const eventType = e.type;
-
-  // 이벤트 버블링: 클릭된 엘리먼트부터 부모로 올라가며 검사
-  while (element) {
-    const elementHandlers = handlers.get(element);
-
-    // 이벤트 핸들러가 있으면 실행하고 종료
-    if (elementHandlers?.has(eventType)) {
-      elementHandlers.get(eventType)(e);
-      break;
-    }
-
-    // 핸들러가 없으면 부모 엘리먼트로 이동
-    element = element.parentElement;
-  }
-};
-
-/**
- * 새로운 함수 추가 : 엘리먼트의 모든 이벤트 제거
- * @param {HTMLElement} element 이벤트를 제거할 엘리먼트
- */
-export function removeAllEvents(element) {
-  handlers.delete(element);
-}
-
-/**
  * 새로운 함수 추가 : 엘리먼트와 그 자식들의 모든 이벤트 제거
  * @param {HTMLElement} element 이벤트를 제거할 엘리먼트
  */
 export function cleanupEvents(element) {
-  // 현재 엘리먼트의 이벤트 제거
-  removeAllEvents(element);
-
-  // 자식 엘리먼트들의 이벤트도 제거
-  const children = element.children;
-  if (children) {
-    Array.from(children).forEach((child) => {
-      cleanupEvents(child);
-    });
-  }
+  handlers.delete(element);
+  allEvents.clear();
 }
