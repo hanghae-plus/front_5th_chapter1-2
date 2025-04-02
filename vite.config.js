@@ -1,6 +1,5 @@
 import { defineConfig as defineTestConfig, mergeConfig } from "vitest/config";
 import { defineConfig } from "vite";
-import { resolve } from "path";
 
 export default mergeConfig(
   defineConfig({
@@ -18,7 +17,7 @@ export default mergeConfig(
     test: {
       globals: true,
       environment: "jsdom",
-      setupFiles: resolve(__dirname, "./src/setupTests.js"),
+      setupFiles: "./src/setupTests.js",
       exclude: ["**/e2e/**", "**/*.e2e.spec.js", "**/node_modules/**"],
     },
   }),
