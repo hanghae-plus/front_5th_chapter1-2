@@ -22,8 +22,10 @@ export function createElement(vNode: RawVNode) {
   }
 
   // HTML 엘리먼트 처리
-  const element = document.createElement(vNode.type);
-  updateAttributes(element, vNode.props);
+  const element = document.createElement(
+    vNode.type as keyof HTMLElementTagNameMap,
+  );
+  updateAttributes(element, vNode.props, null);
   vNode.children.forEach((child) => {
     element.appendChild(createElement(child));
   });

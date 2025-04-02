@@ -1,6 +1,6 @@
 export type RawVNode = string | number | boolean | null | undefined | VNode;
 
-export type Props = Record<string, any> | null;
+export type Props = Record<string, unknown> | null;
 
 export type Component = (props: Props) => VNode | string;
 
