@@ -6,18 +6,18 @@ import { renderElement, createVNode } from "./lib/vdom";
 import { NotFoundPage } from "./pages";
 
 export function render() {
-  const Page = router.get().getTarget() ?? NotFoundPage;
+  const Page = router.get()?.getTarget() ?? NotFoundPage;
   const $root = document.querySelector("#root");
 
   try {
-    renderElement(<Page />, $root);
+    renderElement(<Page />, $root as HTMLElement);
   } catch (error) {
     if (error instanceof ForbiddenError) {
-      router.get().push("/");
+      router.get()?.push("/");
       return;
     }
     if (error instanceof UnauthorizedError) {
-      router.get().push("/login");
+      router.get()?.push("/login");
       return;
     }
     console.error(error);
