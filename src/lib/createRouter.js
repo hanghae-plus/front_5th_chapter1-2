@@ -1,18 +1,19 @@
 import { createObserver } from "./createObserver";
 
 export const createRouter = (routes) => {
-  const basePath = import.meta.env.VITE_BASE_PATH ?? "/";
   const { subscribe, notify } = createObserver();
 
-  const formatPath = (path) => path.replace(basePath, "/");
+  const basePath = import.meta.env.VITE_BASE_PATH;
 
-  const getPath = () => formatPath(window.location.pathname);
+  const getPath = () => window.location.pathname.replace(basePath, "/");
 
   const getTarget = () => routes[getPath()];
 
   const push = (path) => {
-    const newPath = formatPath(path);
-    window.history.pushState(null, null, newPath);
+    const normalizedBasePath = basePath.endsWith("/")
+      ? basePath.slice(0, -1)
+      : basePath;
+    window.history.pushState(null, null, `${normalizedBasePath}${path}`);
     notify();
   };
 
