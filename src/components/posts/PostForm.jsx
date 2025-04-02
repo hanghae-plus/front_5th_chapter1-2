@@ -1,7 +1,30 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
+import { globalStore } from "../../stores";
 
 export const PostForm = () => {
+  const { posts: prevPosts, currentUser } = globalStore.getState();
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const content = document.getElementById("post-content").value;
+    const author = currentUser.username;
+
+    globalStore.setState({
+      posts: [
+        {
+          id: prevPosts.length + 1,
+          content,
+          time: Date.now(),
+          likeUsers: [],
+          author,
+        },
+        ...prevPosts,
+      ],
+    });
+  }
+
   return (
     <div className="mb-4 bg-white rounded-lg shadow p-4">
       <textarea
@@ -12,6 +35,7 @@ export const PostForm = () => {
       <button
         id="post-submit"
         className="mt-2 bg-blue-600 text-white px-4 py-2 rounded"
+        onClick={handleSubmit}
       >
         게시
       </button>
