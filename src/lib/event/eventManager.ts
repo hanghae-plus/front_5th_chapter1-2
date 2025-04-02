@@ -2,7 +2,7 @@ class EventManager {
   #delegatedEvents = new Map();
   #delegatedRoots = new WeakMap();
 
-  setupEventListeners(delegateRoot) {
+  setupEventListeners(delegateRoot: HTMLElement) {
     if (!this.#delegatedRoots.has(delegateRoot)) {
       this.#delegatedRoots.set(delegateRoot, new Set());
     }
@@ -24,7 +24,11 @@ class EventManager {
     });
   }
 
-  addEvent(delegateTarget, eventType, delegateHandler) {
+  addEvent(
+    delegateTarget: HTMLElement,
+    eventType: string,
+    delegateHandler: (event: Event) => void,
+  ) {
     if (!this.#delegatedEvents.has(eventType)) {
       this.#delegatedEvents.set(eventType, new Map());
     }
@@ -33,7 +37,11 @@ class EventManager {
     delegates.set(delegateTarget, delegateHandler);
   }
 
-  removeEvent(delegateTarget, eventType, delegateHandler) {
+  removeEvent(
+    delegateTarget: HTMLElement,
+    eventType: string,
+    delegateHandler: (event: Event) => void,
+  ) {
     const delegates = this.#delegatedEvents.get(eventType);
     if (!delegates) return;
 
@@ -46,7 +54,8 @@ class EventManager {
 
 export const eventManager = new EventManager();
 
-export const setupEventListeners = (...args) =>
+export const setupEventListeners = (...args: any[]) =>
   eventManager.setupEventListeners(...args);
-export const addEvent = (...args) => eventManager.addEvent(...args);
-export const removeEvent = (...args) => eventManager.removeEvent(...args);
+export const addEvent = (...args: any[]) => eventManager.addEvent(...args);
+export const removeEvent = (...args: any[]) =>
+  eventManager.removeEvent(...args);
