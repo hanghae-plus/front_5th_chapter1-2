@@ -3,6 +3,7 @@ import { postStore, userStore } from "../../stores";
 import { notification } from "../notification";
 import { MESSAGES } from "../../consts/messages";
 import { ELEMENT_IDS } from "../../consts/elements";
+import { getValue } from "../dom";
 
 class PostFormHandlerClass extends FormHandler {
   private handlePostSubmit = (e: Event) => {
@@ -12,16 +13,9 @@ class PostFormHandlerClass extends FormHandler {
       return;
     }
 
-    const content = this.getPostContent();
+    const content = getValue(ELEMENT_IDS.POST_CONTENT);
     this.createPost(content, currentUser.username);
   };
-
-  private getPostContent() {
-    const contentElement = document.getElementById(
-      ELEMENT_IDS.POST_CONTENT,
-    ) as HTMLTextAreaElement;
-    return contentElement.value;
-  }
 
   private createPost(content: string, author: string) {
     const { posts } = postStore.getState();

@@ -136,3 +136,83 @@ userStorage에 저장된 정보는 playwright에서 null로 잡힘
 // 질문)
 state가 엮이면, vNode와 함께 어떻게 보관해야할까?
 리액트는 key에 맵핑한다고 되어있는데
+
+## ts 전환
+
+- 우선 typescript 설치
+- tsconfig.json 생성 및 설정
+- vite.config.js에서 build target을 es2020으로 설정
+- 이후 디펜던시가 가장 적은 부분부터 마이그레이션 시작
+
+- 이슈 발생 createVNode에서 ...children으로 받아오던 것이 무조건 array가 아님.
+- 그런데 기존 코드에서는 무조건 array라고 생각해서 children을 flatten에 넣고 돌려버림
+
+- 와, 생각보다 js 믿고 개판으로 때려박은게 많았음
+- 그리고 vNode와 실제 node간의 props, event 등의 타입이 다르게 적용되던 부분들 처리해주기 까다로웠음
+- 그렇게 로직 파일들을 다 수정해주고... 이제 진짜 큰 거 온다.
+- 바로바로... JSX를 TSX로 바꿔주기
+
+#### TSX
+
+- 'JSX.IntrinsicElements' 인터페이스가 없으므로 JSX 요소는 암시적으로 'any' 형식입니다.ts(7026)
+- 일단 이런 에러가 나기 시작함
+
+- 음 그런게 있군. tsconfig에서 `"jsx": "react",`를 수정해야하나?
+- (`"jsx": "preserve",`나 `"jsx": "react-jsx",`로 해야하나?)
+
+> react: JSX를 수동 팩토리(createVNode)로 변환
+> react-jsx: React 17+ 자동 변환 방식 (JSX → jsx-runtime), 리액트 전용
+> preserve: TypeScript가 JSX 문법을 변환하지 않고 그대로 출력.이건 보통 Babel이나 SWC 같은 JS 변환 툴이 JSX를 처리하게 하고 싶을 때 사용
+
+- 그렇다면 다른 해결 방법
+- `jsx.d.ts` 파일 추가 -> JSX.IntrinsicElements와 관련 타입을 정의
+
+```ts
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+import type { VNode, Props } from "../lib/vdom/index";
+
+declare global {
+  namespace JSX {
+    // HTML 태그를 사용할 수 있게 함
+    interface IntrinsicElements {
+      [elemName: string]: Props;
+    }
+
+    // JSX가 반환하는 타입 정의
+    interface Element extends VNode {}
+    // 사용자 정의 컴포넌트를 쓸 때 필요한 선언
+    interface ElementClass {}
+    // 사용자 정의 컴포넌트의 props 타입 추론 기준이 되는 속성 이름 설정
+    interface ElementAttributesProperty {
+      props: {};
+    }
+  }
+}
+```
+
+- `/** @jsx createVNode */`: JSX를 사용할 때 어떤 함수로 변환할지를 지정하는 주석
+
+- 마지막으로 테스트 코드에서 jsx를 tsx로 수정해주고, 테스트코드는 js로 관리되는 중이니 eslint 안걸리도록 변경
+
+## 리팩토링
+
+- 관심사 분리
+
+  > 하나로 관리되던 globalStore를 userStore와 postStore로 분리, 각각의 state와 actions를 분리해서 관리
+  > 각각에 subscribe render를 추가해서 렌더링 함수를 분리해서 관리
+
+  > 폼핸들러 분리하는데 고생함
+  > 일단 받는 데이터도 너무 다르고, 중복되는 요소가 별로없음. 하나는 폼도 아님.
+  > 그래서 폼으로 감싸주고, 공통 요소를 뽑아서 하나의 함수로 만들고, 해당 함수를 중첩해서 사용(class형 쓸까하다가 그냥 함수형으로 함)
+  > 그리고 store도 따로 나눴는데, form도 나눠야될 거 같아서 나눔
+
+
+## 멘토링
+
+건강한 조직일수록, “도움을 요청” 했을 때 신뢰를 더 빠르게 쌓아갈 수 있음.
+
+- 도움을 요청한다는 것 = 취약점을 드러내는 것
+- 취약점을 드러냈을 때, 사람들이 공격을 하는 게 아니라 도움을 주는 조직이라면 건강한 조직.
+- (책) 최고의 팀은 무엇이 다른가
+
+https://typedoc.org/

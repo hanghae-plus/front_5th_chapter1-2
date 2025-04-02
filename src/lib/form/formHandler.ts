@@ -1,3 +1,5 @@
+import { clearValue } from "../dom";
+
 export class FormHandler {
   withPreventDefault(handler: (e: Event) => void) {
     return (e: Event) => {
@@ -10,10 +12,7 @@ export class FormHandler {
     return (handler: (e: Event) => void) => {
       return (e: Event) => {
         handler(e);
-        const element = document.getElementById(elementId) as
-          | HTMLInputElement
-          | HTMLTextAreaElement;
-        if (element) element.value = "";
+        clearValue(elementId);
       };
     };
   }
