@@ -1,11 +1,14 @@
 import { createObserver } from "../observer";
 
-export const createStore = (initialState, initialActions) => {
+export const createStore = <State extends object, Actions extends object>(
+  initialState: State,
+  initialActions: Actions,
+) => {
   const { subscribe, notify } = createObserver();
 
   let state = { ...initialState };
 
-  const setState = (newState) => {
+  const setState = (newState: Partial<State>) => {
     state = { ...state, ...newState };
     notify();
   };
@@ -15,7 +18,7 @@ export const createStore = (initialState, initialActions) => {
   const actions = Object.fromEntries(
     Object.entries(initialActions).map(([key, value]) => [
       key,
-      (...args) => setState(value(getState(), ...args)),
+      (...args: unknown[]) => setState(value(getState(), ...args)),
     ]),
   );
 
