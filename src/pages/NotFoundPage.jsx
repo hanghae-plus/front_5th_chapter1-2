@@ -1,19 +1,6 @@
 /** @jsx createVNode */
 import { createVNode } from "../lib";
-import { router } from "../router";
-
-function Link({ onClick, children, ...props }) {
-  const handleClick = (e) => {
-    e.preventDefault();
-    onClick?.();
-    router.get().push(e.target.href.replace(window.location.origin, ""));
-  };
-  return (
-    <a onClick={handleClick} {...props}>
-      {children}
-    </a>
-  );
-}
+import { Link } from "../components/common/Link";
 
 export const NotFoundPage = () => (
   <main className="bg-gray-100 flex items-center justify-center min-h-screen">
