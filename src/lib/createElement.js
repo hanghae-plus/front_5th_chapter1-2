@@ -1,3 +1,4 @@
+import { getDomAttributeName } from "../utils/domUtils";
 import { addEvent } from "./eventManager";
 
 const isEmptyNode = (vNode) =>
@@ -40,33 +41,17 @@ function updateAttributes($el, props) {
   if (!props) return;
 
   Object.entries(props).forEach(([key, value]) => {
-    onSetAttribute($el, key, value);
+    $el.setAttribute(getDomAttributeName(key), value);
 
-    if (typeof value === "function") {
-      const formattedEventType = key.slice(2).toLowerCase();
+    if (typeof value !== "function") return;
 
-      addEvent($el, formattedEventType, value);
+    const formattedEventType = key.slice(2).toLowerCase();
 
-      $el.removeAttribute(key.toLowerCase());
-    }
+    $el.__eventHandlers = {};
+    $el.__eventHandlers[key] = value;
+
+    addEvent($el, formattedEventType, value);
+
+    $el.removeAttribute(key.toLowerCase());
   });
-}
-
-function onSetAttribute($el, key, value) {
-  switch (key) {
-    case "className":
-      $el.setAttribute("class", value);
-      break;
-
-    case "htmlFor":
-      $el.setAttribute("for", value);
-      break;
-
-    case "httpEquiv":
-      $el.setAttribute("http-equiv", value);
-      break;
-
-    default:
-      $el.setAttribute(key, value);
-  }
 }

@@ -1,28 +1,21 @@
 import { setupEventListeners } from "./eventManager";
 import { createElement } from "./createElement";
 import { normalizeVNode } from "./normalizeVNode";
-// TODO: 심화 @Enjoywater
-// import { updateElement } from "./updateElement";
+import { updateElement } from "./updateElement";
 
 export function renderElement(vNode, container) {
-  const currentRoot = document.querySelector("#root");
-  const element = createElement(normalizeVNode(vNode));
+  const isEmptyContainer = container.children.length === 0;
+  const normalizedNode = normalizeVNode(vNode);
 
-  if (currentRoot) {
-    currentRoot.replaceChildren();
-    currentRoot.appendChild(element);
+  if (isEmptyContainer) {
+    const element = createElement(normalizedNode);
 
-    setupEventListeners(currentRoot);
+    container.appendChild(element);
+  } else {
+    const oldNode = container.children[0];
 
-    return currentRoot;
+    updateElement(container, normalizedNode, oldNode);
   }
 
-  container.replaceChildren();
-  container.appendChild(element);
-
   setupEventListeners(container);
-
-  // 최초 렌더링시에는 createElement로 DOM을 생성하고
-  // 이후에는 updateElement로 기존 DOM을 업데이트한다.
-  // 렌더링이 완료되면 container에 이벤트를 등록한다.
 }

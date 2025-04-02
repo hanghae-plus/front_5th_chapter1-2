@@ -1,8 +1,8 @@
-const vNodeToEmptyString = (vNode) =>
+const isEmptyNode = (vNode) =>
   vNode === null || vNode === undefined || vNode === false || vNode === true;
 
 export function normalizeVNode(vNode) {
-  if (vNodeToEmptyString(vNode)) return "";
+  if (isEmptyNode(vNode)) return "";
 
   if (typeof vNode === "string" || typeof vNode === "number")
     return String(vNode);

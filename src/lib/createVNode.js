@@ -14,8 +14,16 @@ const parsedChildren = (children) => {
   );
 };
 
-export const createVNode = (type, props, ...children) => ({
-  type,
-  props,
-  children: parsedChildren(children),
-});
+export const createVNode = (type, props, ...children) => {
+  const isValidType = typeof type === "string" || typeof type === "function";
+
+  if (!isValidType) {
+    throw new Error(`허용 type = string, function / 받은 값: ${typeof type}`);
+  }
+
+  return {
+    type,
+    props,
+    children: parsedChildren(children),
+  };
+};
