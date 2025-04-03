@@ -1,5 +1,6 @@
 import { createStore } from "../lib";
 import { userStorage } from "../storages";
+import { addItem, removeItem } from "../utils/arrayUtils";
 
 const 초 = 1000;
 const 분 = 초 * 60;
@@ -52,6 +53,35 @@ export const globalStore = createStore(
     logout(state) {
       userStorage.reset();
       return { ...state, currentUser: null, loggedIn: false };
+    },
+    toggleLikePost(state, postId) {
+      // console.log("postId", postId);
+      if (!state.loggedIn) {
+        return { ...state };
+      }
+
+      const posts = state.posts.map((post) => {
+        if (post.id !== postId) return post;
+
+        const username = state.currentUser.username;
+        const hasItem = post.likeUsers.includes(state.currentUser.username);
+
+        // console.log("username", username, hasItem);
+
+        // 좋아요 상태를 반전시키는 로직 추가
+        const updatedLikeUsers = hasItem
+          ? removeItem(post.likeUsers, username) // 좋아요 취소
+          : addItem(post.likeUsers, username); // 좋아요 추가
+
+        console.log("updatedLikeUsers=>", updatedLikeUsers);
+        return {
+          ...post,
+          likeUsers: updatedLikeUsers,
+          activationLike: !post.activationLike,
+        };
+      });
+
+      return { ...state, posts };
     },
   },
 );
