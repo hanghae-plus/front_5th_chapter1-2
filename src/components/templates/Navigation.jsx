@@ -1,10 +1,14 @@
 /** @jsx createVNode */
+import { BASE_PATH } from "../../constants/basePath";
 import { createVNode } from "../../lib";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  const currentPath = window.location.hash
+    ? window.location.hash.replace("#", "")
+    : window.location.pathname.replace(BASE_PATH, "");
+
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 

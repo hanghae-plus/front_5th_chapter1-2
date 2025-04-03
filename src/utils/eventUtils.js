@@ -33,3 +33,8 @@ export const addEvent = (eventType, selector, handler) => {
   }
   eventHandlers[eventType][selector] = handler;
 };
+
+export const normalizeEventName = (attribute) =>
+  attribute.replace(/^on/, "").toLowerCase();
+
+export const isCheckStartOn = (attribute) => attribute.startsWith("on");
