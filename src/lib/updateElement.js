@@ -1,69 +1,102 @@
+import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
-import { addEvent, removeEvent } from "./eventManager.js";
 
-/**newNode와 oldNode의 attribute를 비교하여 변경된 부분만 반영.*/
 function updateAttributes(target, newProps, oldProps) {
-  //달라지거나 추가된 props를 반영
-  for (let [attr, value] of Object.entries(newProps)) {
-    if (newProps[attr] === oldProps[attr]) continue;
-    if (attr === "className") attr = "class";
-    if (attr.startsWith("on")) {
-      return addEvent(target, attr.replace("on", "").toLowerCase(), value);
+  const newPropsBundle = newProps ? Object.entries(newProps) : [];
+  const oldPropsBundle = oldProps ? Object.entries(oldProps) : [];
+
+  for (const [prop, value] of oldPropsBundle) {
+    let newPropValue = newProps[prop];
+
+    if (isEventProp(prop)) {
+      removeEvent(target, normalizeEventNape(prop), value);
+      newPropValue = newProps[normalizeEventNape(prop)];
     }
-    target.setAttribute(attr, value);
+
+    if (newPropValue === undefined) {
+      target.removeAttribute(prop);
+      continue;
+    }
+
+    if (value !== newPropValue) {
+      if (isClassProp(prop)) {
+        target.classList = newPropValue;
+        continue;
+      }
+      if (isEventProp(prop)) {
+        addEvent(target, normalizeEventNape(prop), newPropValue);
+        continue;
+      }
+      target.setAttribute(prop, newPropValue);
+      continue;
+    }
   }
-  for (const attr of Object.keys(oldProps)) {
-    if (newProps[attr] !== undefined) continue;
-    if (attr.startsWith("on")) {
-      removeEvent(target, attr.replace("on", "").toLowerCase(), oldProps[attr]);
+
+  for (const [prop, value] of newPropsBundle) {
+    if (oldPropsBundle[prop] === undefined) {
+      if (isEventProp(prop)) {
+        addEvent(target, normalizeEventNape(prop), value);
+        return;
+      }
+      if (isClassProp(prop)) {
+        target.classList = value;
+        continue;
+      }
+      target.setAttribute(prop, value);
     }
-    target.removeAttribute(attr);
   }
 }
 
-/**기존 container가 비어있지 않다면 실행할 Element업데이트 함수.
- * @param {HTMLElement} containerElement
- */
-export function updateElement(containerElement, newNode, oldNode, index = 0) {
-  console.log("updateElement");
-  const currnetChildNodes = containerElement.childNodes[index];
+export function updateElement(parentElement, newNode, oldNode, index = 0) {
+  const currentChildNodes = parentElement.childNodes[index];
+  if (newNode && !oldNode) {
+    parentElement.appendChild(createElement(newNode));
+    return;
+  }
 
   if (oldNode && !newNode) {
-    return containerElement.removeChild(currnetChildNodes);
+    parentElement.removeChild(currentChildNodes);
+    return;
   }
 
-  if (!oldNode && newNode) {
-    return containerElement.appendChild(createElement(newNode));
+  if (typeof newNode === "string" || typeof newNode === "number") {
+    if (oldNode !== newNode) {
+      currentChildNodes.textContent = newNode;
+    }
+    return;
   }
 
-  if (typeof newNode === "string" && typeof oldNode === "string") {
-    if (newNode === oldNode) return; //같은문자
-
-    return containerElement.replaceChild(
-      createElement(newNode),
-      currnetChildNodes,
-    );
+  if (newNode.type !== oldNode.type) {
+    parentElement.replaceChild(createElement(newNode), currentChildNodes);
+    return;
   }
 
-  if (oldNode.type !== newNode.type) {
-    return containerElement.replaceChild(
-      createElement(newNode),
-      currnetChildNodes,
-    );
-  }
+  updateAttributes(currentChildNodes, newNode.props || {}, oldNode.props || {});
 
-  updateAttributes(currnetChildNodes, newNode.props || {}, oldNode.props || {});
+  const newNodeDepth = newNode.children.length;
+  const oldNodeDepth = oldNode.children.length;
 
-  let newNodeLength = newNode.children.length;
-  let oldNodeLength = oldNode.children.length;
+  const depth = newNodeDepth >= oldNodeDepth ? newNodeDepth : oldNodeDepth;
+  if (depth === 0) return;
 
-  const depth = newNodeLength >= oldNodeLength ? newNodeLength : oldNodeLength;
   for (let i = 0; i < depth; i++) {
     updateElement(
-      currnetChildNodes,
+      currentChildNodes,
       newNode.children[i],
       oldNode.children[i],
       i,
     );
   }
+}
+
+function isEventProp(prop) {
+  return prop.startsWith("on") && prop.length > 2;
+}
+
+function isClassProp(prop) {
+  return prop === "class" || prop === "className";
+}
+
+function normalizeEventNape(prop) {
+  return prop.toLowerCase().slice(2);
 }

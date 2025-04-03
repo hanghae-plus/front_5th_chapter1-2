@@ -1,33 +1,23 @@
-import { setupEventListeners } from "./eventManager";
-import { createElement } from "./createElement";
 import { normalizeVNode } from "./normalizeVNode";
-// import { updateElement } from "./updateElement";
+import { updateElement } from "./updateElement";
+import { createElement } from "./createElement";
+import { setupEventListeners } from "./eventManager";
 
-// let oldNode = null;
+const oldNodeMap = new Map();
 
-/**container에 빈 값이 들어있는 경우, 새로운 Element를 생성합니다. */
-// function createRenderElement(container, _normalizedVNode) {
-//   const _dom = createElement(_normalizedVNode);
-//   container.appendChild(_dom);
-// }
-
-/**renderElement는 앞에서 작성된 함수들을 조합하여 vNode를 container에 렌더링하는 작업을 수행한다. */
 export function renderElement(vNode, container) {
+  if (!vNode || !container) return;
+
+  const _oldNode = oldNodeMap.get(container);
   const _normalizedVNode = normalizeVNode(vNode);
+  const _dom = createElement(_normalizedVNode);
 
-  const oldNode = container._oldNode;
-  console.log(oldNode);
-
-  if (oldNode) {
-    // updateElement(container, _normalizedVNode, oldNode);
-  } else {
-    // createRenderElement(container, _normalizedVNode);
-    const _dom = createElement(_normalizedVNode);
+  if (!_oldNode && !container.innerHTML) {
     container.appendChild(_dom);
+  } else {
+    updateElement(container, _normalizedVNode, _oldNode);
   }
 
+  oldNodeMap.set(container, _normalizedVNode);
   setupEventListeners(container);
-  container._oldNode = normalizeVNode;
-  console.log(container._oldNode);
-  console.log(_normalizedVNode);
 }
