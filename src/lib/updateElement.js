@@ -25,6 +25,7 @@ function updateAttributes(target, newProps, oldProps) {
  * @param {HTMLElement} containerElement
  */
 export function updateElement(containerElement, newNode, oldNode, index = 0) {
+  console.log("updateElement");
   const currnetChildNodes = containerElement.childNodes[index];
 
   if (oldNode && !newNode) {
