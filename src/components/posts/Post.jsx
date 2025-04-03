@@ -3,13 +3,20 @@ import { createVNode } from "../../lib";
 import { toTimeFormat } from "../../utils/index.js";
 import { globalStore } from "../../stores/globalStore.js";
 
-function clickLike() {
-  const { loggedIn } = globalStore.getState();
-
-  if (!loggedIn) {
-    alert("로그인 후 이용해주세요");
-    return false;
-  }
+function likePost(author) {
+  // const updateLike = posts.findIndex((post) => post.author === author);
+  globalStore.setState({
+    posts: globalStore.getState().posts.map((post) =>
+      post.author === author
+        ? {
+            ...post,
+            likeUsers: post.likeUsers.includes("좋아요")
+              ? post.likeUsers.filter((user) => user !== "좋아요")
+              : [...post.likeUsers, "좋아요"],
+          }
+        : post,
+    ),
+  });
 }
 
 export const Post = ({
@@ -19,6 +26,25 @@ export const Post = ({
   likeUsers,
   activationLike = false,
 }) => {
+  if (likeUsers.length != 0) {
+    activationLike = true;
+  }
+
+  const { loggedIn } = globalStore.getState();
+
+  const clickLike = (e) => {
+    e.preventDefault();
+    if (!loggedIn) {
+      alert("로그인 후 이용해주세요");
+      return false;
+    }
+    if (loggedIn) {
+      // console.log('I am logged in!');
+      // console.log(author);
+      likePost(author);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow p-4 mb-4">
       <div className="flex items-center mb-2">
