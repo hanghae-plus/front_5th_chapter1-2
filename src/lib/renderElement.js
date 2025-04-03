@@ -9,25 +9,15 @@ import { updateElement } from "./updateElement";
  * */
 export function renderElement(vNode, container) {
   // vNode를 정규화 (함수형 컴포넌트를 HTML 요소로 변환)
-  const normalizedNode = normalizeVNode(vNode);
+  const normalizedVNode = normalizeVNode(vNode);
 
-  // 이전에 렌더링된 노드 확인
-  const prevNode = container._prevVNode;
-
-  if (!prevNode) {
-    const el = createElement(normalizedNode);
-
-    // 기존 컨텐츠 제거 후 새로운 요소 추가
-    container.innerHTML = "";
-    container.appendChild(el);
+  if (container.oldNode) {
+    updateElement(container, normalizedVNode, container.oldNode);
   } else {
-    // 변경된 부분 업데이트
-    updateElement(container, normalizedNode, prevNode);
+    const el = createElement(normalizedVNode);
+    container.replaceChildren(el);
   }
+  container.oldNode = normalizedVNode;
 
-  // 이벤트 리스너 설정
   setupEventListeners(container);
-
-  // 현재 노드를 이전 노드로 저장
-  container._prevVNode = normalizedNode;
 }

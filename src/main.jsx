@@ -27,19 +27,10 @@ router.set(
 );
 
 function main() {
-  let isRendering = false;
+  router.get()?.subscribe(render);
+  globalStore.subscribe(render);
 
-  const safeRender = () => {
-    if (isRendering) return;
-    isRendering = true;
-    render();
-    isRendering = false;
-  };
-
-  router.get().subscribe(safeRender);
-  globalStore.subscribe(safeRender);
-
-  safeRender();
+  render();
 }
 
 main();
