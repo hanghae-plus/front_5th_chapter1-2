@@ -19,7 +19,8 @@ router.set(
     "/profile": () => {
       const { loggedIn } = globalStore.getState();
       if (!loggedIn) {
-        throw new UnauthorizedError();
+        window.location.hash = "/login";
+        return <LoginPage />;
       }
       return <ProfilePage />;
     },
