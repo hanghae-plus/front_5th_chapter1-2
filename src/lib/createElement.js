@@ -54,7 +54,6 @@ function updateAttributes($el, props) {
   keys.forEach((k) => {
     if (k === "className") {
       $el.setAttribute("class", props[k]);
-      return;
     } else if (k.startsWith("on")) {
       const eventName = k.substring(2).toLowerCase();
       addEvent($el, eventName, props[k]);
