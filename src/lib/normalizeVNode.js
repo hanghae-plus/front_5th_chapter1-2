@@ -29,15 +29,8 @@ export function normalizeVNode(vNode) {
   if (typeof vNode.type === "function") {
     // 컴포넌트 함수 실행
     const component = vNode.type;
-    const props = { ...(vNode.props || {}) };
-
-    // children 이 있으면 props에 추가
-    if (vNode.children && vNode.children.length > 0) {
-      props.children = vNode.children;
-    }
-
+    const props = vNode.props || {};
     const componentResult = component(props);
-
     // 결과를 다시 정규화(중첩 제거)
     return normalizeVNode(componentResult);
   }

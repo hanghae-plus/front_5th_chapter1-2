@@ -25,7 +25,7 @@ export const Navigation = () => {
   const { loggedIn } = globalStore.getState();
   const { logout } = globalStore.actions;
   return (
-    <nav className="bg-white shadow-md p-2 sticky top-14">
+    <nav className="bg-white shadow-md p-2 sticky top-14 z-10">
       <ul className="flex justify-around">
         <li>
           <Link href="/" className={getNavItemClass("/")}>

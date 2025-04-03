@@ -25,6 +25,7 @@ function handleEvent(event) {
  * @param {HTMLElement} root - 이벤트를 위임할 루트 요소
  */
 export function setupEventListeners(root) {
+  console.log("root", root);
   if (!root || root._hasEventSetup) return;
 
   // 등록된 모든 이벤트 타입에 대해 리스너 설정
