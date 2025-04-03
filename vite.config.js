@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 
 export default mergeConfig(
   defineConfig({
+    base: "/front-5th-chapter1-2/",
     build: {
       outDir: "docs",
       emptyOutDir: true,
