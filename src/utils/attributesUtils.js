@@ -40,19 +40,18 @@ export const updateEventHandler = (
 ) => {
   const eventType = normalizeEventPropKey(key);
 
-  if (!isPrototypeEvent($el, eventType)) {
-    setAttribute($el, key, newHandler);
+  if (isPrototypeEvent($el, eventType)) {
+    if (oldHandler) {
+      removeEvent($el, eventType, oldHandler);
+    }
+
+    if (newHandler) {
+      addEvent($el, eventType, newHandler);
+    }
     return;
   }
 
-  if (oldHandler) {
-    removeEvent($el, eventType, oldHandler);
-    return;
-  }
-
-  if (newHandler) {
-    addEvent($el, eventType, newHandler);
-  }
+  setAttribute($el, key, newHandler);
 };
 
 /**
