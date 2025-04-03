@@ -12,34 +12,74 @@ import { addEvent } from "./eventManager";
  * @returns 
  */
 export function createElement(vNode) {
+  // null, undefined, boolean 처리
   if (vNode == null || typeof vNode === "boolean") {
     return document.createTextNode("");
   }
 
+  // 문자열이나 숫자 처리
   if (typeof vNode === "string" || typeof vNode === "number") {
     return document.createTextNode(String(vNode));
   }
 
+  // 배열 처리
   if (Array.isArray(vNode)) {
     const $el = document.createDocumentFragment();
     vNode.forEach((child) => {
-      updateAttributes($el, child);
+      if (child != null) {
+        // null이나 undefined가 아닌 경우만 처리
+        $el.appendChild(createElement(child));
+      }
     });
     return $el;
   }
+
+  // 함수형 컴포넌트 처리
   if (typeof vNode.type === "function") {
-    return createElement(vNode.type(vNode.props));
+    throw new Error("함수형 컴포넌트는 지원하지 않습니다.");
   }
+
+  // 여기에 일반 HTML 요소 생성 로직 추가
+  const $el = document.createElement(vNode.type);
+
+  // 속성 적용
+  if (vNode.props) {
+    updateAttributes($el, vNode.props);
+  }
+
+  // 자식 요소 추가
+  if (vNode.children) {
+    vNode.children.forEach((child) => {
+      if (child != null) {
+        // null이나 undefined가 아닌 경우만 처리
+        $el.appendChild(createElement(child));
+      }
+    });
+  }
+
+  return $el;
 }
 
 function updateAttributes($el, props) {
-  Object.entries(props).forEach(([key, value]) => {
-    if (key === "className") {
-      $el.className = value;
-    } else if (key === "onClick") {
-      addEvent($el, key, value);
-    } else {
-      $el.setAttribute(key, value);
+  if (!props) return;
+
+  Object.entries(props).forEach(([name, value]) => {
+    // 이벤트 처리
+    if (name.startsWith("on") && typeof value === "function") {
+      const eventType = name.toLowerCase().substring(2);
+      addEvent($el, eventType, value);
+    }
+    // className 처리
+    else if (name === "className") {
+      $el.setAttribute("class", value);
+    }
+    // 일반 속성 처리
+    else if (name !== "children" && name !== "key") {
+      if (value === true) {
+        $el.setAttribute(name, "");
+      } else if (value !== false && value != null) {
+        $el.setAttribute(name, value);
+      }
     }
   });
 }
