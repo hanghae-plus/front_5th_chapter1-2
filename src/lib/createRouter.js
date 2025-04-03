@@ -1,14 +1,16 @@
 import { createObserver } from "./createObserver";
-
+import { formatPath } from "./formatPath";
+import { getTargetPath } from "./getTargetPath";
 export const createRouter = (routes) => {
   const { subscribe, notify } = createObserver();
 
-  const getPath = () => window.location.pathname;
+  const getPath = () => formatPath(window.location.pathname);
 
   const getTarget = () => routes[getPath()];
 
   const push = (path) => {
-    window.history.pushState(null, null, path);
+    const targetPath = getTargetPath(path);
+    window.history.pushState(null, null, targetPath);
     notify();
   };
 

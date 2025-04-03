@@ -1,11 +1,14 @@
-/** @jsx createVNode */
-import { createVNode } from "../../lib";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
+import { formatPath } from "../../lib/formatPath";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
-  return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
+  const currentPath = window.location.hash
+    ? window.location.hash.slice(1) || "/"
+    : window.location.pathname;
+  return formatPath(currentPath) === path
+    ? "text-blue-600 font-bold"
+    : "text-gray-600";
 };
 
 function Link({ onClick, children, ...props }) {

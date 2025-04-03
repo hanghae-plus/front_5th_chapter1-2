@@ -53,5 +53,31 @@ export const globalStore = createStore(
       userStorage.reset();
       return { ...state, currentUser: null, loggedIn: false };
     },
+    addPost(state, { content }) {
+      const post = {
+        id: state.posts.length + 1,
+        author: state.currentUser.username,
+        time: Date.now() - 0 * 분,
+        content,
+        likeUsers: [],
+      };
+      return { ...state, posts: [...state.posts, post] };
+    },
+    likePost(state, postId) {
+      console.log(postId);
+      const { username } = state.currentUser;
+      const postIndex = state.posts.findIndex((post) => post.id === postId);
+      const likeUsers = state.posts[postIndex].likeUsers;
+
+      if (state.posts[postIndex].likeUsers.includes(username)) {
+        const userIndex = likeUsers.findIndex((user) => user === username);
+        likeUsers.splice(userIndex, 1);
+      } else {
+        likeUsers.push(username);
+      }
+      const posts = [...state.posts];
+      posts[postIndex] = { ...posts[postIndex], likeUsers };
+      return { ...state, posts };
+    },
   },
 );
