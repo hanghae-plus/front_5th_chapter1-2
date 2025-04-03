@@ -1,5 +1,6 @@
 {
   "name": "front-5th-chapter1-2",
+  "homepage": "https://JiHwanLee-dev.github.io/front_5th_chapter1-2",
   "private": true,
   "version": "0.0.0",
   "engines": {
@@ -22,7 +23,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "npx playwright show-report",
     "test:generate": "playwright codegen localhost:5173",
-    "prepare": "husky"
+    "prepare": "husky",
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
