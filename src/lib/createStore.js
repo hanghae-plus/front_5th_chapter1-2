@@ -12,6 +12,7 @@ export const createStore = (initialState, initialActions) => {
 
   const getState = () => ({ ...state });
 
+  // TODO : 뭘까?
   const actions = Object.fromEntries(
     Object.entries(initialActions).map(([key, value]) => [
       key,

@@ -16,7 +16,7 @@ export function renderElement(vNode, container) {
   } else {
     const element = createElement(createdVNode);
     container.appendChild(element);
-    setupEventListeners(container);
     previousVNodeMap.set(container, createdVNode);
   }
+  setupEventListeners(container);
 }
