@@ -131,7 +131,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
           },
         },
         {
-          name: "함수형 컴포넌트",
+          name: "함수형 컴포넌트", //NOTE: React 처럼 함수형 컴포넌트를 선언해도 vNode가 생성됨
           vNode: <TestComponent message="Hello World" />,
           expected: {
             type: TestComponent,
@@ -149,7 +149,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
           },
         },
         {
-          name: "조건부 렌더링",
+          name: "조건부 렌더링", //NOTE: children으로 false 만났을 경우 추가 x
           vNode: (
             <div>
               {true && <span>Shown</span>}
@@ -186,7 +186,7 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
           },
         },
         {
-          name: "null과 undefined 처리",
+          name: "null과 undefined 처리", //NOTE: children으로 null, undefined만났을 경우, 추가 x
           vNode: (
             <div>
               {null}
@@ -440,27 +440,25 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
       container = document.createElement("div");
       document.body.appendChild(container);
     });
-
     afterEach(() => {
       document.body.removeChild(container);
     });
 
     it("이벤트가 위임 방식으로 등록되어야 한다", () => {
-      const clickHandler = vi.fn();
+      const clickHandler = vi.fn(); //Mock Funtion 생성
       const button = document.createElement("button");
       container.appendChild(button);
-
+      //container밑 button, button에 click addEvent,
       addEvent(button, "click", clickHandler);
       setupEventListeners(container);
       button.click();
 
-      expect(clickHandler).toHaveBeenCalledTimes(1);
+      expect(clickHandler).toHaveBeenCalledTimes(1); //한 번만 호출하는지 확인
 
       const handleClick = (e) => e.stopPropagation();
       button.addEventListener("click", handleClick);
       button.click();
       expect(clickHandler).toHaveBeenCalledTimes(1);
-
       expect(clickHandler).toHaveBeenCalledTimes(1);
       button.removeEventListener("click", handleClick);
       button.click();
@@ -469,18 +467,20 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
 
     it("이벤트 핸들러가 제거되면 더 이상 호출되지 않아야 한다", () => {
       const clickHandler = vi.fn();
-      const button = document.createElement("button");
-      container.appendChild(button);
-
+      const button = document.createElement("button"); //버튼을 만들고
+      container.appendChild(button); //컨테이너에 버튼을 추가한다.
       addEvent(button, "click", clickHandler);
+      //addEvent를 통해 버튼에 클릭 이벤트가 들어오면 clickHandler를 실행하도록 한다.
       setupEventListeners(container);
-      button.click();
-      expect(clickHandler).toHaveBeenCalledTimes(1);
+      //setupEvent로 addEvent로 추가한 이벤트를 루트 밑으로 등록시킨다.
+      button.click(); //버튼을 클릭한다.
+      expect(clickHandler).toHaveBeenCalledTimes(1); //!! //버튼을 클릭하면 1회 실행이 된다.
 
-      removeEvent(button, "click", clickHandler);
+      removeEvent(button, "click", clickHandler); //button 클릭시 clickHandler 이벤트를 없앤다
       button.click();
 
-      expect(clickHandler).toHaveBeenCalledTimes(1);
+      expect(clickHandler).toHaveBeenCalledTimes(1); //이벤트를 없애고 클릭을 하면 이벤트로 인해 함수가 실행되지 않아 기존의 1로 출력이 된다.
+      //새롭게 안 사실, toHave...는 기록을 저장한다. 그래서 0이 아닌 1이나오고 2가 나오면 제거가 안된거다
     });
   });
 
@@ -587,7 +587,6 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
         </div>
       );
       renderElement(updatedVNode, $container);
-
       const newButton = $container.querySelectorAll("button")[1];
       newButton.click();
 
