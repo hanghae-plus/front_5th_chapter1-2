@@ -14,13 +14,11 @@ export function renderElement(vNode, container) {
 
   if (!oldNode) {
     const element = createElement(newNode);
-
     container.appendChild(element);
   } else {
     updateElement(container, newNode, oldNode);
   }
 
   oldNodeMap.set(container, newNode);
-
   setupEventListeners(container);
 }
