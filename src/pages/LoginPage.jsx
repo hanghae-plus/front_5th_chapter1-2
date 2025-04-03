@@ -25,7 +25,7 @@ export const LoginPage = () => {
         <h1 className="text-2xl font-bold text-center text-blue-600 mb-8">
           항해플러스
         </h1>
-        <form id="login-form" onSubmit={handleSubmit}>
+        <form id="login-form">
           <input
             type="text"
             id="username"
@@ -42,6 +42,7 @@ export const LoginPage = () => {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white p-2 rounded"
+            onSubmit={handleSubmit}
           >
             로그인
           </button>

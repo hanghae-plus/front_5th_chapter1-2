@@ -7,7 +7,10 @@ function Link({ onClick, children, ...props }) {
   const handleClick = (e) => {
     e.preventDefault();
     onClick?.();
-    router.get().push(props.ref.replace(window.location.origin, ""));
+    if (e.defaultPrevented) return;
+    //router.get().push(e.target.href.replace(window.location.origin, ""))
+    const path = props.href?.replace(window.location.origin, "") || "/";
+    router.get().push(path);
   };
 
   return (
