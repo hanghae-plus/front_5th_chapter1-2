@@ -12,7 +12,6 @@ export function addEvent(element, eventType, handler) {
 
   if (!eventManagerMap.has(eventType)) {
     eventManagerMap.set(eventType, new Map());
-    console.log(eventManagerMap);
   }
 
   eventManagerMap.get(eventType).set(element, handler);
