@@ -4,7 +4,7 @@ import { toTimeFormat } from "../../utils/index.js";
 import { globalStore } from "../../stores";
 
 export const Post = ({ id, author, time, content, likeUsers = [] }) => {
-  const { currentUser, loggedIn } = globalStore.getState();
+  const { currentUser, loggedIn, posts } = globalStore.getState();
 
   const handleLike = () => {
     if (!loggedIn) {
@@ -12,7 +12,6 @@ export const Post = ({ id, author, time, content, likeUsers = [] }) => {
       return;
     }
 
-    const { posts } = globalStore.getState();
     const updatedPosts = posts.map((post) => {
       if (post.id === id) {
         const isLiked = post.likeUsers?.includes(currentUser.id);

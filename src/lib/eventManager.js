@@ -69,13 +69,16 @@ export function setupEventListeners(root) {
     const delegatedHandler = (event) => {
       let current = event.target;
       while (current && current !== root) {
-        if (elementHandlerMap.has(current)) {
-          const events = elementHandlerMap.get(current);
+        if (!elementHandlerMap.has(current)) {
+          current = current.parentElement;
+          continue;
+        }
 
-          if (events[eventType]) {
-            for (const handler of events[eventType]) {
-              handler.call(current, event);
-            }
+        const events = elementHandlerMap.get(current);
+
+        if (events[eventType]) {
+          for (const handler of events[eventType]) {
+            handler.call(current, event);
           }
         }
         current = current.parentElement;
