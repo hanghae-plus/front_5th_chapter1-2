@@ -1,4 +1,4 @@
-// import { addEvent } from "./eventManager";
+import { addEvent } from "./eventManager";
 
 /**
  * 1. vNode가 null, undefined, boolean일 경우, 빈 텍스트 노드를 반환합니다.
@@ -39,9 +39,11 @@ export function createElement(vNode) {
   // $el에 속성값 주입
   updateAttributes($el, props);
 
-  // 자식 컴포넌트도 element로 변환
+  // childrend depth 없는 경우 return
+  if (!Array.isArray(children)) return;
 
   children.forEach((child) => {
+    // 자식 컴포넌트도 element로 변환
     const $child = createElement(child);
     // $child에 속성값 주입.
     updateAttributes($child, child?.props);
@@ -54,6 +56,10 @@ function updateAttributes($el, props) {
   Object.entries(props || {}).forEach(([key, value]) => {
     if (key.toLowerCase() === "classname") {
       $el.setAttribute("class", value);
+    } else if (key.startsWith("on") && typeof value === "function") {
+      // const event = key.replace(/^on/i, "").toLowerCase();
+      const event = key.toLowerCase().slice(2);
+      addEvent($el, event, value);
     } else {
       $el.setAttribute(key, value);
     }
