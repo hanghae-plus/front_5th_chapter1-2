@@ -1,3 +1,2 @@
-const isProduct = "process"?.env?.NODE_DEV === "production";
-
-export const BASE_PATH = isProduct ? "/front_5th_chapter1-2" : "";
+// src/constants/basePath.js 파일을 수정하세요
+export const BASE_PATH = import.meta.env.PROD ? "/front_5th_chapter1-2" : "";
