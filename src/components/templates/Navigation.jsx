@@ -2,16 +2,19 @@
 import { createVNode } from "../../lib";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
+import { isHashMode } from "../../utils/basePath";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  const currentPath = isHashMode
+    ? location.hash.replace(/^#/, "")
+    : window.location.pathname;
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 
 function Link({ onClick, children, ...props }) {
   const handleClick = (e) => {
     e.preventDefault();
-    onClick?.();
+    onClick?.(e);
     router.get().push(e.target.href.replace(window.location.origin, ""));
   };
   return (
@@ -24,6 +27,7 @@ function Link({ onClick, children, ...props }) {
 export const Navigation = () => {
   const { loggedIn } = globalStore.getState();
   const { logout } = globalStore.actions;
+
   return (
     <nav className="bg-white shadow-md p-2 sticky top-14">
       <ul className="flex justify-around">
