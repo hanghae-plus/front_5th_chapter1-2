@@ -24,7 +24,7 @@
     "test:e2e:report": "npx playwright show-report",
     "test:generate": "playwright codegen localhost:5173",
     "prepare": "husky",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d docs"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
