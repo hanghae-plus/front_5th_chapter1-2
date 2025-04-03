@@ -10,29 +10,6 @@ export function getType(vNode) {
     return typeof vNode;
   }
 }
-/**
- *  자식Node 정규화 과정
- * @param children
- * @returns {*|*[]|*[]}
- */
-function normalizeChildren(children) {
-  let result = [];
-  console.log("children", children);
-  if (!children) {
-    return [];
-  } else {
-    result = children
-      .filter((child) => {
-        if (!exceptedNormalizedType.includes(getType(child))) {
-          return true;
-        }
-      })
-      .map((child) =>
-        getType(child) === "object" ? normalizeVNode(child) : child,
-      );
-  }
-  return result;
-}
 
 /**
  *  vNode를 정규화 시키는 과정
@@ -50,17 +27,17 @@ export function normalizeVNode(vNode) {
   // console.log("vNodeType", vNodeType);
   // console.log("vNode", vNode);
   // vNode가 함수형 컴포넌트 일 때
-  if (vNodeType === "object" && typeof vNode.type === "function") {
+  if (vNode && typeof vNode.type === "function") {
     // createVNode의 형태 반환
     return normalizeVNode(
-      vNode.type({ ...vNode.props, children: vNode.children }),
+      vNode.type({ ...(vNode.props || {}), children: vNode.children }),
     );
   }
-  // 일반 vNode 형태 일때, vNode의 type이 func이 아닌것
-  if (vNodeType === "object" && !("function" in vNode)) {
-    return {
-      ...vNode,
-      children: normalizeChildren(vNode.children),
-    };
+  // 자식 요소의 정규화 및 빈 문자열 제거
+  if (vNode.children) {
+    vNode.children = vNode.children
+      .map((child) => normalizeVNode(child))
+      .filter((child) => child !== "");
   }
+  return vNode;
 }
