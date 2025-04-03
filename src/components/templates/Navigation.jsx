@@ -49,11 +49,10 @@ export const Navigation = () => {
         {loggedIn && (
           <li>
             <a
-              href="#"
+              href="/#"
               id="logout"
               className="text-gray-600"
               onClick={(e) => {
-                e.preventDefault();
                 logout();
               }}
             >
