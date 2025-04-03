@@ -14,6 +14,7 @@ export default mergeConfig(
     },
   }),
   defineTestConfig({
+    base: "/hanghae99-chap2/",
     test: {
       globals: true,
       environment: "jsdom",
