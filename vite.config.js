@@ -10,21 +10,12 @@ export default ({ mode }) => {
   return mergeConfig(
     defineConfig({
       base: env.VITE_BASE_URL,
-      esbuild: {
-        jsxFactory: "createVNode",
-      },
+      esbuild: { jsxFactory: "createVNode" },
       optimizeDeps: {
-        esbuildOptions: {
-          jsx: "transform",
-          jsxFactory: "createVNode",
-        },
+        esbuildOptions: { jsx: "transform", jsxFactory: "createVNode" },
       },
       plugins: isCI ? undefined : [ssgCopyHTML(["login", "profile"])],
-      resolve: {
-        alias: {
-          "@": path.resolve(__dirname, "./src"),
-        },
-      },
+      resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
     }),
     defineTestConfig({
       test: {
