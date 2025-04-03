@@ -1,6 +1,6 @@
 import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
-import { extractEventKey, isEvent } from "../utils/eventUtils.js";
+import { extractEventKey, isEvent, getAttributeKey } from "../utils";
 
 function updateAttributes(target, originNewProps, originOldProps) {
   const attributes = new Set([
@@ -19,10 +19,15 @@ function updateAttributes(target, originNewProps, originOldProps) {
       removeEvent(target, eventKey);
       addEvent(target, eventKey, newPropValue);
     } else {
+      const attributeKey = getAttributeKey(key);
+      if (!attributeKey) {
+        return;
+      }
+
       if (newPropValue) {
-        target.setAttribute(key === "className" ? "class" : key, newPropValue);
+        target.setAttribute(attributeKey, newPropValue);
       } else {
-        target.removeAttribute(key === "className" ? "class" : key);
+        target.removeAttribute(attributeKey);
       }
     }
   });
@@ -43,32 +48,81 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     return;
   }
 
+  const $el = parentElement.childNodes[index];
+
   if (typeof newNode === "string" && typeof oldNode === "string") {
     if (newNode !== oldNode) {
-      parentElement.childNodes[index].textContent = newNode;
+      $el.textContent = newNode;
     }
     return;
   }
 
   if (newNode.type !== oldNode.type) {
-    const oldNodeElement = parentElement.childNodes[index];
-    if (oldNodeElement) {
-      oldNodeElement.replaceWith(createElement(newNode));
-      return;
-    }
-    parentElement.appendChild(createElement(newNode));
+    $el.replaceWith(createElement(newNode));
     return;
   }
 
-  const $el = parentElement.childNodes?.[index];
   if (newNode.type === oldNode.type) {
     updateAttributes($el, newNode.props || {}, oldNode.props || {});
   }
 
   const newNodeChildren = newNode.children || [];
   const oldNodeChildren = oldNode.children || [];
-  const maxLength = Math.max(newNodeChildren.length, oldNodeChildren.length);
-  for (let i = 0; i < maxLength; i++) {
-    updateElement($el, newNodeChildren[i], oldNodeChildren[i], i);
+
+  if (
+    newNodeChildren.every((child) => child.props?.key) &&
+    oldNodeChildren.every((child) => child.props?.key)
+  ) {
+    updateChildrenWithKey($el, newNodeChildren, oldNodeChildren);
+  } else {
+    const maxLength = Math.max(newNodeChildren.length, oldNodeChildren.length);
+    for (let i = 0; i < maxLength; i++) {
+      updateElement($el, newNodeChildren[i], oldNodeChildren[i], i);
+    }
   }
+}
+
+function updateChildrenWithKey(parentElement, newChildren, oldChildren) {
+  // 1. 이전 children을 key로 매핑
+  const oldKeyMap = new Map();
+  oldChildren.forEach((child, index) => {
+    if (child.props.key) {
+      oldKeyMap.set(child.props.key, { node: child, index });
+    }
+  });
+
+  // 2. newChildren에 대해 key를 확인하고 업데이트
+  newChildren.forEach((newChild, newIndex) => {
+    const key = newChild.props.key;
+
+    // 2-1. 새로운 노드가 추가된 경우
+    if (!oldKeyMap.has(key)) {
+      const newEl = createElement(newChild);
+      parentElement.insertBefore(
+        newEl,
+        parentElement.childNodes[newIndex] || null,
+      );
+    } else {
+      // 2-2. 기존 노드가 업데이트된 경우
+      const { node: oldChild, index: oldIndex } = oldKeyMap.get(key);
+      const currentNode = parentElement.childNodes[oldIndex];
+      if (oldIndex !== newIndex) {
+        parentElement.insertBefore(
+          currentNode,
+          parentElement.childNodes[newIndex] || null,
+        );
+      }
+
+      updateElement(parentElement, newChild, oldChild, newIndex);
+      oldKeyMap.delete(key);
+    }
+  });
+
+  // 2-3. 기존 노드가 삭제된 경우
+  [...oldKeyMap.values()]
+    .map(({ index }) => index)
+    .sort((a, b) => b - a)
+    .forEach((index) => {
+      parentElement.removeChild(parentElement.childNodes[index]);
+    });
 }

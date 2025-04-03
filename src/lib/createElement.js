@@ -1,4 +1,10 @@
-import { extractEventKey, flatDeep, isEvent, treatAsBlank } from "../utils";
+import {
+  extractEventKey,
+  flatDeep,
+  getAttributeKey,
+  isEvent,
+  treatAsBlank,
+} from "../utils";
 import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
@@ -39,7 +45,10 @@ function updateAttributes($el, props) {
     if (isEvent(key)) {
       addEvent($el, extractEventKey(key), value);
     } else {
-      $el.setAttribute(key === "className" ? "class" : key, value);
+      const attributeKey = getAttributeKey(key);
+      if (!attributeKey) return;
+
+      $el.setAttribute(attributeKey, value);
     }
   });
 }
