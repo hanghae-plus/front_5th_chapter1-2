@@ -1,5 +1,6 @@
 {
-  "name": "front-5th-chapter1-2",
+  "homepage": "https://ParkYongHo1.github.io/front_5th_chapter1-2/",
+  "name": "front_5th_chapter1-2",
   "private": true,
   "version": "0.0.0",
   "engines": {
@@ -8,6 +9,8 @@
   },
   "type": "module",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "dev:hash": "vite --open ./index.hash.html",
     "build": "vite build",
@@ -43,6 +46,7 @@
     "eslint": "^9.16.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "gh-pages": "^6.3.0",
     "globals": "^15.13.0",
     "husky": "^9.1.7",
     "jsdom": "^25.0.1",
@@ -52,6 +56,6 @@
     "vitest": "^2.1.8"
   },
   "dependencies": {
-    "front-5th-chapter1-2": "file:"
+    "front_5th_chapter1-2": "file:"
   }
 }
