@@ -1,8 +1,18 @@
 import { defineConfig as defineTestConfig, mergeConfig } from "vitest/config";
 import { defineConfig } from "vite";
+import path from "path";
 
 export default mergeConfig(
   defineConfig({
+    base: process.env.NODE_ENV === "production" ? "/front_5th_chapter1-2/" : "",
+    build: {
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, "index.html"),
+          hash: path.resolve(__dirname, "index.hash.html"),
+        },
+      },
+    },
     esbuild: {
       jsxFactory: "createVNode",
     },
