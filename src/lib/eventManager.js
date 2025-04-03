@@ -2,10 +2,16 @@ const globalEventHandlers = {};
 
 const handleGlobalEvents = (e) => {
   const thisEventObject = globalEventHandlers[e.type];
-  for (const tagName in thisEventObject) {
-    if (e.target.tagName === tagName) {
-      thisEventObject[tagName](e);
+  if (!thisEventObject) return;
+  let target = e.target;
+  // 타겟에서 위로 올라가며 핸들러를 찾음 (delegation 대응)
+  while (target && target !== document.body) {
+    const handler = thisEventObject.get(target);
+    if (handler) {
+      handler(e);
+      break;
     }
+    target = target.parentElement;
   }
 };
 
@@ -17,20 +23,16 @@ export function setupEventListeners(root) {
 
 export function addEvent(element, eventType, handler) {
   if (!globalEventHandlers[eventType]) {
-    globalEventHandlers[eventType] = {};
+    globalEventHandlers[eventType] = new WeakMap();
   }
-  globalEventHandlers[eventType][element.tagName] = handler;
+  globalEventHandlers[eventType].set(element, handler);
 }
 
 export function removeEvent(element, eventType, handler) {
   if (!globalEventHandlers[eventType]) return;
-
-  const eventHandlers = globalEventHandlers[eventType];
-
-  if (
-    eventHandlers[element.tagName] &&
-    eventHandlers[element.tagName] === handler
-  ) {
-    delete eventHandlers[element.tagName];
+  const eventMap = globalEventHandlers[eventType];
+  console.log(handler);
+  if (eventMap) {
+    eventMap.delete(element);
   }
 }
