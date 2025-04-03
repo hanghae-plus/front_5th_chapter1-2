@@ -49,9 +49,83 @@ export const globalStore = createStore(
     error: null,
   },
   {
+    login(state, username) {
+      const user = { username, email: "", bio: "" };
+      userStorage.set(user);
+      return { ...state, currentUser: user, loggedIn: true };
+    },
     logout(state) {
       userStorage.reset();
       return { ...state, currentUser: null, loggedIn: false };
+    },
+    likePost(state, id) {
+      if (!state.loggedIn || !id) {
+        if (!state.loggedIn) {
+          alert("로그인 후 이용해주세요");
+        }
+        return state;
+      }
+
+      const updatedPosts = state.posts.map((post) => {
+        if (post.id === id) {
+          const likeUsers = Array.isArray(post.likeUsers)
+            ? [...post.likeUsers]
+            : [];
+          const likeIndex = likeUsers.indexOf(state.currentUser.username);
+
+          if (likeIndex === -1) {
+            // 좋아요 추가
+            likeUsers.push(state.currentUser.username);
+          } else {
+            // 좋아요 제거 (토글)
+            likeUsers.splice(likeIndex, 1);
+          }
+
+          return {
+            ...post,
+            likeUsers,
+          };
+        }
+        return post;
+      });
+
+      return { ...state, posts: updatedPosts };
+    },
+    addPost(state, content) {
+      if (!state.loggedIn || !state.currentUser || !content) {
+        return state;
+      }
+
+      try {
+        // 현재 사용자 이름 확인
+        const username = state.currentUser.username;
+
+        if (!username) {
+          console.error("사용자 이름이 없습니다.");
+          return state;
+        }
+
+        // 새로운 ID 생성 (기존 ID 중 최대값 + 1)
+        const maxId = state.posts.reduce(
+          (max, post) => Math.max(max, post.id || 0),
+          0,
+        );
+
+        const newPost = {
+          id: maxId + 1,
+          author: username, // 로그인한 사용자 이름으로 설정
+          time: Date.now(),
+          content,
+          likeUsers: [],
+        };
+
+        const updatedPosts = [newPost, ...state.posts];
+
+        return { ...state, posts: updatedPosts };
+      } catch (error) {
+        console.error("포스트 추가 중 오류 발생:", error);
+        return state;
+      }
     },
   },
 );

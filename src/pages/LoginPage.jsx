@@ -1,22 +1,20 @@
 /** @jsx createVNode */
 import { createVNode } from "../lib";
 import { globalStore } from "../stores";
-import { userStorage } from "../storages";
-
-function login(username) {
-  const user = { username, email: "", bio: "" };
-  globalStore.setState({
-    currentUser: user,
-    loggedIn: true,
-  });
-  userStorage.set(user);
-}
+import { BASE_PATH, isHashMode } from "../constants/basePath";
 
 export const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const username = document.getElementById("username").value;
-    login(username);
+    if (username.trim()) {
+      globalStore.actions.login(username);
+      const targetPath = isHashMode
+        ? BASE_PATH + "/index.hash.html#/"
+        : BASE_PATH + "/";
+      window.history.pushState({}, "", targetPath);
+      window.dispatchEvent(new Event("popstate"));
+    }
   };
 
   return (
