@@ -53,5 +53,41 @@ export const globalStore = createStore(
       userStorage.reset();
       return { ...state, currentUser: null, loggedIn: false };
     },
+    isPostLiked(state, id) {
+      if (!state.loggedIn) return false;
+
+      const currentUsername = state.currentUser?.username;
+      const postIdx = state.posts.findIndex((post) => post.id === id);
+      const isLiked = state.posts[postIdx].likeUsers.includes(currentUsername);
+      return { ...state, isLiked };
+    },
+
+    toggleLike(state, id, isLiked) {
+      const currentUsername = state.currentUser?.username;
+      const postIdx = state.posts.findIndex((post) => post.id === id);
+      const newLikeUsers = [...state.posts[postIdx].likeUsers];
+
+      if (isLiked) {
+        const userIdx = newLikeUsers.findIndex(
+          (username) => username === currentUsername,
+        );
+        newLikeUsers.splice(userIdx, 1);
+      } else {
+        newLikeUsers.push(currentUsername);
+      }
+      const newPosts = [...state.posts];
+      newPosts[postIdx] = { ...newPosts[postIdx], likeUsers: newLikeUsers };
+      return { ...state, posts: newPosts };
+    },
+
+    addPost(state, content) {
+      const newPosts = [...state.posts];
+      const id = Math.max(...state.posts.map((post) => post.id)) + 1;
+      const author = state.currentUser?.username;
+      const newPost = { content, id, time: Date.now(), likeUsers: [], author };
+      newPosts.push(newPost);
+
+      return { ...state, posts: newPosts };
+    },
   },
 );
