@@ -5,10 +5,12 @@ import { globalStore } from "../../stores";
 import { BASE_ROUTE } from "../../constants/basePath";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
-  return currentPath === BASE_ROUTE + path
-    ? "text-blue-600 font-bold"
-    : "text-gray-600";
+  const isCurrentPath =
+    location.hash !== ""
+      ? location.hash.slice(1) === path
+      : window.location.pathname === BASE_ROUTE + path;
+
+  return isCurrentPath ? "text-blue-600 font-bold" : "text-gray-600";
 };
 
 function Link({ onClick, children, ...props }) {
