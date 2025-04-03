@@ -2,7 +2,7 @@ import { setupEventListeners } from "./eventManager";
 import { createElement } from "./createElement";
 import { normalizeVNode } from "./normalizeVNode";
 import { updateElement } from "./updateElement";
-let oldNode = null;
+const elementToOldNodeMap = new WeakMap();
 export function renderElement(vNode, container) {
   // 최초 렌더링시에는 createElement로 DOM을 생성하고
   // 이후에는 updateElement로 기존 DOM을 업데이트한다.
@@ -12,8 +12,11 @@ export function renderElement(vNode, container) {
   if (!container.hasChildNodes()) {
     container.appendChild(createElement(newNode));
   } else {
+    const oldNode = elementToOldNodeMap.get(container);
     updateElement(container, newNode, oldNode);
   }
-  oldNode = newNode;
+
+  elementToOldNodeMap.set(container, newNode);
+
   setupEventListeners(container);
 }
