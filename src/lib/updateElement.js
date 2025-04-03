@@ -1,5 +1,6 @@
 import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
+import { extractEventKey, isEvent } from "../utils/eventUtils.js";
 
 function updateAttributes(target, originNewProps, originOldProps) {
   const attributes = new Set([
@@ -8,18 +9,21 @@ function updateAttributes(target, originNewProps, originOldProps) {
   ]);
 
   attributes.forEach((key) => {
-    if (originNewProps[key] === originOldProps[key]) {
+    const newPropValue = originNewProps[key];
+    if (newPropValue === originOldProps[key]) {
       return;
     }
 
-    if (key.startsWith("on")) {
-      removeEvent(target, key.slice(2).toLowerCase());
-      addEvent(target, key.slice(2).toLowerCase(), originNewProps[key]);
+    if (isEvent(key)) {
+      const eventKey = extractEventKey(key);
+      removeEvent(target, eventKey);
+      addEvent(target, eventKey, newPropValue);
     } else {
-      target.setAttribute(
-        key === "className" ? "class" : key,
-        originNewProps[key],
-      );
+      if (newPropValue) {
+        target.setAttribute(key === "className" ? "class" : key, newPropValue);
+      } else {
+        target.removeAttribute(key === "className" ? "class" : key);
+      }
     }
   });
 }
@@ -30,11 +34,13 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
   }
 
   if (!newNode && oldNode) {
-    return parentElement.removeChild(parentElement.childNodes[index]);
+    parentElement.removeChild(parentElement.childNodes[index]);
+    return;
   }
 
   if (newNode && !oldNode) {
-    return parentElement.appendChild(createElement(newNode));
+    parentElement.appendChild(createElement(newNode));
+    return;
   }
 
   if (typeof newNode === "string" && typeof oldNode === "string") {
@@ -47,14 +53,17 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
   if (newNode.type !== oldNode.type) {
     const oldNodeElement = parentElement.childNodes[index];
     if (oldNodeElement) {
-      parentElement.replaceChild(createElement(newNode), oldNodeElement);
+      oldNodeElement.replaceWith(createElement(newNode));
       return;
     }
-    return parentElement.append(createElement(newNode));
+    parentElement.appendChild(createElement(newNode));
+    return;
   }
 
   const $el = parentElement.childNodes?.[index];
-  updateAttributes($el, newNode.props || {}, oldNode.props || {});
+  if (newNode.type === oldNode.type) {
+    updateAttributes($el, newNode.props || {}, oldNode.props || {});
+  }
 
   const newNodeChildren = newNode.children || [];
   const oldNodeChildren = oldNode.children || [];

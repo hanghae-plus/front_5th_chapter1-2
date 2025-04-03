@@ -1,7 +1,7 @@
-import { flatDeep } from "../utils";
+import { flatDeep, treatAsBlank } from "../utils";
 
 export function normalizeVNode(vNode) {
-  if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
+  if (treatAsBlank(vNode)) {
     return "";
   }
 

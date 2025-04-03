@@ -1,11 +1,9 @@
-import { flatDeep } from "../utils";
+import { flatDeep, treatAsBlank } from "../utils";
 
 export function createVNode(type, props, ...children) {
   return {
     type,
     props,
-    children: flatDeep(children).filter(
-      (child) => typeof child === "number" || !!child,
-    ),
+    children: flatDeep(children).filter((child) => !treatAsBlank(child)),
   };
 }

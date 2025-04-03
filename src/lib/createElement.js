@@ -1,8 +1,8 @@
-import { flatDeep } from "../utils";
+import { extractEventKey, flatDeep, isEvent, treatAsBlank } from "../utils";
 import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
-  if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
+  if (treatAsBlank(vNode)) {
     return document.createTextNode("");
   }
 
@@ -36,8 +36,8 @@ function updateAttributes($el, props) {
   if (!props) return $el;
 
   Object.entries(props).forEach(([key, value]) => {
-    if (key.startsWith("on")) {
-      addEvent($el, key.slice(2).toLowerCase(), value);
+    if (isEvent(key)) {
+      addEvent($el, extractEventKey(key), value);
     } else {
       $el.setAttribute(key === "className" ? "class" : key, value);
     }
