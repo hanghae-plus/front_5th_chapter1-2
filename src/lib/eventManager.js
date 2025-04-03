@@ -45,9 +45,17 @@ function handleEvent(event) {
 
   let current = target;
   while (current && current !== rootElement) {
+    if (event.cancelBubble) break; // stopPropagation된 경우 위임 중단
+
     const handler = handlerMap.get(current);
+
     if (handler) {
-      handler(event);
+      // 수정된 부분
+      try {
+        handler(event);
+      } catch (error) {
+        console.error("Error in event handler:", error);
+      }
       break;
     }
     current = current.parentElement;
