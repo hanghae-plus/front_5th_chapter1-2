@@ -4,7 +4,8 @@ import { router } from "../../router";
 import { globalStore } from "../../stores";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  // githubPages에 맞게 커스텀된 path
+  const currentPath = router.get().path;
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 
