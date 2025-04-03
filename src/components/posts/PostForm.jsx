@@ -1,7 +1,23 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
+import { globalStore } from "../../stores";
 
 export const PostForm = () => {
+  const handlePostSubmit = () => {
+    const content = document.getElementById("post-content").value;
+    const { currentUser, posts } = globalStore.getState();
+
+    const newPost = {
+      id: posts.length + 1,
+      author: currentUser.username,
+      time: Date.now(),
+      content: content,
+      likeUsers: [],
+    };
+    globalStore.setState({
+      posts: [...posts, newPost],
+    });
+  };
   return (
     <div className="mb-4 bg-white rounded-lg shadow p-4">
       <textarea
@@ -11,6 +27,7 @@ export const PostForm = () => {
       />
       <button
         id="post-submit"
+        onClick={handlePostSubmit}
         className="mt-2 bg-blue-600 text-white px-4 py-2 rounded"
       >
         게시
