@@ -1,13 +1,17 @@
 /** @jsx createVNode */
+/** @jsxFrag Fragment */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   addEvent,
   createElement,
   createVNode,
+  Fragment,
   normalizeVNode,
   removeEvent,
   renderElement,
   setupEventListeners,
+  setupEventListenersCapturing,
+  traverseDown,
 } from "../../lib";
 
 describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
@@ -394,6 +398,53 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
       expect(result.childNodes[1].tagName).toBe("P");
     });
 
+    it("Fragment createVNode 생성", () => {
+      const result = createVNode(
+        Fragment,
+        null,
+        createVNode("span", null, "fragment"),
+        createVNode("p", null, "문단"),
+      );
+
+      expect(result).toEqual([
+        { type: "span", props: null, children: ["fragment"] },
+        { type: "p", props: null, children: ["문단"] },
+      ]);
+    });
+
+    it("fragment 구조를 처리해야 한다. createElement Babel이용", () => {
+      const result = createElement(
+        <>
+          <span>fragment</span>
+          <p>문단</p>
+        </>,
+      );
+      expect(result instanceof DocumentFragment).toBe(true);
+      expect(result.childNodes.length).toBe(2);
+      expect(result.childNodes[0].tagName).toBe("SPAN");
+      expect(result.childNodes[0].textContent).toBe("fragment");
+      expect(result.childNodes[1].tagName).toBe("P");
+      expect(result.childNodes[1].textContent).toBe("문단");
+    });
+
+    it("fragment 구조를 처리해야 한다. createElement vanila", () => {
+      const result = createElement({
+        type: Fragment,
+        props: {},
+        children: [
+          { type: "span", props: {}, children: ["fragment"] },
+          { type: "p", props: {}, children: ["문단"] },
+        ],
+      });
+
+      expect(result instanceof DocumentFragment).toBe(true);
+      expect(result.childNodes.length).toBe(2);
+      expect(result.childNodes[0].tagName).toBe("SPAN");
+      expect(result.childNodes[0].textContent).toBe("fragment");
+      expect(result.childNodes[1].tagName).toBe("P");
+      expect(result.childNodes[1].textContent).toBe("문단");
+    });
+
     it("혼합 콘텐츠(텍스트와 요소)를 처리해야 한다", () => {
       const result = createElement(
         <div>
@@ -481,6 +532,62 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
       button.click();
 
       expect(clickHandler).toHaveBeenCalledTimes(1);
+    });
+
+    it("이벤트가 상위 요소에서 하위 요소로 전파되어야 한다", () => {
+      const parent = document.createElement("div");
+      const child = document.createElement("div");
+      const grandchild = document.createElement("button");
+
+      parent.appendChild(child);
+      child.appendChild(grandchild);
+      container.appendChild(parent);
+
+      // 각 요소에 이벤트 핸들러 추가
+      const parentHandler = vi.fn();
+      const childHandler = vi.fn();
+      const grandchildHandler = vi.fn();
+
+      addEvent(parent, "click", parentHandler);
+      addEvent(child, "click", childHandler);
+      addEvent(grandchild, "click", grandchildHandler);
+
+      // 이벤트 리스너 설정
+      setupEventListenersCapturing(container);
+
+      // 테스트 1: 최상위 요소(parent)에 이벤트를 발생시키면 모든 하위 요소로 전파되어야 함
+      const event1 = new MouseEvent("click");
+      traverseDown(parent, event1);
+
+      expect(parentHandler).toHaveBeenCalledTimes(1);
+      expect(childHandler).toHaveBeenCalledTimes(1);
+      expect(grandchildHandler).toHaveBeenCalledTimes(1);
+
+      // 모든 호출 기록 초기화
+      parentHandler.mockClear();
+      childHandler.mockClear();
+      grandchildHandler.mockClear();
+
+      // 테스트 2: 중간 요소(child)에 이벤트를 발생시키면 자신과 하위 요소만 영향을 받아야 함
+      const event2 = new MouseEvent("click");
+      traverseDown(child, event2);
+
+      expect(parentHandler).toHaveBeenCalledTimes(0); // parent는 호출되지 않아야 함
+      expect(childHandler).toHaveBeenCalledTimes(1); // child는 호출되어야 함
+      expect(grandchildHandler).toHaveBeenCalledTimes(1); // grandchild도 호출되어야 함
+
+      // 모든 호출 기록 초기화
+      parentHandler.mockClear();
+      childHandler.mockClear();
+      grandchildHandler.mockClear();
+
+      // 테스트 3: 최하위 요소(grandchild)에 이벤트를 발생시키면 자신만 영향을 받아야 함
+      const event3 = new MouseEvent("click");
+      traverseDown(grandchild, event3);
+
+      expect(parentHandler).toHaveBeenCalledTimes(0); // parent는 호출되지 않아야 함
+      expect(childHandler).toHaveBeenCalledTimes(0); // child도 호출되지 않아야 함
+      expect(grandchildHandler).toHaveBeenCalledTimes(1); // grandchild만 호출되어야 함
     });
   });
 
