@@ -1,102 +1,55 @@
-import {
-  attachedEventMap,
-  delegationMap,
-  elementEventMap,
-  elementToRootMap,
-  trackedElements,
-} from "../utils/eventStore";
+const eventStore = {};
+let rootElement = null;
 
 export function setupEventListeners(root) {
   if (!root) {
     return;
   }
 
-  const attachedEvents = attachedEventMap.get(root) || new Set();
+  rootElement = root;
 
-  const allElWithEvents = [...trackedElements.keys()].filter((el) =>
-    root.contains(el),
-  );
-
-  const eventTypeHandlers = {};
-
-  allElWithEvents.forEach((el) => {
-    const events = elementEventMap.get(el);
-    elementToRootMap.set(el, root);
-
-    Object.entries(events).forEach(([eventType, handler]) => {
-      if (!eventTypeHandlers[eventType]) {
-        eventTypeHandlers[eventType] = new Map();
-      }
-      eventTypeHandlers[eventType].set(el, handler);
-    });
+  Object.keys(eventStore).forEach((eventType) => {
+    root.addEventListener(eventType, handleEvent);
   });
-
-  Object.entries(eventTypeHandlers).forEach(([eventType, handlerMap]) => {
-    if (attachedEvents.has(eventType)) {
-      return;
-    }
-
-    //위임 핸들러
-    const delegatedHandler = (event) => {
-      const handler = handlerMap.get(event.target);
-
-      if (handler) {
-        handler(event);
-      }
-    };
-
-    root.addEventListener(eventType, delegatedHandler);
-    attachedEvents.add(eventType);
-
-    // 위임정보를 나중에 제거할 때 쓰기위해 저장
-    const rootDelegationMap = delegationMap.get(root) || new Map();
-    rootDelegationMap.set(eventType, handlerMap);
-    delegationMap.set(root, rootDelegationMap);
-  });
-
-  attachedEventMap.set(root, attachedEvents);
 }
 
 export function addEvent(element, eventType, handler) {
   if (!eventType || !element || typeof handler !== "function") {
     return;
   }
+  if (!eventStore[eventType]) {
+    eventStore[eventType] = new Map();
+  }
 
-  const events = elementEventMap.get(element) || {};
-  events[eventType] = handler;
-  elementEventMap.set(element, events);
-  trackedElements.add(element);
+  eventStore[eventType].set(element, handler);
 }
 
 export function removeEvent(element, eventType) {
   if (!eventType || !element) {
     return;
   }
-  const events = elementEventMap.get(element);
-  if (!events || !events[eventType]) return;
+  const handlerMap = eventStore[eventType];
+  if (!handlerMap) return;
 
-  delete events[eventType];
+  handlerMap.delete(element);
 
-  if (Object.keys(events).length === 0) {
-    elementEventMap.delete(element);
-    trackedElements.delete(element);
-  } else {
-    elementEventMap.set(element, events);
+  if (handlerMap.size === 0) {
+    delete eventStore[eventType];
   }
+}
 
-  const root = elementToRootMap.get(element);
-  if (!root) return;
+function handleEvent(event) {
+  const { type, target } = event;
+  const handlerMap = eventStore[type];
+  if (!handlerMap) return;
 
-  const typeMap = delegationMap.get(root);
-  const handlerMap = typeMap?.get(eventType);
-
-  handlerMap?.delete(element);
-
-  if (handlerMap?.size === 0) {
-    typeMap.delete(eventType);
-  }
-
-  if (typeMap?.size === 0) {
-    delegationMap.delete(root);
+  let current = target;
+  while (current && current !== rootElement) {
+    const handler = handlerMap.get(current);
+    if (handler) {
+      handler(event);
+      break;
+    }
+    current = current.parentElement;
   }
 }
