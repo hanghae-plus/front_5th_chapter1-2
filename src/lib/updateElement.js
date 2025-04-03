@@ -1,15 +1,15 @@
 import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
 
-function updateAttributes(target, originNewProps, originOldProps) {
+function updateAttributes(target, originNewProps = {}, originOldProps = {}) {
   for (const key in originOldProps) {
+    const oldVal = originOldProps[key];
     if (!(key in originNewProps)) {
-      target.removeAttribute(key);
-
-      const oldVal = originOldProps[key];
       if (key.startsWith("on") && typeof oldVal === "function") {
         const eventType = key.slice(2).toLowerCase();
         removeEvent(target, eventType, oldVal);
+      } else {
+        target.removeAttribute(key);
       }
     }
   }
@@ -25,6 +25,9 @@ function updateAttributes(target, originNewProps, originOldProps) {
         target.setAttribute(key, newValue);
       } else if (key.startsWith("on")) {
         const eventType = key.slice(2).toLowerCase();
+        if (typeof oldValue === "function") {
+          removeEvent(target, eventType, oldValue);
+        }
         addEvent(target, eventType, newValue);
       } else {
         target.setAttribute(key, newValue);
