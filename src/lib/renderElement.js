@@ -14,8 +14,8 @@ export function renderElement(vNode, container) {
   if (container.oldNode) {
     updateElement(container, normalizedVNode, container.oldNode);
   } else {
-    const el = createElement(normalizedVNode);
-    container.replaceChildren(el);
+    const element = createElement(normalizedVNode);
+    container.replaceChildren(element);
   }
   container.oldNode = normalizedVNode;
 

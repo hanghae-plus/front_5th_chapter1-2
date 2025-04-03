@@ -13,14 +13,6 @@ export function normalizeVNode(vNode) {
     return String(vNode);
   }
 
-  // 배열인 경우 정규화
-  // if (Array.isArray(vNode)) {
-  //   return vNode
-  //     .map((child) => normalizeVNode(child))
-  //     .filter((child) => child !== "");
-  // }
-
-  // 함수형 컴포넌트 처리
   if (typeof vNode.type === "function") {
     const { type, props, children } = vNode;
     return normalizeVNode(type({ ...props, children }));

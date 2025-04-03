@@ -1,5 +1,5 @@
 import { createObserver } from "./createObserver";
-import { BASE_PATH } from "../constants/basePath.js";
+import { BASE_PATH } from "../constants/basePath";
 
 export const createRouter = (routes) => {
   console.log("routes", routes);
