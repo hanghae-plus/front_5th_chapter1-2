@@ -1,5 +1,10 @@
 export function normalizeVNode(vNode) {
-  if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
+  if (
+    vNode === null ||
+    vNode === undefined ||
+    vNode === true ||
+    vNode === false
+  ) {
     return "";
   } else if (typeof vNode === "string") {
     return vNode;
@@ -14,14 +19,13 @@ export function normalizeVNode(vNode) {
       ...vNode.props,
     });
 
-    nodeFn.props = {
-      ...(vNode.props || {}),
-      ...(nodeFn.props || {}),
-    };
-
-    nodeFn.children = nodeFn.children.map((node) => normalizeVNode(node));
     return normalizeVNode(nodeFn);
   }
 
-  return vNode;
+  const normalizedNode = {
+    ...vNode,
+    children: vNode.children.map((child) => normalizeVNode(child)),
+  };
+
+  return normalizedNode;
 }

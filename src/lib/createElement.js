@@ -1,21 +1,5 @@
 import { addEvent } from "./eventManager";
 
-function addProps(el, props) {
-  Object.entries(props).forEach(([key, value]) => {
-    if (key.startsWith("on") && typeof value === "function") {
-      const event = key.slice(2).toLowerCase();
-
-      el.addEventListener(event, value);
-    } else if (key === "style" && typeof value === "object") {
-      Object.assign(el.style, value);
-    } else {
-      el.setAttribute(key, value);
-    }
-  });
-
-  return el;
-}
-
 export function createElement(vNode) {
   if (
     vNode === undefined ||
@@ -41,10 +25,12 @@ export function createElement(vNode) {
   }
 
   // 정규화하지 않았을 경우 에러처리
-  if (typeof vNode.type === "function") throw new Error();
+  if (typeof vNode.type === "function") {
+    throw new Error();
+  }
 
   let el = document.createElement(vNode.type);
-  if (vNode.props) el = addProps(el, vNode.props);
+  if (vNode.props) updateAttributes(el, vNode.props);
 
   // 텍스트 노드 합치기
   const normalizedChildren = [];
@@ -66,4 +52,18 @@ export function createElement(vNode) {
   return el;
 }
 
-function updateAttributes($el, props) {}
+function updateAttributes($el, props) {
+  Object.entries(props).forEach(([key, value]) => {
+    if (key.startsWith("on") && typeof value === "function") {
+      const event = key.slice(2).toLowerCase();
+
+      $el.addEventListener(event, value);
+    } else if (key === "className") {
+      value.split(" ").forEach((val) => $el.classList.add(val));
+    } else if (key === "style" && typeof value === "object") {
+      Object.assign($el.style, value);
+    } else {
+      $el.setAttribute(key, value);
+    }
+  });
+}
