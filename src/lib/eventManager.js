@@ -18,12 +18,8 @@ function handleEvent(event) {
 
   let current = target;
   while (current) {
-    console.log("checking:", current);
-    // if (event.cancelBubble) break; // stopPropagation된 경우 위임 중단
-
     const handler = handlerMap.get(current);
     if (handler) {
-      console.log("handler found on:", current);
       handler(event);
     }
 

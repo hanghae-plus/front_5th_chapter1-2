@@ -2,9 +2,12 @@
 import { createVNode } from "../../lib";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
+import { isHashMode } from "../../utils/basePath";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  const currentPath = isHashMode
+    ? location.hash.replace(/^#/, "")
+    : window.location.pathname;
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 
