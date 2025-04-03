@@ -29,7 +29,8 @@ export function setAttribute($el, key, value) {
  * 이벤트 핸들러를 설정합니다.
  * @param {HTMLElement} $el - 대상 DOM 요소
  * @param {string} key - 이벤트 속성 키 (예: onClick)
- * @param {Function} handler - 이벤트 핸들러
+ * @param {Function|null} newHandler - 새 이벤트 핸들러
+ * @param {Function|null} oldHandler - 이전 이벤트 핸들러
  */
 export const updateEventHandler = (
   $el,
@@ -54,6 +55,14 @@ export const updateEventHandler = (
   }
 };
 
+/**
+ * DOM 요소의 속성들을 업데이트합니다.
+ * 이전 속성들을 제거하고 새로운 속성들을 추가하거나 업데이트합니다.
+ *
+ * @param {HTMLElement} $el - 속성을 업데이트할 DOM 요소
+ * @param {Object} newProps - 새로운 속성 객체
+ * @param {Object} oldProps - 이전 속성 객체
+ */
 export const updateAttributes = ($el, newProps = {}, oldProps = {}) => {
   Object.keys(oldProps).forEach((key) => {
     if (key in newProps && newProps[key] != null) {
