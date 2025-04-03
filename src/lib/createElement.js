@@ -65,9 +65,11 @@ function updateAttributes($el, props) {
 
 function appendChildren($el, children) {
   if (Array.isArray(children)) {
+    const fragment = document.createDocumentFragment();
     for (const child of children) {
-      $el.appendChild(createElement(child));
+      fragment.appendChild(createElement(child));
     }
+    $el.appendChild(fragment);
   } else {
     $el.appendChild(createElement(children));
   }
