@@ -4,7 +4,9 @@ import { router } from "../../router";
 import { globalStore } from "../../stores";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  const BASE_URL = import.meta.env.VITE_PUBLIC_PATH;
+
+  const currentPath = window.location.pathname.replace(BASE_URL, "");
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 
@@ -49,7 +51,7 @@ export const Navigation = () => {
         {loggedIn && (
           <li>
             <a
-              href="/#"
+              href="#"
               id="logout"
               className="text-gray-600"
               onClick={(e) => {
