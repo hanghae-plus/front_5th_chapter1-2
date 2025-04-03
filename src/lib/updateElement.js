@@ -8,58 +8,30 @@ import { createElement } from "./createElement.js";
  * @param {Object} originOldProps - 이전 속성 객체
  */
 function updateAttributes(target, originNewProps, originOldProps) {
-  // 1. 이벤트 핸들러 처리
-  // 1.1 이전 이벤트 핸들러 제거
-  Object.keys(originOldProps)
-    .filter((key) => key.startsWith("on"))
-    .forEach((key) => {
-      // 새 props에 해당 핸들러가 없거나 다른 핸들러로 변경된 경우
-      if (
-        !(key in originNewProps) ||
-        originOldProps[key] !== originNewProps[key]
-      ) {
-        const eventType = key.replace(/^on/, "").toLowerCase();
-        removeEvent(target, eventType, originOldProps[key]);
+  Object.keys({ ...originNewProps, ...originOldProps }).forEach((key) => {
+    if (key.startsWith("on")) {
+      const eventType = key.replace(/^on/, "").toLowerCase();
+      const newHandler = originNewProps[key];
+      const oldHandler = originOldProps[key];
+      if (oldHandler && oldHandler !== newHandler) {
+        // 이전 핸들러(oldHandler)가 있고, 새로운 핸들러와 다르면 제거
+        removeEvent(target, eventType, oldHandler);
       }
-    });
-
-  // 1.2 새 이벤트 핸들러 추가
-  Object.keys(originNewProps)
-    .filter((key) => key.startsWith("on"))
-    .forEach((key) => {
-      // 이전 props에 해당 핸들러가 없거나 다른 핸들러였던 경우
-      if (
-        !(key in originOldProps) ||
-        originOldProps[key] !== originNewProps[key]
-      ) {
-        const eventType = key.replace(/^on/, "").toLowerCase();
-        addEvent(target, eventType, originNewProps[key]);
+      if (newHandler && oldHandler !== newHandler) {
+        // 새로운 핸들러(newHandler)가 있고, 이전 핸들러가 변경되었으면 새로 등록
+        addEvent(target, eventType, newHandler);
       }
-    });
-
-  // 2. 일반 속성 처리
-  // 2.1 제거된 속성 처리
-  Object.keys(originOldProps)
-    .filter((key) => !key.startsWith("on"))
-    .forEach((key) => {
-      // 새 props에 해당 속성이 없는 경우
-      if (!(key in originNewProps)) {
-        target.removeAttribute(key);
-      }
-    });
-
-  // 2.2 새 속성 추가 및 변경된 속성 업데이트
-  Object.keys(originNewProps)
-    .filter((key) => !key.startsWith("on"))
-    .forEach((key) => {
-      // className은 class로 변환
+    } else {
       const attr = key === "className" ? "class" : key;
-
-      // 이전 props와 값이 다른 경우
-      if (originOldProps[key] !== originNewProps[key]) {
-        target.setAttribute(attr, originNewProps[key]);
+      const newValue = originNewProps[key];
+      const oldValue = originOldProps[key];
+      if (!newValue) {
+        target.removeAttribute(attr);
+      } else if (newValue !== oldValue) {
+        target.setAttribute(attr, newValue);
       }
-    });
+    }
+  });
 }
 
 /**
@@ -72,17 +44,13 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
   if (!newNode) {
     // 부모 요소의 자식 노드 배열에서 특정 인덱스의 노드 선택해서 제거
     parentElement.removeChild(parentElement.childNodes[index]);
-    return null;
+    return;
   }
 
   // 2. 기존 노드가 없는 경우 (추가)
   if (!oldNode) {
     const newElement = createElement(newNode);
-    newElement.__vNode = newNode; // vNode 정보 저장
-    parentElement.insertBefore(
-      newElement,
-      parentElement.childNodes[index] || null,
-    );
+    parentElement.appendChild(newElement);
     return newElement;
   }
 
@@ -91,7 +59,7 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     const newElement = createElement(newNode);
     // 기존 노드를 완전히 새로운 노드로 대체하고 이전 노드의 모든 특성 제거
     parentElement.replaceChild(newElement, parentElement.childNodes[index]);
-    return newElement;
+    return;
   }
 
   // 4. 텍스트 노드인 경우
@@ -101,7 +69,7 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
       // 텍스트 내용이 변경된 경우 textContent만 업데이트
       currentNode.nodeValue = newNode;
     }
-    return currentNode;
+    return;
   }
 
   // 5. 요소 노드인 경우
@@ -111,9 +79,8 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     // 요소 타입(tag) 비교
     if (newNode.type !== oldNode.type) {
       const newElement = createElement(newNode);
-
-      parentElement.replaceChild(newElement, parentElement.childNodes[index]);
-      return newElement;
+      parentElement.replaceChild(newElement, element);
+      return;
     }
 
     // 요소의 속성 및 이벤트 핸들러 업데이트
@@ -129,8 +96,8 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     for (let i = 0; i < maxLength; i++) {
       updateElement(element, newChildren[i], oldChildren[i], i);
     }
-    return element;
+    return;
   }
 
-  return null;
+  return;
 }
