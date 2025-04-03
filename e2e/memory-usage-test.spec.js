@@ -5,11 +5,10 @@ import path from "path";
 const ELEMENTS_COUNT = 1000; // 생성할 요소 수
 const CYCLES = 5; // 생성/제거 반복 횟수
 
-// 메모리 측정 결과를 저장할 파일 경로
-const MEMORY_TEST_FOLDER = "e2e-performance";
+const TEST_RESULT_BASE_FOLDER = "e2e-performance";
 const getMemoryTestFilePath = () => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-  const folderPath = path.resolve(process.cwd(), MEMORY_TEST_FOLDER);
+  const folderPath = path.resolve(process.cwd(), TEST_RESULT_BASE_FOLDER);
 
   // 폴더가 없으면 생성
   if (!fs.existsSync(folderPath)) {
@@ -20,21 +19,20 @@ const getMemoryTestFilePath = () => {
 };
 
 // 측정 결과를 파일에 저장하는 함수
-function saveMemoryTestResult(
+function saveTestResult(
   filePath,
   testName,
   cycle,
   initialMemory,
   currentMemory,
 ) {
+  const testHeader =
+    "Timestamp,TestName,Cycle,InitialMemory(MB),CurrentMemory(MB),MemoryDiff(MB)\n";
   const exists = fs.existsSync(filePath);
 
   // 파일이 없으면 헤더 생성
   if (!exists) {
-    fs.writeFileSync(
-      filePath,
-      "Timestamp,TestName,Cycle,InitialMemory(MB),CurrentMemory(MB),MemoryDiff(MB)\n",
-    );
+    fs.writeFileSync(filePath, testHeader);
   }
 
   // 데이터 행 추가
@@ -148,7 +146,7 @@ test.describe("EventManager 메모리 성능 테스트", () => {
       });
 
       // 사이클별 결과 저장
-      saveMemoryTestResult(
+      saveTestResult(
         resultFilePath,
         "DOM 요소 생성 후",
         cycle + 1,
@@ -192,7 +190,7 @@ test.describe("EventManager 메모리 성능 테스트", () => {
       });
 
       // GC 후 결과 저장
-      saveMemoryTestResult(
+      saveTestResult(
         resultFilePath,
         "GC 실행 후",
         cycle + 1,
@@ -216,7 +214,7 @@ test.describe("EventManager 메모리 성능 테스트", () => {
     });
 
     // 최종 결과 저장
-    saveMemoryTestResult(
+    saveTestResult(
       resultFilePath,
       "테스트 완료",
       CYCLES,
