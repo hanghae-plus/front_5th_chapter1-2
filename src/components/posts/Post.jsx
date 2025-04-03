@@ -1,6 +1,7 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
-import { toTimeFormat } from "../../utils/index.js";
+import { globalStore } from "../../stores/globalStore.js";
+import { toTimeFormat, addEvent } from "../../utils/index.js";
 
 export const Post = ({
   author,
@@ -30,3 +31,11 @@ export const Post = ({
     </div>
   );
 };
+
+addEvent("click", ".like-button", (event) => {
+  const { loggedIn } = globalStore.getState();
+  if (!loggedIn) {
+    window.alert("로그인 후 이용해주세요");
+    return;
+  }
+});
