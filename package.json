@@ -1,5 +1,5 @@
 {
-  "homepage": "https://cherrybbang.github.io/hanghae99-chap2/",
+  "homepage": "https://cherrybbang.github.io/",
   "name": "front-5th-chapter1-2",
   "private": true,
   "version": "0.0.0",
@@ -24,7 +24,7 @@
     "test:e2e:report": "npx playwright show-report",
     "test:generate": "playwright codegen localhost:5173",
     "prepare": "husky",
-    "predeploy": "npm run build",
+    "predeploy": "pnpm run build",
     "deploy": "gh-pages -d build"
   },
   "lint-staged": {
