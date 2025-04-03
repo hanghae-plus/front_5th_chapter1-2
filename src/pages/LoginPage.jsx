@@ -15,8 +15,13 @@ function login(username) {
 export const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
-    const username = document.getElementById("username").value;
-    login(username);
+    try {
+      const usernameInput = document.getElementById("username");
+      if (!usernameInput) return;
+      login(usernameInput.value);
+    } catch (error) {
+      console.warn("Login form submission failed:", error);
+    }
   };
 
   return (

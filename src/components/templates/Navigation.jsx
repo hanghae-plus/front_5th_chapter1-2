@@ -3,8 +3,15 @@ import { createVNode } from "../../lib";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
 
+const BASE_PATH =
+  process.env.NODE_ENV === "production" ? "/front_5th_chapter1-2" : "";
+
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  const fullPath = window.location.pathname;
+  const currentPath =
+    BASE_PATH && fullPath.startsWith(BASE_PATH)
+      ? fullPath.slice(BASE_PATH.length)
+      : fullPath;
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 
