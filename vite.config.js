@@ -34,12 +34,32 @@ const create404Html = (base) => `
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-      sessionStorage.redirect = location.href;
-      location.replace(location.origin + '${base}');
+      (function() {
+        // 현재 URL 저장
+        const path = window.location.pathname + window.location.search + window.location.hash;
+        const baseUrl = '${base}';
+        
+        // base path를 고려한 경로 저장
+        sessionStorage.redirect = path.startsWith(baseUrl) 
+          ? path 
+          : baseUrl + path.substring(1);
+
+        // 메인 페이지로 리다이렉트
+        window.location.replace(
+          window.location.origin + baseUrl + 
+          (baseUrl.endsWith('/') ? '' : '/')
+        );
+      })();
     </script>
   </head>
   <body>
-    Redirecting to main page...
+    <h1>페이지를 찾을 수 없습니다.</h1>
+    <p>메인 페이지로 리다이렉트합니다...</p>
+    <script>
+      document.body.style.fontFamily = 'Arial, sans-serif';
+      document.body.style.textAlign = 'center';
+      document.body.style.padding = '50px';
+    </script>
   </body>
 </html>
 `;
