@@ -22,6 +22,8 @@ export function normalizeVNode(vNode) {
   // 기본적으로 vNode를 반환
   return {
     ...vNode,
-    children: vNode.children.map(normalizeVNode),
+    children: vNode.children
+      .map(normalizeVNode)
+      .filter((child) => child !== "" && child !== null && child !== undefined),
   };
 }
