@@ -4,7 +4,17 @@ import { normalizeVNode } from "./normalizeVNode.js";
 
 function updateAttributes(target, originNewProps, originOldProps) {
   for (const key in originOldProps) {
-    if ((!key) in originNewProps) {
+    if (key.startsWith("on") && typeof originOldProps[key] === "function") {
+      const eventType = key.toLowerCase().substring(2);
+      if (
+        !(key in originNewProps) ||
+        originNewProps[key] !== originOldProps[key]
+      ) {
+        removeEvent(target, eventType, originOldProps[key]);
+      }
+
+      addEvent(target, eventType, ori);
+    } else if ((!key) in originNewProps) {
       target.removeAttribute(key);
     }
   }

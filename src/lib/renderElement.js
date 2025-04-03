@@ -17,5 +17,6 @@ export function renderElement(vNode, container) {
     updateElement(container, vNode, oldNode);
   }
   oldNodeMap.set(container, newNode);
+
   setupEventListeners(container);
 }

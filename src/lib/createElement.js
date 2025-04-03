@@ -58,7 +58,7 @@ function updateAttributes($el, props) {
       const event = key.slice(2).toLowerCase();
       addEvent($el, event, value);
     } else if (key === "className") {
-      value.split(" ").forEach((val) => $el.classList.add(val));
+      $el.setAttribute("class", value);
     } else if (key === "style" && typeof value === "object") {
       Object.assign($el.style, value);
     } else {
