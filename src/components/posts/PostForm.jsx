@@ -1,5 +1,23 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
+import { globalStore } from "../../stores";
+
+const addPostEventHandle = () => {
+  const { posts, currentUser } = globalStore.getState();
+  const postContent = document.getElementById("post-content").value;
+  const postUpdateTimes = new Date().getTime();
+  const newPost = {
+    id: posts.length + 1,
+    author: currentUser.username,
+    time: postUpdateTimes,
+    content: postContent,
+    likeUsers: [],
+  };
+  globalStore.setState({
+    posts: [...posts, newPost],
+  });
+  document.getElementById("post-content").value = "";
+};
 
 export const PostForm = () => {
   return (
@@ -11,6 +29,7 @@ export const PostForm = () => {
       />
       <button
         id="post-submit"
+        onClick={addPostEventHandle}
         className="mt-2 bg-blue-600 text-white px-4 py-2 rounded"
       >
         게시
