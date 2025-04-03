@@ -1,8 +1,11 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
+import { globalStore } from "../../stores";
 
 export const PostForm = () => {
-  return (
+  const { loggedIn } = globalStore.getState();
+
+  return loggedIn ? (
     <div className="mb-4 bg-white rounded-lg shadow p-4">
       <textarea
         id="post-content"
@@ -16,5 +19,5 @@ export const PostForm = () => {
         게시
       </button>
     </div>
-  );
+  ) : null;
 };
