@@ -44,7 +44,29 @@
 
 ## 과제 셀프회고
 
-<!-- 과제에 대한 회고를 작성해주세요 -->
+/** @jsx createVNode */
+import { createVNode } from "../../lib";
+
+=> jsx 문법 사용시 createVNoede를 jsx의 변환함수로 지정하는 것.
+이 방식은 React의 createElement 처럼 동작하는 방식임. - /** @jsx createVNode */ 지시어를 사용하여 JSX 코드가 createVNode 함수 호출로 변환됨.
+
+createVNode = '조건부 렌더링' , 'null 과 undeifned 처리리' 과제
+
+요렇게 처리해줌.
+children 중에 falsy한 값이 없도록.
+    return children.filter((item) => item !== undefined && item !== null && item !== false).reduce((flat, child) => {
+
+
+3.31
+normalizeVNode =>
+
+4.1 ㅇ ㅣ부분이 normalizeVNode의 가장 중요한 부분일수도 기술적으로?
+    return normalizeVNode(vNode.type({
+      ...vNode.props,
+      children: vNode.children,
+    })); // 재귀적으로 정규화
+
+
 
 ### 기술적 성장
 <!-- 예시

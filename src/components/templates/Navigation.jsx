@@ -4,7 +4,13 @@ import { router } from "../../router";
 import { globalStore } from "../../stores";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  let currentPath = window.location.pathname;
+
+  const baseUrl = import.meta.env.BASE_URL;
+  if (baseUrl !== "/" && currentPath.startsWith(baseUrl)) {
+    currentPath = currentPath.slice(baseUrl.length - 1) || "/";
+  }
+
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 

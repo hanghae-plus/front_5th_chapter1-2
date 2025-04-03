@@ -11,6 +11,7 @@ router.set(
     "/": HomePage,
     "/login": () => {
       const { loggedIn } = globalStore.getState();
+      console.log(loggedIn);
       if (loggedIn) {
         throw new ForbiddenError();
       }
