@@ -40,7 +40,7 @@ function updateAttributes(target, originNewProps, originOldProps) {
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
   if (!newNode && oldNode) {
-    return parentElement.removeChild(parentElement.childNode[index]);
+    return parentElement.removeChild(parentElement.childNodes[index]);
   }
 
   // 2. newNode만 있는 경우
