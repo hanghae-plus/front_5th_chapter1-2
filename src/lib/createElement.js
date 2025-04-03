@@ -1,4 +1,3 @@
-import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
@@ -30,14 +29,14 @@ export function createElement(vNode) {
   return el;
 }
 
-//컴포넌트를 정규화한 다음에 createElement로 생성할 수 있다.
 function updateAttributes($el, props) {
+  //element와 element의 props를 받아서 새로운 element의 속성값들을 세팅해줌
   Object.entries(props).forEach(([key, value]) => {
     if (key.startsWith("on") && typeof value === "function") {
       const eventType = key.slice(2).toLowerCase();
       addEvent($el, eventType, value);
     } else if (key === "className") {
-      $el.setAttribute("class", value);
+      $el.setAttribute("class", value); //element.setAttribute(attributeName, value) DOM요소에 속성값을 설정. 속성이 이미 존재하는 경우 값이 업데이트됨.
     } else {
       $el.setAttribute(key, value);
     }
