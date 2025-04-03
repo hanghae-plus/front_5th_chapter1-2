@@ -73,13 +73,14 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
 
   // 텍스트 노드인 경우 텍스트 노드를 업데이트
   if (typeof newNode === "string") {
-    const textNode = parentElement.childNodes[index];
-    if (textNode.nodeType === Node.TEXT_NODE) {
-      if (textNode.textContent !== newNode) textNode.textContent = newNode;
+    const oldNode = parentElement.childNodes[index];
+
+    if (oldNode.nodeType !== Node.TEXT_NODE) {
+      parentElement.replaceChild(document.createTextNode(newNode), oldNode);
       return;
     }
 
-    parentElement.replaceChild(document.createTextNode(newNode), textNode);
+    if (oldNode.textContent !== newNode) oldNode.textContent = newNode;
     return;
   }
 
