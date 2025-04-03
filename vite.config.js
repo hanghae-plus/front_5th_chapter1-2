@@ -4,6 +4,9 @@ import { defineConfig } from "vite";
 export default ({ mode }) => {
   const base = mode === "production" ? "/front_5th_chapter1-2/" : "/";
 
+  console.log("Current Mode:", mode);
+  console.log("Base URL:", base);
+
   return mergeConfig(
     defineConfig({
       base,

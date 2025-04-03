@@ -1,29 +1,36 @@
 import { createObserver } from "./createObserver";
 
-export const createRouter = (routes) => {
+export const createRouter = (routes, base = "/") => {
+  // base 파라미터 추가
   const { subscribe, notify } = createObserver();
-  const baseUrl = import.meta.env.BASE_URL;
-  console.log(baseUrl);
 
-  // 경로에서 baseUrl 처리하는 함수
-  const normalizePath = (path) =>
-    baseUrl === "/" ? path : path.replace(new RegExp(`^${baseUrl}`), "/");
-  console.log(normalizePath(window.location.pathname));
+  // base path를 제거하고 실제 경로만 가져오는 함수
+  const normalizePath = (path) => {
+    return path.replace(base, "/").replace(/\/+/g, "/");
+  };
 
-  // baseUrl 추가하는 함수
-  const addBasePath = (path) =>
-    baseUrl === "/" ? path : baseUrl + path.replace(/^\//, "");
+  const getPath = () => {
+    return normalizePath(window.location.pathname);
+  };
+
+  const getTarget = () => routes[getPath()];
+
+  const push = (path) => {
+    // base path를 포함한 전체 경로로 변환
+    const fullPath =
+      path === "/" ? base : `${base}${path}`.replace(/\/+/g, "/");
+    window.history.pushState(null, null, fullPath);
+    notify();
+  };
+
+  window.addEventListener("popstate", () => notify());
 
   return {
     get path() {
-      return normalizePath(window.location.pathname);
+      return getPath();
     },
-    getTarget: () => routes[normalizePath(window.location.pathname)],
-    push: (path) => {
-      console.log(addBasePath(path));
-      window.history.pushState(null, null, addBasePath(path));
-      notify();
-    },
+    push,
     subscribe,
+    getTarget,
   };
 };

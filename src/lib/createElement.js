@@ -43,13 +43,6 @@ export function createElement(vNode) {
 
   // 자식 요소 처리
   if (vNode.children) {
-    // if (Array.isArray(vNode.children)) {
-    //   vNode.children.forEach((child) => {
-    //     const childEl = createElement(child);
-    //     console.log("childEl", childEl);
-    //     if (childEl) $el.appendChild(childEl);
-    //   });
-    // } else {
     const childEl = createElement(vNode.children);
     if (childEl) $el.appendChild(childEl);
   }
