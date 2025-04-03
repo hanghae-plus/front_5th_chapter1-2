@@ -59,11 +59,7 @@ export function removeEvent(element, eventType, handler) {
 
 // <전체 동작 흐름>
 // 사용자가 특정 DOM 요소에 대해 addEvent()로 이벤트와 핸들러를 등록하면 데이터가 elementMap과 eventTypes에 저장
-
 // 사용자 인터페이스 초기화 시 setupEventListeners()로 루트 요소에 모든 필요한 이벤트 리스너를 등록
-
 // 실제로 이벤트가 발생하면 루트에서 이를 캐치하고 handleEvent()가 호출
-
 // handleEvent()는 발생한 대상과 이벤트 타입을 기반으로 적절한 핸들러를 찾아 실행
-
 // 필요 시 특정 핸들러는 removeEvent()로 제거 가능
