@@ -1,6 +1,6 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
-import { globalStore } from "../stores";
+import { globalStore } from "../../stores/globalStore.js";
 
 export const PostForm = () => {
   const { post } = globalStore.actions;

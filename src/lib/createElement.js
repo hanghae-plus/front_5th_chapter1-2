@@ -1,7 +1,11 @@
 import { addEvent } from "./eventManager";
 
 export function createElement(vNode) {
-  if (vNode === undefined || vNode === null || typeof vNode === "boolean") {
+  if (
+    typeof vNode === "undefined" ||
+    vNode === null ||
+    typeof vNode === "boolean"
+  ) {
     return document.createTextNode("");
   }
 
@@ -26,7 +30,7 @@ export function createElement(vNode) {
       updateAttributes($el, vNode.props);
     }
 
-    if (vNode.children) {
+    if (Array.isArray(vNode.children)) {
       vNode.children.forEach((node) => $el.appendChild(createElement(node)));
     }
 
@@ -35,6 +39,7 @@ export function createElement(vNode) {
 }
 
 function updateAttributes($el, props) {
+  if (!props) return;
   for (const key in props) {
     if (key.startsWith("on")) {
       // 1. 이벤트 리스너
@@ -49,4 +54,5 @@ function updateAttributes($el, props) {
       $el.setAttribute(key, props[key]);
     }
   }
+  return $el;
 } //createElement함수로 만든 속성에 요소를 적용?

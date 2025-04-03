@@ -54,7 +54,7 @@ export const globalStore = createStore(
       return { ...state, currentUser: null, loggedIn: false };
     },
     post(state, content) {
-      const posts = state.post;
+      const posts = state.posts;
 
       const newPost = {
         id: posts[posts.length - 1] + 1,
@@ -76,10 +76,8 @@ export const globalStore = createStore(
           return {
             ...post,
             likeUsers: isLike
-              ? post.likeUsers.filter(
-                  (user) => user.username !== state.currentUser.username,
-                )
-              : [...post.likeUsers, state.currentUser],
+              ? [] // 좋아요 해제 시 빈 배열로 설정
+              : [...post.likeUsers, state.currentUser], // 좋아요 추가
           };
         }
         return post;

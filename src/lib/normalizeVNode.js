@@ -9,13 +9,6 @@ export function normalizeVNode(vNode) {
     return String(vNode);
   }
 
-  // 배열일 경우, 모든 항목을 평탄화하고 정규화 후, falsy 값은 제거
-  if (Array.isArray(vNode)) {
-    return vNode
-      .flat()
-      .map((item) => normalizeVNode(item))
-      .filter((item) => item !== null && item !== undefined && item !== false);
-  }
   // JSX 컴포넌트 처리 (컴포넌트인 경우, 호출 후 결과 정규화)
   if (typeof vNode.type === "function") {
     // 컴포넌트 인 경우
@@ -26,26 +19,9 @@ export function normalizeVNode(vNode) {
     return normalizeVNode(result);
   }
 
-  // 객체일 경우, children이 있는지 확인하고, children을 정규화
-  if (typeof vNode === "object" && vNode.children) {
-    return {
-      ...vNode,
-      children: Array.isArray(vNode.children)
-        ? vNode.children
-            .map((item) => normalizeVNode(item))
-            .filter(
-              (item) =>
-                item !== null &&
-                item !== undefined &&
-                item !== false &&
-                item !== "",
-            )
-        : normalizeVNode(vNode.children),
-    };
-
-    //JSX에서 Falsy값은 아무것도 렌더링 되지않지만 빈문자열은 DOM내에서 존재할수있기 때문에 제거 해줘야함
-  }
-
   // 기본적으로 vNode를 반환
-  return vNode;
+  return {
+    ...vNode,
+    children: vNode.children.map(normalizeVNode),
+  };
 }
