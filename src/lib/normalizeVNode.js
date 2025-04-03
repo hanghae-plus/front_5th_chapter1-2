@@ -1,10 +1,7 @@
 export function normalizeVNode(vNode) {
-  if (
-    vNode === null ||
-    vNode === undefined ||
-    vNode === true ||
-    vNode === false
-  ) {
+  const falsyType = ["undefined", "boolean"];
+
+  if (falsyType.includes(typeof vNode) || vNode === null) {
     return "";
   } else if (typeof vNode === "string") {
     return vNode;
@@ -24,7 +21,9 @@ export function normalizeVNode(vNode) {
 
   const normalizedNode = {
     ...vNode,
-    children: vNode.children.map((child) => normalizeVNode(child)),
+    children: vNode.children
+      .filter((child) => !falsyType.includes(typeof child) && child !== null)
+      .map((child) => normalizeVNode(child)),
   };
 
   return normalizedNode;

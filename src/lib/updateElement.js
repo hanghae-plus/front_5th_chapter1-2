@@ -16,30 +16,41 @@ function updateAttributes(target, originNewProps, originOldProps) {
   }
 }
 
-function changed(node1, node2) {
-  return (
-    typeof node1 !== typeof node2 ||
-    (typeof node1 === "string" && node1 !== node2) ||
-    node1.type !== node2.type
-  );
-}
-
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
   const updatedNode = createElement(normalizeVNode(newNode));
+  const existedNode = parentElement.childNodes[index];
 
-  if (!newNode) {
-    parentElement.removeChild(parentElement.childNodes[index]);
-  } else if (changed(oldNode, newNode)) {
-    parentElement.replaceChild(updatedNode, parentElement.childNodes[index]);
-  } else if (newNode.type) {
+  // 기존 노드가 없으면 추가
+  if (!existedNode) {
+    console.log("here!");
+    parentElement.appendChild(updatedNode);
+    return;
+  }
+
+  // 바뀔 노드가 없으면 삭제
+  if (!updatedNode) {
+    parentElement.removeChild(existedNode);
+    return;
+  }
+
+  // 업데이트
+  if (typeof oldNode !== typeof newNode || oldNode.type !== newNode.type) {
+    parentElement.replaceChild(updatedNode, existedNode);
+    return;
+  }
+
+  // props 업데이트
+  if (newNode.type) {
     updateAttributes(
       parentElement.childNodes[index],
       newNode.props,
       oldNode.props,
     );
 
+    // 자식 순회
     const max = Math.max(newNode.children.length, oldNode.children.length);
     for (let i = 0; i < max; i++) {
+      console.log(`children here! ${i}`);
       updateElement(
         parentElement.childNodes[index],
         newNode.children[i],
