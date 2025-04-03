@@ -13,6 +13,8 @@ import { globalStore } from "../stores";
 export const HomePage = () => {
   const { posts } = globalStore.getState();
 
+  const user = globalStore.getState().currentUser;
+
   return (
     <div className="bg-gray-100 min-h-screen flex justify-center">
       <div className="max-w-md w-full">
@@ -20,12 +22,18 @@ export const HomePage = () => {
         <Navigation />
 
         <main className="p-4">
-          <PostForm />
+          {user ? <PostForm /> : null}
           <div id="posts-container" className="space-y-4">
             {[...posts]
               .sort((a, b) => b.time - a.time)
-              .map((props) => {
-                return <Post {...props} activationLike={false} />;
+              .map((props, index) => {
+                return (
+                  <Post
+                    {...props}
+                    activationLike={props.isLiked}
+                    key={index + 1}
+                  />
+                );
               })}
           </div>
         </main>
