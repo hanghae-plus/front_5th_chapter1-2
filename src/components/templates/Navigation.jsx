@@ -10,17 +10,10 @@ const getNavItemClass = (path) => {
 
 function Link({ onClick, children, ...props }) {
   const handleClick = (e) => {
+    console.log("??");
     e.preventDefault();
     onClick?.();
     // 이미 현재 경로와 동일하면 라우팅 스킵
-    if (
-      window.location.pathname ===
-      e.target.href.replace(window.location.origin, "")
-    ) {
-      console.log(`이미 현재 경로(${e.target.href})입니다. 라우팅 스킵!`);
-      return;
-    }
-
     console.log(
       `라우팅: ${window.location.pathname} -> ${e.target.href.replace(window.location.origin, "")}`,
     );
