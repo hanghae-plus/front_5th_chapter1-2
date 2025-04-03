@@ -25,3 +25,7 @@ dist-ssr
 /test-results/
 /playwright-report/
 /coverage/
+
+# e2e performance test
+.session-id
+e2e-performance/
