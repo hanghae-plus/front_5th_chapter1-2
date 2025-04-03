@@ -1,17 +1,17 @@
-const eventStore = new Map();
+const eventRegistry = new Map();
 const eventType = ["click", "input", "change", "keydown", "keyup"];
 
 export function setupEventListeners(root) {
   eventType.forEach((eventType) =>
-    root.addEventListener(eventType, dispatchEventHandler),
+    root.addEventListener(eventType, handleDelegatedEvent),
   );
 }
 
-function dispatchEventHandler(event) {
+function handleDelegatedEvent(event) {
   let target = event.target;
 
   while (target && target !== event.currentTarget) {
-    const handlers = eventStore.get(target);
+    const handlers = eventRegistry.get(target);
     if (handlers?.[event.type]) {
       handlers[event.type](event);
       return;
@@ -21,16 +21,16 @@ function dispatchEventHandler(event) {
 }
 
 export function addEvent(element, eventType, handler) {
-  if (!eventStore.has(element)) {
-    eventStore.set(element, {});
+  if (!eventRegistry.has(element)) {
+    eventRegistry.set(element, {});
   }
-  eventStore.get(element)[eventType] = handler;
+  eventRegistry.get(element)[eventType] = handler;
 }
 
 export function removeEvent(element, eventType) {
-  const handlers = eventStore.get(element);
+  const handlers = eventRegistry.get(element);
   if (handlers) {
     delete handlers[eventType];
-    if (Object.keys(handlers).length === 0) eventStore.delete(element);
+    if (Object.keys(handlers).length === 0) eventRegistry.delete(element);
   }
 }
