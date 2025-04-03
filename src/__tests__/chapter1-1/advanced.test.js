@@ -3,8 +3,8 @@ import {
   afterAll,
   beforeAll,
   beforeEach,
-  expect,
   describe,
+  expect,
   it,
   vi,
 } from "vitest";
@@ -69,7 +69,10 @@ describe("심화과제 테스트", () => {
       goTo("/");
 
       const firstTarget = document.querySelector('nav a[href="/login"]');
-
+      setTimeout(() => {
+        const el = document.querySelector('nav a[href="/login"]');
+        console.log("login link:", el); // 렌더링 끝난 후라면 잘 찍힘
+      }, 0);
       firstTarget.addEventListener("click", (e) => {
         e.stopPropagation();
         e.preventDefault();
