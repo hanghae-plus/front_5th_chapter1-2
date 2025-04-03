@@ -1,5 +1,5 @@
 /** @jsx createVNode */
-import { createVNode } from "../../lib";
+import { createVNode, Fragment } from "../../lib";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
 
@@ -27,6 +27,10 @@ export const Navigation = () => {
   return (
     <nav className="bg-white shadow-md p-2 sticky top-14">
       <ul className="flex justify-around">
+        <>
+          <div>test1</div>
+          <div>test2</div>
+        </>
         <li>
           <Link href="/" className={getNavItemClass("/")}>
             홈

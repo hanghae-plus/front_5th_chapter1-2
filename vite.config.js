@@ -6,11 +6,13 @@ export default mergeConfig(
   defineConfig({
     esbuild: {
       jsxFactory: "createVNode",
+      jsxFragment: "Fragment",
     },
     optimizeDeps: {
       esbuildOptions: {
         jsx: "transform",
         jsxFactory: "createVNode",
+        jsxFragment: "Fragment",
       },
     },
   }),

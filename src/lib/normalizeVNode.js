@@ -1,3 +1,5 @@
+import { Fragment } from "./createVNode";
+
 export function normalizeVNode(vNode) {
   if (typeof vNode === "string") {
     return vNode;
@@ -18,6 +20,10 @@ export function normalizeVNode(vNode) {
     });
 
     return normalizeVNode(functionNode);
+  }
+
+  if (vNode.type === Fragment) {
+    return vNode.children.map(normalizeVNode);
   }
 
   return {
