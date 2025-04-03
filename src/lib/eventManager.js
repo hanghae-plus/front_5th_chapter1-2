@@ -18,7 +18,7 @@ export function setupEventListeners(root) {
       if (!handlers || handlers.length === 0) return;
 
       // stopPropagation()이 원래 핸들러에서 실행되었으면 버블링 도중 위임 핸들러 실행되지 않음
-      // → 우리가 등록한 위임 핸들러는 항상 실행됨. 단, 위임된 handler 내부에서 stopPropagation은 정상 동작.
+      // → 등록한 위임 핸들러는 항상 실행됨. 단, 위임된 handler 내부에서 stopPropagation은 정상 동작.
       handlers.forEach((handler) => {
         handler(event);
       });
