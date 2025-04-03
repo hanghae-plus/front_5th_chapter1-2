@@ -3,30 +3,23 @@ import { createVNode } from "../../lib";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
 
+const getNavItemClass = (path) => {
+  const currentPath = window.location.pathname;
+  return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
+};
+
 function Link({ onClick, children, ...props }) {
   const handleClick = (e) => {
     e.preventDefault();
     onClick?.(e);
-
-    if (e.defaultPrevented) return; // ✅ 핵심!
-
-    const path = props.href?.replace(window.location.origin, "") || "/";
-    router.get().push(path);
-
-    // router.get().push(e.target.href.replace(window.location.origin, ""))
+    router.get().push(e.target.href.replace(window.location.origin, ""));
   };
-
   return (
     <a onClick={handleClick} {...props}>
       {children}
     </a>
   );
 }
-
-const getNavItemClass = (path) => {
-  const currentPath = router.get().path;
-  return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
-};
 
 export const Navigation = () => {
   const { loggedIn } = globalStore.getState();
