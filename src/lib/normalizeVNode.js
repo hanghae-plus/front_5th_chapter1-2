@@ -2,7 +2,7 @@ import {
   isEmptyVNode,
   isFunctionalComponent,
   isTextVNode,
-} from "../utils/\bvNode";
+} from "../utils/vNode";
 
 export function normalizeVNode(vNode) {
   if (isEmptyVNode(vNode)) {
