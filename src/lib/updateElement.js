@@ -1,30 +1,33 @@
 import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
 
+function isOnEventType(key, value) {
+  return key.startsWith("on") && typeof value === "function";
+}
+
 function updateAttributes($target, originNewProps, originOldProps) {
-  if (originOldProps !== null && typeof originOldProps !== "undefined") {
-    Object.entries(originOldProps).forEach(([key, value]) => {
-      if (originNewProps[key] === originOldProps[key]) return;
-      if (key.startsWith("on") && typeof value === "function") {
-        removeEvent($target, key.replace("on", "").toLowerCase(), value);
-      }
+  // Old
+  Object.entries(originOldProps).forEach(([key, value]) => {
+    if (originNewProps[key] === originOldProps[key]) return;
+    if (isOnEventType(key, value)) {
+      removeEvent($target, key.replace("on", "").toLowerCase(), value);
+    } else {
       $target.removeAttribute(key);
-    });
-  }
-  if (originNewProps !== null && typeof originNewProps !== "undefined") {
-    Object.entries(originNewProps).forEach(([key, value]) => {
-      if (key.startsWith("on") && typeof value === "function") {
-        const eventType = key.replace("on", "").toLowerCase();
-        if (typeof originOldProps[key] === "function") {
-          removeEvent($target, eventType, originOldProps[key]);
-        }
-        addEvent($target, eventType, value);
-      } else {
-        if (key === "className") key = "class";
-        $target.setAttribute(key, value);
+    }
+  });
+  // New
+  Object.entries(originNewProps).forEach(([key, value]) => {
+    if (isOnEventType(key, value)) {
+      const eventType = key.replace("on", "").toLowerCase();
+      if (typeof originOldProps[key] === "function") {
+        removeEvent($target, eventType, originOldProps[key]);
       }
-    });
-  }
+      addEvent($target, eventType, value);
+    } else {
+      if (key === "className") key = "class";
+      $target.setAttribute(key, value);
+    }
+  });
 }
 
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
