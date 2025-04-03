@@ -1,7 +1,7 @@
 /** @jsx createVNode */
 import { createVNode } from "../lib";
 import { globalStore } from "../stores";
-import { userStorage } from "../storages";
+import { BASE_PATH, isHashMode } from "../constants/basePath";
 
 export const LoginPage = () => {
   const handleSubmit = (e) => {
@@ -9,7 +9,10 @@ export const LoginPage = () => {
     const username = document.getElementById("username").value;
     if (username.trim()) {
       globalStore.actions.login(username);
-      window.history.pushState({}, "", "/");
+      const targetPath = isHashMode
+        ? BASE_PATH + "/index.hash.html#/"
+        : BASE_PATH + "/";
+      window.history.pushState({}, "", targetPath);
       window.dispatchEvent(new Event("popstate"));
     }
   };
