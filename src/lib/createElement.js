@@ -33,21 +33,16 @@ export function createElement(vNode) {
 
 function updateAttributes($el, props) {
   Object.entries(props).forEach(([key, value]) => {
-    if (typeof value === "function") {
-      addEvent($el, key, value);
-      // export function addEvent(element, eventType, handler) {}
-    }
-
-    if (key === "id") {
-      $el.setAttribute(key, value);
-    }
-    if (key === "className") {
-      $el.setAttribute("class", value);
-    }
-    if (key in $el) {
+    if (key.startsWith("on")) {
+      const eventType = key.slice(2).toLowerCase();
+      addEvent($el, eventType, value);
+    } else if (key in $el) {
       $el[key] = value;
-    }
-    if (!(key in $el) && value !== null) {
+    } else if (key === "id") {
+      $el.setAttribute(key, value);
+    } else if (key === "className") {
+      $el.setAttribute("class", value);
+    } else if (!(key in $el) && value !== null) {
       $el.setAttribute(key, value);
     }
   });

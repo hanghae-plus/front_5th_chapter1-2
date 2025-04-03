@@ -1,5 +1,5 @@
 import { setupEventListeners } from "./eventManager";
-// import { createElement } from "./createElement";
+import { createElement } from "./createElement";
 import { normalizeVNode } from "./normalizeVNode";
 import { updateElement } from "./updateElement";
 
@@ -14,10 +14,13 @@ export function renderElement(vNode, container) {
   const newNode = normalizeVNode(vNode);
 
   if (!oldNode) {
-    container.appendChildCreateElement(newNode);
+    const renderedElement = createElement(newNode);
+    container.innerHTML = "";
+    container.appendChild(renderedElement);
+
+    setupEventListeners(container);
   } else {
     updateElement(container, newNode, oldNode);
-    // container.firstChild.replaceWith(createElement(newNode));
   }
 
   OldNodeMap.set(container, newNode);
