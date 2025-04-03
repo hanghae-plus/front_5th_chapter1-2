@@ -73,8 +73,6 @@ export function createElement(vNode) {
 }
 
 function updateAttributes($el, props) {
-  console.log("updateAttributes start");
-
   Object.entries(props).forEach(([key, value]) => {
     // console.log("$el: ", $el.outerHTML);
 

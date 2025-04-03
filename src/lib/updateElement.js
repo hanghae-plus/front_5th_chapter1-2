@@ -2,68 +2,41 @@ import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
 
 function updateAttributes(target, originNewProps, originOldProps) {
-  // // 달라지거나 추가된 Props를 반영
-  // for (const [attr, value] of Object.entries(originNewProps)) {
-  //   if (originOldProps[attr] === originNewProps[attr]) continue;
-  //   target.setAttribute(attr, value);
-  // }
-
-  // // 없어진 props를 attribute에서 제거
-  // for (const attr of Object.keys(originOldProps)) {
-  //   if (originNewProps[attr] !== undefined) continue;
-  //   target.removeAttribute(attr);
-  // }
-
-  // for (const [attr, value] of Object.entries(newProps)) {
-  //   if (oldProps[attr] === newProps[attr]) continue;
-  //   target.setAttribute(attr, value);
-  // }
-
-  // for (const attr of Object.keys(oldProps)) {
-  //   if (newProps[attr] !== undefined) continue;
-  //   target.removeAttribute(attr);
-  // }
-
-  // 이벤트 핸들러 제거 (이전에 있었지만 이제 없거나 변경된 경우)
-  for (const [attr, value] of Object.entries(originOldProps)) {
-    // 이벤트 속성(on으로 시작)이고 새 props에 없거나 값이 변경된 경우
-    if (
-      attr.startsWith("on") &&
-      (originNewProps[attr] === undefined || originNewProps[attr] !== value)
-    ) {
-      const eventType = attr.substring(2).toLowerCase();
-      removeEvent(target, eventType, value);
-    }
-  }
-
-  // 일반 속성 및 새 이벤트 핸들러 추가
-  for (const [attr, value] of Object.entries(originNewProps)) {
+  for (let [attr, value] of Object.entries(originNewProps)) {
     if (originOldProps[attr] === originNewProps[attr]) continue;
-    // 이벤트 속성인 경우
-    if (attr.startsWith("on") && typeof value === "function") {
-      const eventType = attr.substring(2).toLowerCase();
-      // 똑같은게 있는데 조건을 안걸어줘서 똑같은걸 add한다.
-      // if (typeof originOldProps[attr] === "function") {
-      //   console.log("들어오니?11");
 
-      //   removeEvent(target, eventType, originOldProps[attr]);
-      // }
+    if (attr.startsWith("on") && typeof originNewProps[attr] === "function") {
+      // onClick -> click on이름 제거
+      const eventType = attr.slice(2).toLowerCase();
 
-      addEvent(target, eventType, value);
+      // onEvent가 먼저 등록되어있으면 제거
+      if (typeof originOldProps[attr] === "function") {
+        removeEvent(target, eventType, originOldProps[attr]);
+      }
+
+      addEvent(target, eventType, originNewProps[attr]);
+      continue;
     }
-    // 일반 속성인 경우
-    else {
-      target.setAttribute(attr, value);
+
+    if (attr === "className") {
+      attr = attr.replace("className", "class");
     }
+
+    target.setAttribute(attr, value);
   }
 
-  // 없어진 일반 속성 제거
   for (const attr of Object.keys(originOldProps)) {
-    if (originNewProps[attr] !== undefined || attr.startsWith("on")) {
-      continue;
-    } else {
-      target.removeAttribute(attr);
+    // old노드에서 새노드랑 비교해서 undefined가 아니면 아직 필요한 요소이므로 계속 불필요한 요소 찾기
+    if (originNewProps[attr] !== undefined) continue;
+
+    // 불필요한 요소 정리
+    if (attr.startsWith("on")) {
+      // onClick -> click on이름 제거
+      const eventType = attr.slice(2).toLowerCase();
+      removeEvent(target, eventType, originOldProps[attr]);
     }
+
+    target.removeAttribute(attr);
   }
 }
 
