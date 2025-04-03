@@ -1,16 +1,16 @@
 /* eventStore 예시
-const btn1 = document.querySelector("#btn1");
-const btn2 = document.querySelector("#btn2");
+    const btn1 = document.querySelector("#btn1");
+    const btn2 = document.querySelector("#btn2");
 
-addEvent(btn1, "click", () => console.log("clicked btn1"));
-addEvent(btn2, "click", () => console.log("clicked btn2"));
+    addEvent(btn1, "click", () => console.log("clicked btn1"));
+    addEvent(btn2, "click", () => console.log("clicked btn2"));
 
-eventStore = {
-  click: Map {
-    btn1 => () => console.log("clicked btn1"),
-    btn2 => () => console.log("clicked btn2")
-  }
-}
+    eventStore = {
+      click: Map {
+        btn1 => () => console.log("clicked btn1"),
+        btn2 => () => console.log("clicked btn2")
+      }
+    }
 */
 
 const eventStore = {};

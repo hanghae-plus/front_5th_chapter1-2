@@ -4,12 +4,12 @@ export function normalizeVNode(vNode) {
   }
 
   if (typeof vNode === "string" || typeof vNode === "number") {
-    return `${vNode}`;
+    return String(vNode);
   }
 
   if (typeof vNode.type === "function") {
     const { type, props, children } = vNode;
-    return normalizeVNode(type({ ...props, children }));
+    return normalizeVNode(type({ ...(props || {}), children }));
   }
 
   return {
