@@ -5,6 +5,7 @@ export default mergeConfig(
   defineConfig({
     esbuild: {
       jsxFactory: "createVNode",
+      loader: "jsx",
     },
     optimizeDeps: {
       esbuildOptions: {
