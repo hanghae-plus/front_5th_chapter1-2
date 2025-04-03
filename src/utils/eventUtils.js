@@ -37,11 +37,11 @@ export const addEvent = (eventType, selector, handler) => {
 /**
  * 이벤트 핸들러 여부 확인
  * @param {string} attr 속성
- * @param {*} value 값
+ * @param {*} handler 값
  * @returns {boolean} 이벤트 핸들러 여부
  */
-export function isAttrEventHandler(attr, value) {
-  return attr.startsWith("on") && typeof value === "function";
+export function isAttrEventHandler(attr, handler) {
+  return attr.startsWith("on") && typeof handler === "function";
 }
 
 /**

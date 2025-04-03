@@ -12,6 +12,12 @@ const elementHandlerMap = new WeakMap();
  */
 const rootListenerMap = new Map();
 
+/**
+ * 이벤트 추가
+ * @param {*} element 대상 요소
+ * @param {*} eventType 이벤트 타입
+ * @param {*} handler 이벤트 핸들러
+ */
 export function addEvent(element, eventType, handler) {
   let events = elementHandlerMap.get(element);
   if (!events) {
@@ -27,6 +33,12 @@ export function addEvent(element, eventType, handler) {
   }
 }
 
+/**
+ * 이벤트 제거
+ * @param {*} element 대상 요소
+ * @param {*} eventType 이벤트 타입
+ * @param {*} handler 이벤트 핸들러
+ */
 export function removeEvent(element, eventType, handler) {
   const events = elementHandlerMap.get(element);
   if (!events || !events[eventType]) return;
@@ -44,6 +56,10 @@ export function removeEvent(element, eventType, handler) {
   }
 }
 
+/**
+ * 이벤트 리스너 설정
+ * @param {*} root 루트 요소
+ */
 export function setupEventListeners(root) {
   for (const [eventType, existingHandler] of rootListenerMap) {
     if (existingHandler) {
@@ -51,8 +67,6 @@ export function setupEventListeners(root) {
     }
 
     const delegatedHandler = (event) => {
-      if (event.cancelBubble) return;
-
       let current = event.target;
       while (current && current !== root) {
         if (elementHandlerMap.has(current)) {
@@ -61,7 +75,6 @@ export function setupEventListeners(root) {
           if (events[eventType]) {
             for (const handler of events[eventType]) {
               handler.call(current, event);
-              if (event.cancelBubble) return;
             }
           }
         }

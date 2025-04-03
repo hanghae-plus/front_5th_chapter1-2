@@ -1,3 +1,4 @@
+import { isAttrEventHandler } from "../utils";
 import { addEvent } from "./eventManager";
 
 /**
@@ -8,8 +9,8 @@ import { addEvent } from "./eventManager";
 export function createElement(vNode) {
   function _applyProps(element, props) {
     Object.entries(props).forEach(([key, value]) => {
-      if (key.startsWith("on") && typeof value === "function") {
-        // 이벤트 핸들러 처리
+      if (isAttrEventHandler(key, value)) {
+        // 이벤트 핸들러 처리 - DOM 속성으로 추가하지 않고 이벤트 매니저에만 등록
         const eventName = key.toLowerCase().substring(2);
         addEvent(element, eventName, value);
       } else if (key === "className") {
@@ -55,10 +56,4 @@ export function createElement(vNode) {
   }
 
   return element;
-}
-
-export function updateAttributes($el, props) {
-  for (const key in props) {
-    $el.setAttribute(key, props[key]);
-  }
 }
