@@ -14,6 +14,8 @@ export default mergeConfig(
     },
   }),
   defineTestConfig({
+    base:
+      process.env.NODE_ENV === "production" ? "/front_5th_chapter1-2/" : "/",
     test: {
       globals: true,
       environment: "jsdom",

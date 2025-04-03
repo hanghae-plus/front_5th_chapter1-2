@@ -8,7 +8,6 @@ function updateProfile(profile) {
   const user = { ...globalStore.getState().currentUser, ...profile };
   globalStore.setState({ currentUser: user });
   userStorage.set(user);
-  alert("프로필이 업데이트되었습니다.");
 }
 
 export const ProfilePage = () => {
