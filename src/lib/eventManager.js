@@ -42,7 +42,7 @@ const eventTypes = new Set();
 
 let _root;
 function eventHandler(event) {
-  console.log(`${event.type} 이벤트 발생!!!!!!`); // 이벤트 발생시 로그
+  // console.log(`${event.type} 이벤트 발생!!!!!!`); // 이벤트 발생시 로그
 
   let target = event.target;
 
@@ -69,19 +69,16 @@ export function setupEventListeners(root) {
   _root = root;
 
   eventTypes.forEach((eventType) => {
-    console.log(`이벤트 타입 처리: ${eventType}`);
-
     root.removeEventListener(eventType, eventHandler);
     root.addEventListener(eventType, eventHandler);
-    console.log(`${eventType} 이벤트 리스너 추가 완료`);
   });
-  console.log("setupEventListeners 완료");
-  console.groupEnd();
+  // console.log("setupEventListeners 완료");
+  // console.groupEnd();
 }
 
 // 특정 DOM요소에 이벤트 핸들러를 등록
 export function addEvent(element, eventType, handler) {
-  console.log("addEvent");
+  // console.log("addEvent");
 
   // 이벤트 핸들러에 등록
   //   handlersMap.set(element, eventType);
@@ -92,8 +89,6 @@ export function addEvent(element, eventType, handler) {
 
   const elementEvents = handlersMap.get(element);
   if (!elementEvents.has(eventType)) {
-    console.log("이벤트 핸들러 등록: ", eventType);
-
     elementEvents.set(eventType, handler);
   }
 
@@ -104,7 +99,6 @@ export function addEvent(element, eventType, handler) {
 export function removeEvent(element, eventType) {
   const elementHandlers = handlersMap.get(element);
   if (elementHandlers.has(eventType)) {
-    console.log("remove evnet type : ", eventType);
     elementHandlers.delete(eventType);
   }
 }

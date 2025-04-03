@@ -25,8 +25,8 @@ export function renderElement(vNode, container) {
     // 2반쩨 호츨이므로 여기서 updateElement로 기본 DOM을 업데이트 한다.
     // parentElement, newNode, oldNode, index = 0
     // 1번째랑 2번째 다른 것들을 넘김
-    console.log("newNode: ", normalizeNd);
-    console.log("oldNode: ", previousVNode);
+    // console.log("newNode: ", normalizeNd);
+    // console.log("oldNode: ", previousVNode);
 
     updateElement(container, normalizeNd, previousVNode);
   }
