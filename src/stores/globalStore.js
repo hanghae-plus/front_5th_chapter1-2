@@ -53,5 +53,37 @@ export const globalStore = createStore(
       userStorage.reset();
       return { ...state, currentUser: null, loggedIn: false };
     },
+    post(state, content) {
+      const posts = state.posts;
+
+      const newPost = {
+        id: posts[posts.length - 1] + 1,
+        author: state.currentUser.username,
+        time: Date.now(),
+        content: content,
+        likeUsers: [],
+      };
+
+      return { ...state, posts: [...posts, newPost] };
+    },
+    postLike(state, id) {
+      const updatePosts = state.posts.map((post) => {
+        if (post.id === id) {
+          const isLike = post.likeUsers.some(
+            (user) => user.username === state.currentUser.username,
+          );
+
+          return {
+            ...post,
+            likeUsers: isLike
+              ? [] // 좋아요 해제 시 빈 배열로 설정
+              : [...post.likeUsers, state.currentUser], // 좋아요 추가
+          };
+        }
+        return post;
+      });
+
+      return { ...state, posts: updatePosts };
+    },
   },
 );

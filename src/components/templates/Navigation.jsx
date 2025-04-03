@@ -1,7 +1,7 @@
 /** @jsx createVNode */
 import { createVNode } from "../../lib";
 import { router } from "../../router";
-import { globalStore } from "../../stores";
+import { globalStore } from "../../stores/globalStore";
 
 const getNavItemClass = (path) => {
   const currentPath = window.location.pathname;
