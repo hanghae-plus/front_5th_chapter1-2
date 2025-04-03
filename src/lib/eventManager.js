@@ -1,9 +1,6 @@
 const events = new Map();
-let isListening = false;
 
 export function setupEventListeners(root) {
-  if (isListening) return;
-
   function getEventHandlers(e) {
     events.forEach((event) => {
       if (event.has(e.target)) event.get(e.target).forEach((fn) => fn(e));
@@ -13,8 +10,6 @@ export function setupEventListeners(root) {
   events.forEach((_, eventType) => {
     root.addEventListener(eventType, getEventHandlers);
   });
-
-  isListening = true;
 }
 
 export function addEvent(element, eventType, handler) {
