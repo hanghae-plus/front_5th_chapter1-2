@@ -67,7 +67,6 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
 function updateAttributes(target, newProps, oldProps) {
   // 1. old에는 있지만 new에는 없는 속성들 제거
   Object.keys(oldProps).forEach((key) => {
-    console.log(key in newProps);
     if (!(key in newProps)) {
       if (key.startsWith("on")) {
         // 이벤트 핸들러 제거
@@ -89,7 +88,6 @@ function updateAttributes(target, newProps, oldProps) {
   // 2. new props 처리 (새로 추가되거나 변경된 속성)
   Object.entries(newProps).forEach(([key, newValue]) => {
     const oldValue = oldProps[key];
-    console.log("oldValue", oldValue);
 
     // 값이 변경된 경우에만 처리
     if (newValue !== oldValue) {
