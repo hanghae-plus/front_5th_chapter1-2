@@ -6,19 +6,17 @@ import { ForbiddenError, UnauthorizedError } from "./errors";
 import { router } from "./router";
 import { render } from "./render";
 
-const BASE_PATH = import.meta.env.PROD ? "/front_5th_chapter1-2" : "";
-
 router.set(
   createRouter({
-    [`${BASE_PATH}/`]: HomePage,
-    [`${BASE_PATH}/login`]: () => {
+    "/": HomePage,
+    "/login": () => {
       const { loggedIn } = globalStore.getState();
       if (loggedIn) {
         throw new ForbiddenError();
       }
       return <LoginPage />;
     },
-    [`${BASE_PATH}/profile`]: () => {
+    "/profile": () => {
       const { loggedIn } = globalStore.getState();
       if (!loggedIn) {
         throw new UnauthorizedError();
