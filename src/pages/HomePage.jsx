@@ -28,7 +28,6 @@ export const HomePage = () => {
                 return (
                   <Post
                     {...props}
-                    key={props.id}
                     isLoggedIn={loggedIn}
                     activationLike={props.likeUsers.length > 0}
                   />
