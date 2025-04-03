@@ -35,88 +35,76 @@
 
 // addEvent()로 들어온 매개변수들을 여기 맵에다가 저장
 const handlersMap = new Map();
+
 // 지원할 이벤트 타입들 (테스트에서 사용하는 이벤트들)
-const eventTypes = ["click", "mouseover", "focus", "keydown"];
+// const eventTypes = ["click", "mouseover", "focus", "keydown"];
+const eventTypes = new Set();
+
+let _root;
+function eventHandler(event) {
+  console.log(`${event.type} 이벤트 발생!!!!!!`); // 이벤트 발생시 로그
+
+  let target = event.target;
+
+  // 이벤트 버블링: 클릭된 요소부터 시작해서 부모로 올라가며 핸들러 찾기
+  while (target && target !== _root) {
+    // 이 요소에 핸들러가 등록되어 있는지 확인
+    if (handlersMap.has(target)) {
+      const elementEvents = handlersMap.get(target);
+
+      // 이벤트 핸들러가 있으면 실행하고 종료
+      if (elementEvents?.has(event.type)) {
+        elementEvents.get(event.type)(event);
+        break;
+      }
+    }
+
+    // 부모 요소로 이동 (버블링)
+    target = target.parentElement;
+  }
+}
 
 // addEvent로 dom tree에 어떤 이벤트들이 사용되는지 저장합니다
 export function setupEventListeners(root) {
-  // 이벤트 위임을 여기서 구현
-  // root를 addEventListener로 등록을한다
-  //   if(handlersMap.has())
+  _root = root;
 
   eventTypes.forEach((eventType) => {
-    root.addEventListener(eventType, (event) => {
-      let target = event.target;
+    console.log(`이벤트 타입 처리: ${eventType}`);
 
-      // 이벤트 버블링: 클릭된 요소부터 시작해서 부모로 올라가며 핸들러 찾기
-      while (target && target !== root) {
-        // 이 요소에 핸들러가 등록되어 있는지 확인
-        if (handlersMap.has(target)) {
-          const elementEvents = handlersMap.get(target);
-
-          // 해당 이벤트 타입의 핸들러가 있는지 확인
-          if (elementEvents.has(eventType)) {
-            // 등록된 모든 핸들러 실행
-            const handlers = elementEvents.get(eventType);
-            handlers.forEach((handler) => handler(event));
-          }
-        }
-
-        // 부모 요소로 이동 (버블링)
-        target = target.parentElement;
-      }
-    });
+    root.removeEventListener(eventType, eventHandler);
+    root.addEventListener(eventType, eventHandler);
+    console.log(`${eventType} 이벤트 리스너 추가 완료`);
   });
+  console.log("setupEventListeners 완료");
+  console.groupEnd();
 }
 
 // 특정 DOM요소에 이벤트 핸들러를 등록
 export function addEvent(element, eventType, handler) {
+  console.log("addEvent");
+
   // 이벤트 핸들러에 등록
   //   handlersMap.set(element, eventType);
-
+  eventTypes.add(eventType);
   if (!handlersMap.has(element)) {
     handlersMap.set(element, new Map());
   }
 
   const elementEvents = handlersMap.get(element);
   if (!elementEvents.has(eventType)) {
-    elementEvents.set(eventType, []);
+    console.log("이벤트 핸들러 등록: ", eventType);
+
+    elementEvents.set(eventType, handler);
   }
 
-  elementEvents.get(eventType).push(handler);
+  // elementEvents.get(eventType).push(handler);
 }
 
 // 등록된 이벤트 핸들러를 제거
-export function removeEvent(element, eventType, handler) {
-  // 1. 해당 요소가 맵에 있는지 확인
-  if (!handlersMap.has(element)) {
-    return; // 요소가 없으면 아무것도 하지 않음
-  }
-
-  const elementEvents = handlersMap.get(element);
-
-  if (!elementEvents.has(eventType)) {
-    return;
-  }
-
-  // 핸들러 배열 가져오기
-  const handlers = elementEvents.get(eventType);
-
-  // 핸들러 배열에서 특정 핸들러 찾기
-  const index = handlers.indexOf(handler);
-
-  // 핸들러를 찾았으면 제거
-  if (index !== -1) {
-    handlers.splice(index, 1);
-  }
-
-  //  후속 처리: 빈 배열이 되면 해당 항목 제거
-  if (handlers.length === 0) {
-    elementEvents.delete(eventType);
-  }
-
-  //  이벤트가 없으면 요소 자체를 맵에서 제거
-  if (elementEvents.size === 0) {
-    handlersMap.delete(element);
+export function removeEvent(element, eventType) {
+  const elementHandlers = handlersMap.get(element);
+  if (elementHandlers.has(eventType)) {
+    console.log("remove evnet type : ", eventType);
+    elementHandlers.delete(eventType);
   }
 }
