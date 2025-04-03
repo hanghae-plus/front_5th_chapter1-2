@@ -1,14 +1,12 @@
 /** @jsx createVNode */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  addEvent,
   createElement,
   createVNode,
   normalizeVNode,
-  removeEvent,
   renderElement,
-  setupEventListeners,
-} from "../../lib";
+} from "../../lib/vdom";
+import { addEvent, removeEvent, setupEventListeners } from "../../lib/event";
 
 describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
   describe("createVNode > ", () => {
