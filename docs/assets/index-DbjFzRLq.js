@@ -7,68 +7,71 @@ var v = (e, t, n) => z(e, typeof t != "symbol" ? t + "" : t, n);
 (function () {
   const t = document.createElement("link").relList;
   if (t && t.supports && t.supports("modulepreload")) return;
-  for (const r of document.querySelectorAll('link[rel="modulepreload"]')) l(r);
+  for (const r of document.querySelectorAll('link[rel="modulepreload"]')) o(r);
   new MutationObserver((r) => {
-    for (const o of r)
-      if (o.type === "childList")
-        for (const a of o.addedNodes)
-          a.tagName === "LINK" && a.rel === "modulepreload" && l(a);
+    for (const l of r)
+      if (l.type === "childList")
+        for (const a of l.addedNodes)
+          a.tagName === "LINK" && a.rel === "modulepreload" && o(a);
   }).observe(document, { childList: !0, subtree: !0 });
   function n(r) {
-    const o = {};
+    const l = {};
     return (
-      r.integrity && (o.integrity = r.integrity),
-      r.referrerPolicy && (o.referrerPolicy = r.referrerPolicy),
+      r.integrity && (l.integrity = r.integrity),
+      r.referrerPolicy && (l.referrerPolicy = r.referrerPolicy),
       r.crossOrigin === "use-credentials"
-        ? (o.credentials = "include")
+        ? (l.credentials = "include")
         : r.crossOrigin === "anonymous"
-          ? (o.credentials = "omit")
-          : (o.credentials = "same-origin"),
-      o
+          ? (l.credentials = "omit")
+          : (l.credentials = "same-origin"),
+      l
     );
   }
-  function l(r) {
+  function o(r) {
     if (r.ep) return;
     r.ep = !0;
-    const o = n(r);
-    fetch(r.href, o);
+    const l = n(r);
+    fetch(r.href, l);
   }
 })();
 const _ = () => {
     const e = new Set();
-    return { subscribe: (l) => e.add(l), notify: () => e.forEach((l) => l()) };
+    return { subscribe: (o) => e.add(o), notify: () => e.forEach((o) => o()) };
   },
   G = (e, t) => {
-    const { subscribe: n, notify: l } = _();
+    const { subscribe: n, notify: o } = _();
     let r = { ...e };
-    const o = (f) => {
-        (r = { ...r, ...f }), l();
+    const l = (f) => {
+        (r = { ...r, ...f }), o();
       },
       a = () => ({ ...r }),
       i = Object.fromEntries(
-        Object.entries(t).map(([f, E]) => [f, (...d) => o(E(a(), ...d))]),
+        Object.entries(t).map(([f, E]) => [f, (...d) => l(E(a(), ...d))]),
       );
-    return { getState: a, setState: o, subscribe: n, actions: i };
+    return { getState: a, setState: l, subscribe: n, actions: i };
   },
   H = (e, t = window.localStorage) => ({
     get: () => JSON.parse(t.getItem(e)),
-    set: (o) => t.setItem(e, JSON.stringify(o)),
+    set: (l) => t.setItem(e, JSON.stringify(l)),
     reset: () => t.removeItem(e),
   }),
   P = (e) => {
     const { subscribe: t, notify: n } = _(),
-      l = () => window.location.pathname,
-      r = () => e[l()],
-      o = (a) => {
-        window.history.pushState(null, null, a), n();
+      o = () => (window.location.hash ? window.location.hash.slice(1) : "/"),
+      r = () => e[o()],
+      l = (a) => {
+        window.location.hash = a;
       };
     return (
-      window.addEventListener("popstate", () => n()),
+      window.addEventListener("hashchange", n),
+      window.addEventListener("load", () => {
+        window.location.hash || l("/");
+      }),
       {
         get path() {
-          return l();
+          return o();
         },
-        push: o,
+        push: l,
         subscribe: t,
         getTarget: r,
       }
@@ -91,16 +94,16 @@ const u = new Map();
 function O(e, t, n) {
   e._eid || (e._eid = Date.now() + Math.random().toString(36).substring(2, 9)),
     u.has(e._eid) || u.set(e._eid, new Map());
-  const l = u.get(e._eid);
-  l.has(t) || l.set(t, new Set()), l.get(t).add(n);
+  const o = u.get(e._eid);
+  o.has(t) || o.set(t, new Set()), o.get(t).add(n);
 }
 function J(e, t, n) {
   if (!e._eid || !u.has(e._eid)) return;
-  const l = u.get(e._eid);
-  l.has(t) &&
-    (l.get(t).delete(n),
-    l.get(t).size === 0 && l.delete(t),
-    l.size === 0 && u.delete(e._eid));
+  const o = u.get(e._eid);
+  o.has(t) &&
+    (o.get(t).delete(n),
+    o.get(t).size === 0 && o.delete(t),
+    o.size === 0 && u.delete(e._eid));
 }
 function W(e) {
   if (e._hasEventListeners) return;
@@ -117,17 +120,17 @@ function W(e) {
       "keyup",
       "submit",
     ].forEach((n) => {
-      e.addEventListener(n, (l) => {
-        let r = l.target;
+      e.addEventListener(n, (o) => {
+        let r = o.target;
         for (; r && r !== e; ) {
           if (r._eid && u.has(r._eid)) {
-            const o = u.get(r._eid);
+            const l = u.get(r._eid);
             if (
-              o.has(n) &&
-              (o.get(n).forEach((i) => {
-                i(l);
+              l.has(n) &&
+              (l.get(n).forEach((i) => {
+                i(o);
               }),
-              l.cancelBubble || !l.bubbles)
+              o.cancelBubble || !o.bubbles)
             )
               break;
           }
@@ -143,8 +146,8 @@ function m(e) {
   if (Array.isArray(e)) {
     const n = document.createDocumentFragment();
     return (
-      e.forEach((l) => {
-        l != null && n.appendChild(m(l));
+      e.forEach((o) => {
+        o != null && n.appendChild(m(o));
       }),
       n
     );
@@ -163,18 +166,18 @@ function m(e) {
 }
 function K(e, t) {
   t &&
-    Object.entries(t).forEach(([n, l]) => {
-      if (n.startsWith("on") && typeof l == "function") {
+    Object.entries(t).forEach(([n, o]) => {
+      if (n.startsWith("on") && typeof o == "function") {
         const r = n.toLowerCase().substring(2);
-        O(e, r, l);
+        O(e, r, o);
       } else
         n === "className"
-          ? e.setAttribute("class", l)
+          ? e.setAttribute("class", o)
           : n !== "children" &&
             n !== "key" &&
-            (l === !0
+            (o === !0
               ? e.setAttribute(n, "")
-              : l !== !1 && l != null && e.setAttribute(n, l));
+              : o !== !1 && o != null && e.setAttribute(n, o));
     });
 }
 function g(e) {
@@ -191,12 +194,12 @@ function g(e) {
   return { type: e.type, props: e.props, children: t };
 }
 function R(e, t, n) {
-  const l = { ...(n || {}), ...(t || {}) };
-  Object.keys(l).forEach((r) => {
-    if (r.startsWith("on") && typeof l[r] == "function") {
-      const o = r.toLowerCase().substring(2);
-      n && typeof n[r] == "function" && J(e, o, n[r]),
-        t && typeof t[r] == "function" && O(e, o, t[r]);
+  const o = { ...(n || {}), ...(t || {}) };
+  Object.keys(o).forEach((r) => {
+    if (r.startsWith("on") && typeof o[r] == "function") {
+      const l = r.toLowerCase().substring(2);
+      n && typeof n[r] == "function" && J(e, l, n[r]),
+        t && typeof t[r] == "function" && O(e, l, t[r]);
     } else
       r !== "children" &&
         r !== "key" &&
@@ -211,13 +214,13 @@ function R(e, t, n) {
               : e.setAttribute(r, t[r]));
   });
 }
-function j(e, t, n, l = 0) {
+function j(e, t, n, o = 0) {
   if (n == null) {
     t && e.appendChild(m(t));
     return;
   }
   if (t == null) {
-    e.removeChild(e.childNodes[l]);
+    e.removeChild(e.childNodes[o]);
     return;
   }
   if (
@@ -228,36 +231,36 @@ function j(e, t, n, l = 0) {
   ) {
     if (t !== n) {
       const i = m(t);
-      e.replaceChild(i, e.childNodes[l]);
+      e.replaceChild(i, e.childNodes[o]);
     }
     return;
   }
   if (t.type !== n.type) {
     const i = m(t);
-    e.replaceChild(i, e.childNodes[l]);
+    e.replaceChild(i, e.childNodes[o]);
     return;
   }
-  R(e.childNodes[l], t.props, n.props);
+  R(e.childNodes[o], t.props, n.props);
   const r = t.children ? t.children.length : 0,
-    o = n.children ? n.children.length : 0,
-    a = Math.max(r, o);
+    l = n.children ? n.children.length : 0,
+    a = Math.max(r, l);
   for (let i = 0; i < a; i++)
     j(
-      e.childNodes[l],
+      e.childNodes[o],
       t.children && i < r ? t.children[i] : null,
-      n.children && i < o ? n.children[i] : null,
+      n.children && i < l ? n.children[i] : null,
       i,
     );
 }
 function Y(e, t) {
   const n = t,
-    l = g(e);
-  if (n.firstChild) j(n, l, n._vNode);
+    o = g(e);
+  if (n.firstChild) j(n, o, n._vNode);
   else {
-    const r = m(l);
+    const r = m(o);
     n.appendChild(r);
   }
-  (n._vNode = l), n._hasEventListeners || (W(n), (n._hasEventListeners = !0));
+  (n._vNode = o), n._hasEventListeners || (W(n), (n._hasEventListeners = !0));
 }
 const Q = 1e3,
   N = Q * 60,
@@ -275,8 +278,8 @@ const Q = 1e3,
   },
   b = H("user"),
   $ = 1e3,
-  h = $ * 60,
-  ee = h * 60,
+  p = $ * 60,
+  ee = p * 60,
   c = G(
     {
       currentUser: b.get(),
@@ -285,28 +288,28 @@ const Q = 1e3,
         {
           id: 1,
           author: "홍길동",
-          time: Date.now() - 5 * h,
+          time: Date.now() - 5 * p,
           content: "오늘 날씨가 정말 좋네요. 다들 좋은 하루 보내세요!",
           likeUsers: [],
         },
         {
           id: 2,
           author: "김철수",
-          time: Date.now() - 15 * h,
+          time: Date.now() - 15 * p,
           content: "새로운 프로젝트를 시작했어요. 열심히 코딩 중입니다!",
           likeUsers: [],
         },
         {
           id: 3,
           author: "이영희",
-          time: Date.now() - 30 * h,
+          time: Date.now() - 30 * p,
           content: "오늘 점심 메뉴 추천 받습니다. 뭐가 좋을까요?",
           likeUsers: [],
         },
         {
           id: 4,
           author: "박민수",
-          time: Date.now() - 30 * h,
+          time: Date.now() - 30 * p,
           content: "주말에 등산 가실 분 계신가요? 함께 가요!",
           likeUsers: [],
         },
@@ -330,15 +333,15 @@ const Q = 1e3,
     id: e,
     author: t,
     time: n,
-    content: l,
+    content: o,
     likeUsers: r,
-    activationLike: o = !1,
+    activationLike: l = !1,
   }) => {
     const { currentUser: a } = c.getState(),
       i = a == null ? void 0 : a.username,
       f = i && r.includes(i),
       E = () => {
-        if (!o) {
+        if (!l) {
           alert("로그인 후 이용해주세요");
           return;
         }
@@ -362,7 +365,7 @@ const Q = 1e3,
           s("div", { className: "text-gray-500 text-sm" }, Z(n)),
         ),
       ),
-      s("p", null, l),
+      s("p", null, o),
       s(
         "div",
         { className: "mt-2 flex justify-between text-gray-500" },
@@ -396,14 +399,14 @@ const Q = 1e3,
           id: "post-submit",
           className: "mt-2 bg-blue-600 text-white px-4 py-2 rounded",
           onClick: () => {
-            const l = document.getElementById("post-content").value;
-            l.trim() &&
+            const o = document.getElementById("post-content").value;
+            o.trim() &&
               (c.setState({
                 posts: [
                   ...e,
                   {
                     id: e.length + 1,
-                    content: l,
+                    content: o,
                     author: t.username,
                     time: Date.now(),
                     likeUsers: [],
@@ -435,7 +438,7 @@ const Q = 1e3,
         " 항해플러스. All rights reserved.",
       ),
     ),
-  p = {
+  h = {
     value: null,
     get() {
       return this.value;
@@ -455,7 +458,7 @@ function k({ onClick: e, children: t, ...n }) {
       onClick: (r) => {
         r.preventDefault(),
           e == null || e(),
-          p.get().push(r.target.href.replace(window.location.origin, ""));
+          h.get().push(r.target.href.replace(window.location.origin, ""));
       },
       ...n,
     },
@@ -522,7 +525,7 @@ const B = () => {
             "div",
             { id: "posts-container", className: "space-y-4" },
             [...e]
-              .sort((n, l) => l.time - n.time)
+              .sort((n, o) => o.time - n.time)
               .map((n) => s(te, { ...n, activationLike: t })),
           ),
         ),
@@ -534,7 +537,7 @@ function re(e) {
   const t = { username: e, email: "", bio: "" };
   c.setState({ currentUser: t, loggedIn: !0 }), b.set(t);
 }
-const le = () =>
+const oe = () =>
     s(
       "div",
       {
@@ -601,7 +604,7 @@ const le = () =>
         ),
       ),
     ),
-  oe = () =>
+  le = () =>
     s(
       "main",
       {
@@ -648,7 +651,7 @@ function ie(e) {
 }
 const ae = () => {
     const { loggedIn: e, currentUser: t } = c.getState(),
-      { username: n = "", email: l = "", bio: r = "" } = t ?? {};
+      { username: n = "", email: o = "", bio: r = "" } = t ?? {};
     return s(
       "div",
       { className: "bg-gray-100 min-h-screen flex justify-center" },
@@ -717,7 +720,7 @@ const ae = () => {
                   id: "email",
                   name: "email",
                   className: "w-full p-2 border rounded",
-                  value: l,
+                  value: o,
                   required: !0,
                 }),
               ),
@@ -774,29 +777,29 @@ const S = class S extends Error {
 v(S, "MESSAGE", "UnauthorizedError");
 let x = S;
 function I() {
-  const e = p.get().getTarget() ?? oe,
+  const e = h.get().getTarget() ?? le,
     t = document.querySelector("#root");
   try {
     Y(s(e, null), t);
   } catch (n) {
     if (n instanceof y) {
-      p.get().push("/");
+      h.get().push("/");
       return;
     }
     if (n instanceof x) {
-      p.get().push("/login");
+      h.get().push("/login");
       return;
     }
     console.error(n);
   }
 }
-p.set(
+h.set(
   P({
     "/": se,
     "/login": () => {
       const { loggedIn: e } = c.getState();
       if (e) throw new y();
-      return s(le, null);
+      return s(oe, null);
     },
     "/profile": () => {
       const { loggedIn: e } = c.getState();
@@ -806,6 +809,6 @@ p.set(
   }),
 );
 function ce() {
-  p.get().subscribe(I), c.subscribe(I), I();
+  h.get().subscribe(I), c.subscribe(I), I();
 }
 ce();
