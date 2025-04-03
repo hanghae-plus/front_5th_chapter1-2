@@ -44,6 +44,12 @@ function updateAttributes($el, props) {
     if (key === "className") {
       $el.setAttribute("class", value);
     }
+    if (key in $el) {
+      $el[key] = value;
+    }
+    if (!(key in $el) && value !== null) {
+      $el.setAttribute(key, value);
+    }
   });
   return { $el, props }; // 함수일때에 반환하는 코드를 작성.  각각 테스트 코드에 맞는 코드를 작성하면됨.
 }
