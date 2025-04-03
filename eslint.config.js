@@ -9,4 +9,10 @@ export default [
   pluginJs.configs.recommended,
   eslintPluginPrettier,
   eslintConfigPrettier,
+  {
+    // linebreak-style 규칙 비활성화
+    rules: {
+      "linebreak-style": "off",
+    },
+  },
 ];

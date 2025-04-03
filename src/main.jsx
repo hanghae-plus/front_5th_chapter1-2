@@ -27,7 +27,7 @@ router.set(
 );
 
 function main() {
-  router.get().subscribe(render);
+  router.get()?.subscribe(render);
   globalStore.subscribe(render);
 
   render();
