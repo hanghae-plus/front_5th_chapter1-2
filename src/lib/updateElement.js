@@ -45,6 +45,7 @@ function updateAttributes(target, originNewProps, originOldProps) {
   });
 }
 
+// Diff 알고리즘 !!
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
   const currentElement = parentElement.childNodes[index]; //현재 노드
 
