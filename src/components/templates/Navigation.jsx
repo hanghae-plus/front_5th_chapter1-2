@@ -1,10 +1,10 @@
 /** @jsx createVNode */
-import { createVNode } from "../../lib";
+import { createVNode, Fragment } from "../../lib";
 import { router } from "../../router";
 import { globalStore } from "../../stores";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  const currentPath = router.get().path;
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 

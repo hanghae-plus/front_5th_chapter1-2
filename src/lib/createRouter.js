@@ -1,14 +1,20 @@
+import { BASE_PATH } from "../constants";
 import { createObserver } from "./createObserver";
 
 export const createRouter = (routes) => {
   const { subscribe, notify } = createObserver();
 
-  const getPath = () => window.location.pathname;
+  const getPath = () => {
+    const pathname = window.location.pathname;
+    const pathnameWithoutBasePath = pathname.replace(BASE_PATH, "");
+    return pathnameWithoutBasePath;
+  };
 
   const getTarget = () => routes[getPath()];
 
   const push = (path) => {
-    window.history.pushState(null, null, path);
+    const pathnameWithBasePath = `${BASE_PATH}${path}`;
+    window.history.pushState(null, null, pathnameWithBasePath);
     notify();
   };
 
