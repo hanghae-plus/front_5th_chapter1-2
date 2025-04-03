@@ -86,11 +86,3 @@ export function setupEventListeners(root) {
     rootListenerMap.set(eventType, delegatedHandler);
   }
 }
-
-// if (process.env.NODE_ENV === "test") {
-window.testEventManager = {
-  addEvent,
-  removeEvent,
-  setupEventListeners,
-};
-// }

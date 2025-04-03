@@ -1,5 +1,4 @@
 import { test } from "@playwright/test";
-import { measurePerformance } from "../src/utils";
 import fs from "fs";
 import path from "path";
 
@@ -56,6 +55,30 @@ function saveMemoryTestResult(
 test.describe("EventManager 메모리 성능 테스트", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
+
+    // eventManager.js 파일의 내용을 문자열로 읽어옴
+    const eventManagerPath = path.join(
+      process.cwd(),
+      "src/lib/eventManager.js",
+    );
+    const eventManagerCode = fs.readFileSync(eventManagerPath, "utf8");
+
+    // 페이지에 eventManager 코드 주입
+    await page.evaluate((code) => {
+      // 모듈 코드를 eval 하기 전에 window.testEventManager 객체 준비
+      window.testEventManager = {};
+
+      // export 문을 window.testEventManager로 리다이렉트하는 코드로 변환
+      const modifiedCode = code
+        .replace(
+          /export function ([a-zA-Z]+)/g,
+          "window.testEventManager.$1 = function",
+        )
+        .replace(/export const ([a-zA-Z]+)/g, "window.testEventManager.$1 =");
+
+      // 코드 실행
+      eval(modifiedCode);
+    }, eventManagerCode);
   });
 
   test("대량의 DOM 요소 생성 및 제거 후 메모리 사용량 측정", async ({
@@ -74,125 +97,116 @@ test.describe("EventManager 메모리 성능 테스트", () => {
 
     console.log(`초기 메모리 사용량: ${initialMemory.toFixed(2)}MB`);
 
-    // 테스트 실행
-    await measurePerformance(
-      page,
-      async () => {
-        for (let cycle = 0; cycle < CYCLES; cycle++) {
-          // 1. 대량의 DOM 요소 생성 및 이벤트 리스너 추가
-          await page.evaluate((count) => {
-            // DOM 요소 생성
-            const container = document.createElement("div");
-            container.id = "test-container";
-            document.body.appendChild(container);
+    for (let cycle = 0; cycle < CYCLES; cycle++) {
+      // 1. 대량의 DOM 요소 생성 및 이벤트 리스너 추가
+      await page.evaluate((count) => {
+        // DOM 요소 생성
+        const container = document.createElement("div");
+        container.id = "test-container";
+        document.body.appendChild(container);
 
-            // 글로벌 eventManager를 사용하여 이벤트 리스너 설정
-            window.testEventManager.setupEventListeners(document.body);
+        // 글로벌 eventManager를 사용하여 이벤트 리스너 설정
+        window.testEventManager.setupEventListeners(document.body);
 
-            // 요소 생성 및 이벤트 등록
-            for (let i = 0; i < count; i++) {
-              const element = document.createElement("button");
-              element.textContent = `Button ${i}`;
-              element.id = `btn-${i}`;
-              container.appendChild(element);
+        // 요소 생성 및 이벤트 등록
+        for (let i = 0; i < count; i++) {
+          const element = document.createElement("button");
+          element.textContent = `Button ${i}`;
+          element.id = `btn-${i}`;
+          container.appendChild(element);
 
-              window.testEventManager.addEvent(element, "click", () =>
-                console.log(`Click ${i}`),
-              );
-              window.testEventManager.addEvent(element, "mouseover", () =>
-                console.log(`Mouseover ${i}`),
-              );
-              window.testEventManager.addEvent(element, "mouseout", () =>
-                console.log(`Mouseout ${i}`),
-              );
-            }
-
-            // 일부 이벤트 활성화
-            for (let i = 0; i < Math.min(50, count); i++) {
-              const element = document.getElementById(`btn-${i}`);
-              if (element) {
-                const event = new MouseEvent("click", {
-                  bubbles: true,
-                  cancelable: true,
-                });
-                element.dispatchEvent(event);
-              }
-            }
-            return count;
-          }, ELEMENTS_COUNT);
-
-          // 2. 메모리 상태 확인
-          const midMemory = await page.evaluate(() => {
-            return performance.memory
-              ? performance.memory.usedJSHeapSize / (1024 * 1024)
-              : 0;
-          });
-
-          // 사이클별 결과 저장
-          saveMemoryTestResult(
-            resultFilePath,
-            "DOM 요소 생성 후",
-            cycle + 1,
-            initialMemory,
-            midMemory,
+          window.testEventManager.addEvent(element, "click", () =>
+            console.log(`Click ${i}`),
           );
-
-          console.log(
-            `요소 생성 후 메모리 (사이클 ${cycle + 1}): ${midMemory.toFixed(
-              2,
-            )}MB`,
+          window.testEventManager.addEvent(element, "mouseover", () =>
+            console.log(`Mouseover ${i}`),
           );
-
-          // 3. 요소 제거
-          await page.evaluate(() => {
-            const container = document.getElementById("test-container");
-            if (container) {
-              document.body.removeChild(container);
-            }
-          });
-
-          // 4. 가비지 컬렉션 유도 (브라우저에서 허용되는 경우)
-          await page.evaluate(() => {
-            if (window.gc) {
-              window.gc();
-            } else {
-              // 가비지 컬렉션을 유도하기 위한 메모리 압박
-              const pressure = [];
-              for (let i = 0; i < 1000000; i++) {
-                pressure.push(new Array(100).fill(i));
-                if (i % 10000 === 0) {
-                  pressure.length = 0;
-                }
-              }
-            }
-          });
-
-          // GC 후 메모리 상태 확인
-          const afterGcMemory = await page.evaluate(() => {
-            return performance.memory
-              ? performance.memory.usedJSHeapSize / (1024 * 1024)
-              : 0;
-          });
-
-          // GC 후 결과 저장
-          saveMemoryTestResult(
-            resultFilePath,
-            "GC 실행 후",
-            cycle + 1,
-            initialMemory,
-            afterGcMemory,
+          window.testEventManager.addEvent(element, "mouseout", () =>
+            console.log(`Mouseout ${i}`),
           );
-
-          console.log(
-            `GC 후 메모리 (사이클 ${cycle + 1}): ${afterGcMemory.toFixed(2)}MB`,
-          );
-
-          // 짧은 대기 시간
-          await page.waitForTimeout(500);
         }
-      },
-      "DOM 요소 생성 및 제거 테스트",
-    );
+
+        // 일부 이벤트 활성화
+        for (let i = 0; i < Math.min(50, count); i++) {
+          const element = document.getElementById(`btn-${i}`);
+          if (element) {
+            const event = new MouseEvent("click", {
+              bubbles: true,
+              cancelable: true,
+            });
+            element.dispatchEvent(event);
+          }
+        }
+        return count;
+      }, ELEMENTS_COUNT);
+
+      // 2. 메모리 상태 확인
+      const midMemory = await page.evaluate(() => {
+        return performance.memory
+          ? performance.memory.usedJSHeapSize / (1024 * 1024)
+          : 0;
+      });
+
+      // 사이클별 결과 저장
+      saveMemoryTestResult(
+        resultFilePath,
+        "DOM 요소 생성 후",
+        cycle + 1,
+        initialMemory,
+        midMemory,
+      );
+
+      console.log(
+        `요소 생성 후 메모리 (사이클 ${cycle + 1}): ${midMemory.toFixed(2)}MB`,
+      );
+
+      // 3. 요소 제거
+      await page.evaluate(() => {
+        const container = document.getElementById("test-container");
+        if (container) {
+          document.body.removeChild(container);
+        }
+      });
+
+      // 4. 가비지 컬렉션 유도 (브라우저에서 허용되는 경우)
+      await page.evaluate(() => {
+        if (window.gc) {
+          window.gc();
+        } else {
+          // 가비지 컬렉션을 유도하기 위한 메모리 압박
+          const pressure = [];
+          for (let i = 0; i < 1000000; i++) {
+            pressure.push(new Array(100).fill(i));
+            if (i % 10000 === 0) {
+              pressure.length = 0;
+            }
+          }
+        }
+      });
+
+      // GC 후 메모리 상태 확인
+      const afterGcMemory = await page.evaluate(() => {
+        return performance.memory
+          ? performance.memory.usedJSHeapSize / (1024 * 1024)
+          : 0;
+      });
+
+      // GC 후 결과 저장
+      saveMemoryTestResult(
+        resultFilePath,
+        "GC 실행 후",
+        cycle + 1,
+        initialMemory,
+        afterGcMemory,
+      );
+
+      console.log(
+        `GC 후 메모리 (사이클 ${cycle + 1}): ${afterGcMemory.toFixed(2)}MB`,
+      );
+
+      // 짧은 대기 시간
+      await page.waitForTimeout(500);
+    }
 
     // 최종 메모리 측정
     const finalMemory = await page.evaluate(() => {
