@@ -2,6 +2,7 @@
 import { createVNode } from "../lib";
 import { globalStore } from "../stores";
 import { userStorage } from "../storages";
+import { router } from "../router";
 
 function login(username) {
   const user = { username, email: "", bio: "" };
@@ -10,13 +11,17 @@ function login(username) {
     loggedIn: true,
   });
   userStorage.set(user);
+  return user;
 }
 
 export const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const username = document.getElementById("username").value;
-    login(username);
+    const user = login(username);
+    if (user != null) {
+      router.get().push("/");
+    }
   };
 
   return (

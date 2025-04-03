@@ -22,7 +22,9 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "npx playwright show-report",
     "test:generate": "playwright codegen localhost:5173",
-    "prepare": "husky"
+    "prepare": "husky",
+    "deploy": "pnpm build && pnpm exec gh-pages -d dist -b gh-pages -f",
+    "dev:live": "VITE_BASE_URL=/front_5th_chapter1-2/ pnpm dev"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -49,6 +51,7 @@
     "lint-staged": "^15.2.11",
     "prettier": "^3.4.2",
     "vite": "^6.0.3",
+    "gh-pages": "^6.3.0",
     "vitest": "^2.1.8"
   }
 }

@@ -26,10 +26,11 @@ router.set(
   }),
 );
 
+const BASE_URL = import.meta.env.VITE_BASE_URL ?? "";
+
 function main() {
   router.get().subscribe(render);
   globalStore.subscribe(render);
-
   render();
 }
 
