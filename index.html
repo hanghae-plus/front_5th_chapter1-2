@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>항해플러스 SNS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      (function() {
+        // 404 페이지에서 저장한 원래 URL 복원
+        const redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          // 원래 요청한 URL로 history 상태 복원
+          history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
