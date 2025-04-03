@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      front-5th-chapter1-2:
+        specifier: 'file:'
+        version: 'file:'
     devDependencies:
       '@babel/core':
         specifier: ^7.26.0
@@ -1163,6 +1167,10 @@ packages:
   form-data@4.0.2:
     resolution: {integrity: sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w==}
     engines: {node: '>= 6'}
+
+  'front-5th-chapter1-2@file:':
+    resolution: {directory: '', type: directory}
+    engines: {node: '>=22', pnpm: '>=10'}
 
   fsevents@2.3.2:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
@@ -2984,6 +2992,8 @@ snapshots:
       combined-stream: 1.0.8
       es-set-tostringtag: 2.1.0
       mime-types: 2.1.35
+
+  'front-5th-chapter1-2@file:': {}
 
   fsevents@2.3.2:
     optional: true
