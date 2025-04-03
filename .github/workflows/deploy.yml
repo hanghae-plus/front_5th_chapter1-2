@@ -6,33 +6,33 @@ on:
       - main
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest 
-        
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v3
+  deploy:
+    runs-on: ubuntu-latest
 
-            - name: Setup pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                version: 10 # 사용 중인 pnpm 버전
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v3
-              with:
-                node-version: "22"
-                cache: 'pnpm'
-            - name: Install dependencies
-              run: pnpm install
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10 # 사용 중인 pnpm 버전
 
-            - name: Build
-              run : pnpm build
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
 
-            - name: Deploy to Github Pages
-              uses: peaceiris/actions-gh-pages@v3
-              with:
-                github_token: ${{secrets.DEPLOY_TOKEN}}
-                publish_dir: ./dist
-                keep_files: true
-                enable_jekyll: false
+      - name: Build
+        run: pnpm build
+
+      - name: Deploy to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{secrets.DEPLOY_TOKEN}}
+          publish_dir: ./dist
+          keep_files: true
+          enable_jekyll: false

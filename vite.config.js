@@ -2,7 +2,7 @@ import { defineConfig as defineTestConfig, mergeConfig } from "vitest/config";
 import { defineConfig } from "vite";
 
 export default ({ mode }) => {
-  const base = mode === "production" ? "/front_5th_chapter1-2" : "/";
+  const base = mode === "production" ? "/front_5th_chapter1-2/" : "/";
 
   return mergeConfig(
     defineConfig({
