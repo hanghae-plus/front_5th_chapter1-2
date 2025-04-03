@@ -73,7 +73,12 @@ export function createElement(vNode) {
 }
 
 function updateAttributes($el, props) {
+  console.log("updateAttributes start");
+
   Object.entries(props).forEach(([key, value]) => {
+    // console.log("$el: ", $el.outerHTML);
+
+    // console.log("key: ", key, "value: ", value);
     // if (key === "style") {
     // }
     // if (eky === "className") {
@@ -84,21 +89,21 @@ function updateAttributes($el, props) {
     // $el.setAttribute(key, value);
 
     //  나중에 리펛토링 하기..
+    // 이벤트 핸들러 처리
+    if (key.startsWith("on")) {
+      const eventType = key.toLowerCase().slice(2);
+      addEvent($el, eventType, value);
+      return;
+    }
+
+    // className 처리
     if (key === "className") {
       $el.setAttribute("class", value);
-    } else if (key === "id") {
-      $el.setAttribute(key, value);
-    } else if (key === "disabled") {
-      $el.setAttribute(key, value);
-    } else if (key.startsWith("data-")) {
-      $el.setAttribute(key, value);
-    } else if (key.startsWith("on")) {
-      //이벤트 리스너 add이벤트를 통해서.. 다른 곳에 핸들러를 저장한다..
-      const eventType = key.substring(2);
-
-      addEvent($el, eventType.toLowerCase(), value);
-      // $el.setAttribute(key, value);
+      return;
     }
+
+    // 일반 속성 처리
+    $el.setAttribute(key, value);
   });
   // $el.setAttribute("id", props.id);
 }
