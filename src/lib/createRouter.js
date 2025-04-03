@@ -3,10 +3,12 @@ import { createObserver } from "./createObserver";
 export const createRouter = (routes) => {
   const { subscribe, notify } = createObserver();
   const baseUrl = import.meta.env.BASE_URL;
+  console.log(baseUrl);
 
   // 경로에서 baseUrl 처리하는 함수
   const normalizePath = (path) =>
     baseUrl === "/" ? path : path.replace(new RegExp(`^${baseUrl}`), "/");
+  console.log(normalizePath(window.location.pathname));
 
   // baseUrl 추가하는 함수
   const addBasePath = (path) =>
@@ -18,6 +20,7 @@ export const createRouter = (routes) => {
     },
     getTarget: () => routes[normalizePath(window.location.pathname)],
     push: (path) => {
+      console.log(addBasePath(path));
       window.history.pushState(null, null, addBasePath(path));
       notify();
     },
