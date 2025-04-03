@@ -53,5 +53,17 @@ export const globalStore = createStore(
       userStorage.reset();
       return { ...state, currentUser: null, loggedIn: false };
     },
+    likePost(state, posts) {
+      return {
+        ...state,
+        posts,
+      };
+    },
+    addPost(state, post) {
+      return {
+        ...state,
+        posts: [post, ...state.posts],
+      };
+    },
   },
 );
