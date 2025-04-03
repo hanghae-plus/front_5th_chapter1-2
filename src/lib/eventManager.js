@@ -17,9 +17,6 @@ export function addEvent(element, eventType, handler) {
   }
   const eventData = eventStore.get(element);
   eventData.set(eventType, handler);
-
-  console.log("eventStore", eventStore);
-  console.log("addEvent", element, eventType, handler);
 }
 
 //TODO: 이벤트 제거 필요

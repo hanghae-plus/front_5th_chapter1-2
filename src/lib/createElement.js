@@ -3,7 +3,6 @@ import { addEvent } from "./eventManager";
 import { isEvent } from "../utils/eventUtils";
 
 export function createElement(vNode) {
-  console.log("createElement", vNode);
   if (
     typeof vNode === "boolean" ||
     typeof vNode === "undefined" ||
@@ -31,7 +30,6 @@ export function createElement(vNode) {
     });
 
   updateAttributes($el, vNode.props);
-  console.log("vNode.children", vNode, vNode.children);
 
   vNode.children.map(createElement).forEach((child) => $el.appendChild(child));
 

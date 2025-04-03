@@ -40,7 +40,6 @@ export function reconcile(workInProgressRoot, newVNode, oldVNode, index = 0) {
 
   // 3. 노드가 둘다 string인 경우
   if (typeof newVNode === "string" && typeof oldVNode === "string") {
-    console.log("newVNode.nodeValue", newVNode, oldVNode);
     if (newVNode !== oldVNode) {
       replaceChildNode(workInProgressRoot, newVNode, currentDom);
     }
