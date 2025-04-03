@@ -19,9 +19,10 @@ export const updateClassName = ($el, value) => {
 export function setAttribute($el, key, value) {
   if (value != null) {
     $el.setAttribute(key, value);
-  } else {
-    $el.removeAttribute(key);
+    return;
   }
+
+  $el.removeAttribute(key);
 }
 
 /**
@@ -38,19 +39,19 @@ export const updateEventHandler = (
 ) => {
   const eventType = normalizeEventPropKey(key);
 
-  if (isPrototypeEvent($el, eventType)) {
-    if (oldHandler) {
-      removeEvent($el, eventType, oldHandler);
-    }
-
-    if (newHandler) {
-      addEvent($el, eventType, newHandler);
-    }
-
+  if (!isPrototypeEvent($el, eventType)) {
+    setAttribute($el, key, newHandler);
     return;
   }
 
-  setAttribute($el, key, newHandler);
+  if (oldHandler) {
+    removeEvent($el, eventType, oldHandler);
+    return;
+  }
+
+  if (newHandler) {
+    addEvent($el, eventType, newHandler);
+  }
 };
 
 export const updateAttributes = ($el, newProps = {}, oldProps = {}) => {
