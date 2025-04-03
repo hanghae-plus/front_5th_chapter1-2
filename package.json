@@ -14,6 +14,7 @@
     "lint:fix": "eslint --fix",
     "prettier:write": "prettier --write ./src",
     "preview": "vite preview",
+    "deploy": "pnpm run build && gh-pages -d dist -b gh-pages2",
     "test": "vitest",
     "test:basic": "vitest basic",
     "test:advanced": "vitest advanced",
