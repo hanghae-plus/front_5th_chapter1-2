@@ -2,15 +2,34 @@ const eventStore = {};
 let rootElement = null;
 
 export function setupEventListeners(root) {
-  if (!root) {
-    return;
-  }
+  if (!root) return;
 
   rootElement = root;
 
   Object.keys(eventStore).forEach((eventType) => {
     root.addEventListener(eventType, handleEvent);
   });
+}
+
+function handleEvent(event) {
+  const { type, target } = event;
+  const handlerMap = eventStore[type];
+  if (!handlerMap) return;
+
+  let current = target;
+  while (current) {
+    console.log("checking:", current);
+    // if (event.cancelBubble) break; // stopPropagation된 경우 위임 중단
+
+    const handler = handlerMap.get(current);
+    if (handler) {
+      console.log("handler found on:", current);
+      handler(event);
+    }
+
+    if (current === rootElement) break;
+    current = current.parentElement;
+  }
 }
 
 export function addEvent(element, eventType, handler) {
@@ -35,29 +54,5 @@ export function removeEvent(element, eventType) {
 
   if (handlerMap.size === 0) {
     delete eventStore[eventType];
-  }
-}
-
-function handleEvent(event) {
-  const { type, target } = event;
-  const handlerMap = eventStore[type];
-  if (!handlerMap) return;
-
-  let current = target;
-  while (current && current !== rootElement) {
-    if (event.cancelBubble) break; // stopPropagation된 경우 위임 중단
-
-    const handler = handlerMap.get(current);
-
-    if (handler) {
-      // 수정된 부분
-      try {
-        handler(event);
-      } catch (error) {
-        console.error("Error in event handler:", error);
-      }
-      break;
-    }
-    current = current.parentElement;
   }
 }

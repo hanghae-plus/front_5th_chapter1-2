@@ -21,6 +21,7 @@ export function createElement(vNode) {
   }
 
   const domElement = document.createElement(vNode.type);
+
   const props = vNode.props ?? {};
   const children = vNode.children ?? [];
 

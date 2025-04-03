@@ -1,8 +1,12 @@
+import { addEvent } from "../lib";
+
 export const applyProps = (element, props) => {
+  if (!props) return;
+
   Object.entries(props).forEach(([key, value]) => {
     if (key.startsWith("on") && typeof value === "function") {
       const eventKey = key.slice(2).toLowerCase();
-      element.addEventListener(eventKey, value);
+      addEvent(element, eventKey, value);
       return;
     }
 
