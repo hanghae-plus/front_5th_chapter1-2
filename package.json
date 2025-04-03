@@ -7,6 +7,7 @@
     "pnpm": ">=10"
   },
   "type": "module",
+  "homepage": "https://devchaeyoung.github.io/front_5th_chapter1-2/",
   "scripts": {
     "dev": "vite",
     "dev:hash": "vite --open ./index.hash.html",
