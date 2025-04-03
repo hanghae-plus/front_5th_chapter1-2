@@ -31,9 +31,10 @@ export function addEvent(element, eventType, handler) {
 export function removeEvent(element, eventType, handler) {
   const elementHandlers = handlers.get(element);
   if (elementHandlers?.has(eventType)) {
+    element.removeEventListener(eventType, elementHandlers[eventType]);
     elementHandlers.delete(eventType);
   }
   if (typeof handler !== "function") {
-    console.log("wow");
+    console.log("never happens");
   }
 }
