@@ -6,4 +6,5 @@ export * from "./createVNode";
 export * from "./createElement";
 export * from "./normalizeVNode";
 export * from "./renderElement";
+export * from "./updateElement";
 export * from "./eventManager";
