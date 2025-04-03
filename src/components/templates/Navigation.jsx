@@ -6,11 +6,14 @@ import { globalStore } from "../../stores";
 function Link({ onClick, children, ...props }) {
   const handleClick = (e) => {
     e.preventDefault();
-    onClick?.();
-    if (e.defaultPrevented) return;
-    //router.get().push(e.target.href.replace(window.location.origin, ""))
+    onClick?.(e);
+
+    if (e.defaultPrevented) return; // ✅ 핵심!
+
     const path = props.href?.replace(window.location.origin, "") || "/";
     router.get().push(path);
+
+    // router.get().push(e.target.href.replace(window.location.origin, ""))
   };
 
   return (
