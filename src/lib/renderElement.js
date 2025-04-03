@@ -9,15 +9,15 @@ export function renderElement(vNode, container) {
   if (!vNode || !container) return;
 
   const _oldNode = oldNodeMap.get(container);
-  const _normalizedVNode = normalizeVNode(vNode);
-  const _dom = createElement(_normalizedVNode);
+  const _newNode = normalizeVNode(vNode);
+  const _dom = createElement(_newNode);
 
   if (!_oldNode && !container.innerHTML) {
     container.appendChild(_dom);
   } else {
-    updateElement(container, _normalizedVNode, _oldNode);
+    updateElement(container, _newNode, _oldNode);
   }
 
-  oldNodeMap.set(container, _normalizedVNode);
+  oldNodeMap.set(container, _newNode);
   setupEventListeners(container);
 }

@@ -9,8 +9,8 @@ function updateAttributes(target, newProps, oldProps) {
     let newPropValue = newProps[prop];
 
     if (isEventProp(prop)) {
-      removeEvent(target, normalizeEventNape(prop), value);
-      newPropValue = newProps[normalizeEventNape(prop)];
+      removeEvent(target, getEventType(prop), value);
+      newPropValue = newProps[getEventType(prop)];
     }
 
     if (newPropValue === undefined) {
@@ -24,7 +24,7 @@ function updateAttributes(target, newProps, oldProps) {
         continue;
       }
       if (isEventProp(prop)) {
-        addEvent(target, normalizeEventNape(prop), newPropValue);
+        addEvent(target, getEventType(prop), newPropValue);
         continue;
       }
       target.setAttribute(prop, newPropValue);
@@ -35,7 +35,7 @@ function updateAttributes(target, newProps, oldProps) {
   for (const [prop, value] of newPropsBundle) {
     if (oldPropsBundle[prop] === undefined) {
       if (isEventProp(prop)) {
-        addEvent(target, normalizeEventNape(prop), value);
+        addEvent(target, getEventType(prop), value);
         return;
       }
       if (isClassProp(prop)) {
@@ -70,7 +70,7 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     parentElement.replaceChild(createElement(newNode), currentChildNodes);
     return;
   }
-
+  //타입이 같은 경우
   updateAttributes(currentChildNodes, newNode.props || {}, oldNode.props || {});
 
   const newNodeDepth = newNode.children.length;
@@ -97,6 +97,6 @@ function isClassProp(prop) {
   return prop === "class" || prop === "className";
 }
 
-function normalizeEventNape(prop) {
+function getEventType(prop) {
   return prop.toLowerCase().slice(2);
 }
