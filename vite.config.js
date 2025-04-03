@@ -1,5 +1,8 @@
 import { defineConfig as defineTestConfig, mergeConfig } from "vitest/config";
 import { defineConfig } from "vite";
+import { resolve } from "path";
+
+const isProduction = process.env.NODE_ENV === "production";
 
 export default mergeConfig(
   defineConfig({
@@ -12,7 +15,17 @@ export default mergeConfig(
         jsxFactory: "createVNode",
       },
     },
+    build: {
+      rollupOptions: {
+        input: {
+          main: resolve(__dirname, "index.html"),
+          hash: resolve(__dirname, "index.hash.html"),
+        },
+      },
+    },
+    base: isProduction ? "/front_5th_chapter1-2/" : "/",
   }),
+
   defineTestConfig({
     test: {
       globals: true,
