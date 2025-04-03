@@ -13,10 +13,13 @@ export const createRouter = (routes) => {
       : fullPath.replace(new RegExp(`^${baseUrl}`), "");
   };
 
+  console.log("getPath", getPath());
+
   const getTarget = () => routes[getPath()];
 
   const push = (path) => {
     const url = baseUrl === "/" ? path : `${baseUrl}${path}`;
+    console.log("push", url);
 
     window.history.pushState(null, null, url);
     notify();
