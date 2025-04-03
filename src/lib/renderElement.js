@@ -12,13 +12,14 @@ export function renderElement(vNode, container) {
   // 3. 렌더링이 완료되면 container에 이벤트를 등록한다.
   // 이벤트를 등록합니다.
 
+  const hasPrevNode = container._prevNode;
   const normalizedVNode = normalizeVNode(vNode);
 
-  if (!container._prevNode) {
-    updateElement(container, normalizedVNode, container.oldNode);
-  } else {
+  if (!hasPrevNode) {
     const element = createElement(normalizedVNode);
     container.replaceChildren(element);
+  } else {
+    updateElement(container, normalizedVNode, container._prevNode);
   }
   container._prevNode = normalizedVNode;
   setupEventListeners(container);
