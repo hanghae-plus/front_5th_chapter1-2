@@ -35,13 +35,17 @@ export function addEvent(element, eventType, handler) {
 export function removeEvent(targetElement, eventType, targetHandler) {
   const handlers = eventMap.get(eventType);
 
-  if (!handlers) return;
+  if (!handlers) {
+    return;
+  }
 
   const index = handlers.findIndex(({ element, handler }) => {
     return element === targetElement && handler === targetHandler;
   });
 
-  if (index === -1) return;
+  if (index === -1) {
+    return;
+  }
 
   handlers.splice(index, 1);
 
