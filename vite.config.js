@@ -3,6 +3,9 @@ import { defineConfig } from "vite";
 
 export default mergeConfig(
   defineConfig({
+    build: {
+      outDir: "docs",
+    },
     esbuild: {
       jsxFactory: "createVNode",
     },
