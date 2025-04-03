@@ -6,6 +6,12 @@ import { updateElement } from "./updateElement";
 // 최초 렌더링시에는 createElement로 DOM을 생성하고
 // 이후에는 updateElement로 기존 DOM을 업데이트한다.
 // 렌더링이 완료되면 container에 이벤트를 등록한다.
+/**
+ * 가상 DOM을 실제 DOM으로 렌더링
+ * @param {*} vNode 가상 노드
+ * @param {*} container 컨테이너
+ * @returns 렌더링된 요소
+ */
 export function renderElement(vNode, container) {
   const $container = container;
 

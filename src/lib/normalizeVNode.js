@@ -1,3 +1,8 @@
+/**
+ * 가상 DOM을 실제 DOM으로 변환하기 위해 정규화
+ * @param {*} vNode 가상 노드
+ * @returns 정규화된 가상 노드
+ */
 export function normalizeVNode(vNode) {
   // 1. null, undefined, boolean 값 처리
   // null == undefined

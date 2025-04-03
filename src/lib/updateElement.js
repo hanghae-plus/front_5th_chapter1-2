@@ -1,6 +1,13 @@
 import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
 
+/**
+ * 속성 업데이트
+ * @param {*} target
+ * @param {*} originNewProps
+ * @param {*} originOldProps
+ * @returns 업데이트된 요소
+ */
 function updateAttributes(target, originNewProps, originOldProps) {
   const props = { ...(originOldProps || {}), ...(originNewProps || {}) };
 
@@ -51,8 +58,18 @@ function updateAttributes(target, originNewProps, originOldProps) {
   });
 }
 
+/**
+ * 가상 DOM 비교 알고리즘
+ * Diffing 기본 구현
+ * @param {*} parentElement 부모 요소
+ * @param {*} newNode 새로운 노드
+ * @param {*} oldNode 이전 노드
+ * @param {*} index 인덱스
+ * @returns 업데이트된 요소
+ */
 export function updateElement(parentElement, newNode, oldNode, index = 0) {
-  // 노드가 없는 경우
+  // 1. 기본 노드 추가 삭제
+  // 이전 노드가 없는 경우 (새로운 노드 추가)
   if (oldNode === undefined || oldNode === null) {
     // 새 노드만 있으면 추가
     if (newNode) {
@@ -61,20 +78,20 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     return;
   }
 
-  // 새 노드가 없는 경우 (삭제)
+  // 새로운 노드가 없는 경우 (노드 삭제)
   if (newNode === undefined || newNode === null) {
     parentElement.removeChild(parentElement.childNodes[index]);
     return;
   }
 
-  // 텍스트 노드 비교
+  // 2. 텍스트 노드 비교
   if (
     typeof newNode === "string" ||
     typeof newNode === "number" ||
     typeof oldNode === "string" ||
     typeof oldNode === "number"
   ) {
-    // 내용이 변경됐으면 교체
+    // 텍스트가 다르면 교체
     if (newNode !== oldNode) {
       const newTextNode = createElement(newNode);
       parentElement.replaceChild(newTextNode, parentElement.childNodes[index]);
@@ -82,21 +99,21 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     return;
   }
 
-  // 노드 타입이 다른 경우 (교체)
+  // 3. 노드 타입이 다르면 완전히 교체
   if (newNode.type !== oldNode.type) {
     const newElement = createElement(newNode);
     parentElement.replaceChild(newElement, parentElement.childNodes[index]);
     return;
   }
 
-  // 같은 타입의 노드면 속성 업데이트
+  // 4. 같은 타입의 노드면 속성만 업데이트
   updateAttributes(
     parentElement.childNodes[index],
     newNode.props,
     oldNode.props,
   );
 
-  // 자식 노드 비교
+  // 5.자식 노드 비교...
   const newLength = newNode.children ? newNode.children.length : 0;
   const oldLength = oldNode.children ? oldNode.children.length : 0;
   const maxLength = Math.max(newLength, oldLength);
