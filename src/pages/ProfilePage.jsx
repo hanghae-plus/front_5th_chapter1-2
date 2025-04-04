@@ -79,7 +79,7 @@ export const ProfilePage = () => {
                   rows="4"
                   className="w-full p-2 border rounded"
                 >
-                  {bio}
+                  {bio} {bio}
                 </textarea>
               </div>
               <button
