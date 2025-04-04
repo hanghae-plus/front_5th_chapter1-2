@@ -10,15 +10,15 @@ router.set(
   createHashRouter({
     "/": HomePage,
     "/login": () => {
-      const { loggedIn } = globalStore.getState();
-      if (loggedIn) {
+      const { loggedIn } = globalStore.selectors;
+      if (loggedIn()) {
         throw new ForbiddenError();
       }
       return <LoginPage />;
     },
     "/profile": () => {
-      const { loggedIn } = globalStore.getState();
-      if (!loggedIn) {
+      const { loggedIn } = globalStore.selectors;
+      if (!loggedIn()) {
         throw new UnauthorizedError();
       }
       return <ProfilePage />;

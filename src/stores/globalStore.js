@@ -1,5 +1,7 @@
 import { createStore } from "../lib";
 import { userStorage } from "../storages";
+import { generateNewId } from "../utils/idUtils";
+import { addItem, removeItem } from "../utils/arrayUtils";
 
 const 초 = 1000;
 const 분 = 초 * 60;
@@ -8,7 +10,6 @@ const 시간 = 분 * 60;
 export const globalStore = createStore(
   {
     currentUser: userStorage.get(),
-    loggedIn: Boolean(userStorage.get()),
     posts: [
       {
         id: 1,
@@ -51,7 +52,61 @@ export const globalStore = createStore(
   {
     logout(state) {
       userStorage.reset();
-      return { ...state, currentUser: null, loggedIn: false };
+      return { ...state, currentUser: null };
     },
+    createPost(state, content) {
+      if (!state.currentUser) {
+        return { ...state };
+      }
+
+      const postIds = state.posts.map((post) => post.id);
+      const post = {
+        id: generateNewId(postIds),
+        author: state.currentUser.username,
+        time: Date.now(),
+        content,
+        likeUsers: [],
+      };
+
+      return {
+        ...state,
+        posts: [post, ...state.posts],
+      };
+    },
+    toggleLikePost(state, postId) {
+      if (!state.currentUser) {
+        return { ...state };
+      }
+
+      const posts = state.posts.map((post) => {
+        if (post.id !== postId) return post;
+
+        const username = state.currentUser.username;
+        const hasItem = post.likeUsers.includes(state.currentUser.username);
+
+        return {
+          ...post,
+          likeUsers: hasItem
+            ? removeItem(post.likeUsers, username)
+            : addItem(post.likeUsers, username),
+        };
+      });
+
+      return { ...state, posts };
+    },
+  },
+  {
+    hasLikedPost: (state, postId) => {
+      if (!state.currentUser) {
+        return false;
+      }
+
+      return (
+        state.posts
+          .find((post) => post.id === postId)
+          ?.likeUsers.includes(state.currentUser.username) ?? false
+      );
+    },
+    loggedIn: (state) => Boolean(state.currentUser),
   },
 );

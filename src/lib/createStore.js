@@ -1,6 +1,6 @@
 import { createObserver } from "./createObserver.js";
 
-export const createStore = (initialState, initialActions) => {
+export const createStore = (initialState, initialActions, initialSelectors) => {
   const { subscribe, notify } = createObserver();
 
   let state = { ...initialState };
@@ -19,5 +19,12 @@ export const createStore = (initialState, initialActions) => {
     ]),
   );
 
-  return { getState, setState, subscribe, actions };
+  const selectors = Object.fromEntries(
+    Object.entries(initialSelectors).map(([key, value]) => [
+      key,
+      (...args) => value(getState(), ...args),
+    ]),
+  );
+
+  return { getState, setState, subscribe, actions, selectors };
 };

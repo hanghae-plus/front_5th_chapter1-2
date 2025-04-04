@@ -4,7 +4,7 @@ import { router } from "../../router";
 import { globalStore } from "../../stores";
 
 const getNavItemClass = (path) => {
-  const currentPath = window.location.pathname;
+  const currentPath = router.get().path;
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 
@@ -22,7 +22,7 @@ function Link({ onClick, children, ...props }) {
 }
 
 export const Navigation = () => {
-  const { loggedIn } = globalStore.getState();
+  const { loggedIn } = globalStore.selectors;
   const { logout } = globalStore.actions;
   return (
     <nav className="bg-white shadow-md p-2 sticky top-14">
@@ -32,21 +32,21 @@ export const Navigation = () => {
             홈
           </Link>
         </li>
-        {!loggedIn && (
+        {!loggedIn() && (
           <li>
             <Link href="/login" className={getNavItemClass("/login")}>
               로그인
             </Link>
           </li>
         )}
-        {loggedIn && (
+        {loggedIn() && (
           <li>
             <Link href="/profile" className={getNavItemClass("/profile")}>
               프로필
             </Link>
           </li>
         )}
-        {loggedIn && (
+        {loggedIn() && (
           <li>
             <a
               href="#"

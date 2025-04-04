@@ -5,10 +5,7 @@ import { userStorage } from "../storages";
 
 function login(username) {
   const user = { username, email: "", bio: "" };
-  globalStore.setState({
-    currentUser: user,
-    loggedIn: true,
-  });
+  globalStore.setState({ currentUser: user });
   userStorage.set(user);
 }
 

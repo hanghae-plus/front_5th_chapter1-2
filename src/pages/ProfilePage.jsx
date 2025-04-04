@@ -12,7 +12,8 @@ function updateProfile(profile) {
 }
 
 export const ProfilePage = () => {
-  const { loggedIn, currentUser } = globalStore.getState();
+  const { currentUser } = globalStore.getState();
+  const { loggedIn } = globalStore.selectors;
   const { username = "", email = "", bio = "" } = currentUser ?? {};
 
   const handleSubmit = (e) => {
@@ -26,7 +27,7 @@ export const ProfilePage = () => {
     <div className="bg-gray-100 min-h-screen flex justify-center">
       <div className="max-w-md w-full">
         <Header />
-        <Navigation loggedIn={loggedIn} />
+        <Navigation loggedIn={loggedIn()} />
 
         <main className="p-4">
           <div className="bg-white p-8 rounded-lg shadow-md">
