@@ -2,18 +2,9 @@
 import { createVNode } from "../../lib";
 import { toTimeFormat } from "../../utils/index.js";
 import { globalStore } from "../../stores";
-export const Post = ({
-  author,
-  time,
-  id,
-  content,
-  likeUsers,
-  activationLike = false,
-}) => {
+export const Post = ({ author, time, id, content, likeUsers }) => {
   const { loggedIn, currentUser, posts } = globalStore.getState();
-  const isActivationLike =
-    Array.isArray(likeUsers) &&
-    likeUsers.some((user) => user.username === currentUser?.username);
+  const isActivationLike = likeUsers.includes(currentUser?.username);
 
   const isLiked = (e) => {
     e.preventDefault();

@@ -4,7 +4,6 @@ import { globalStore } from "../../stores";
 
 export const PostForm = () => {
   const { posts, currentUser } = globalStore.getState();
-
   const updatePost = (e) => {
     const $textArea = document.getElementById("post-content");
     const content = $textArea.value;
@@ -12,7 +11,7 @@ export const PostForm = () => {
     e.preventDefault();
     const newPost = {
       id: posts.length + 1,
-      author: currentUser,
+      author: currentUser.username,
       time: Date.now(),
       content: content.trim(),
       likeUsers: [],

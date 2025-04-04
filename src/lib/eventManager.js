@@ -1,26 +1,5 @@
 export const eventHandlers = new Map();
-
-export function setupEventListeners(root) {
-  eventHandlers.forEach((handlersMap, eventType) => {
-    root.addEventListener(eventType, (eventObj) => {
-      let target = eventObj.target;
-
-      while (target && target !== root) {
-        const handlers = handlersMap.get(target);
-
-        if (handlers) {
-          for (const fn of handlers) {
-            fn(eventObj);
-          }
-          break;
-        }
-
-        target = target.parentNode;
-      }
-    });
-  });
-}
-
+const registeredListeners = new Map();
 export function addEvent(element, eventType, handler) {
   if (!eventHandlers.get(eventType)) {
     eventHandlers.set(eventType, new Map());
@@ -43,27 +22,36 @@ export function removeEvent(element, eventType, handler) {
 
   handlers.delete(handler);
 
-  // 핸들러가 모두 제거되었으면 Map에서도 제거
   if (handlers.size === 0) {
     handlersMap.delete(element);
   }
 }
 
-// export function setupEventListeners(root) {
-//   Object.keys(eventHandlers).forEach((eventType) => {
-//     root.addEventListener(eventType, (eventObj) => {
-//       let target = eventObj.target;
-
-//       while (target && target !== root) {
-//         const handlers = eventHandlers[eventType].get(target);
-//         console.log(handlers);
-//         if (handlers) {
-//           handlers.forEach((fn) => fn(eventObj));
-//           break;
-//         }
-
-//         target = target.parentNode;
-//       }
-//     });
-//   });
 // }
+
+export function setupEventListeners(root) {
+  eventHandlers.forEach((handlersMap, eventType) => {
+    // 기존 리스너 제거
+    const prevListener = registeredListeners.get(eventType);
+    if (prevListener) {
+      root.removeEventListener(eventType, prevListener);
+    }
+
+    // 새 리스너 정의
+    const listener = (eventObj) => {
+      let target = eventObj.target;
+
+      while (target && target !== root) {
+        const handlers = handlersMap.get(target);
+
+        handlers?.forEach((fn) => fn(eventObj));
+
+        if (handlers) break;
+        target = target.parentNode;
+      }
+    };
+
+    root.addEventListener(eventType, listener);
+    registeredListeners.set(eventType, listener);
+  });
+}

@@ -10,6 +10,7 @@ export function renderElement(vNode, container) {
 
   if (!oldVNode) {
     const $el = createElement(normalizedVNode);
+
     container.appendChild($el);
 
     if (!container._isInitialized) {
@@ -23,6 +24,7 @@ export function renderElement(vNode, container) {
     };
   } else {
     updateElement(container, normalizedVNode, oldVNode);
+    setupEventListeners(container);
 
     container._vnode = {
       ...normalizedVNode,

@@ -25,7 +25,7 @@ export const LoginPage = () => {
         <h1 className="text-2xl font-bold text-center text-blue-600 mb-8">
           항해플러스
         </h1>
-        <form id="login-form" onSubmit={handleSubmit} action="#">
+        <form id="login-form" onSubmit={handleSubmit}>
           <input
             type="text"
             id="username"
