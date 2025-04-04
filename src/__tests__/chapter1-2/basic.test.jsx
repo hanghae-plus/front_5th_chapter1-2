@@ -482,6 +482,100 @@ describe("Chapter1-2 > 기본과제 > 가상돔 만들기 > ", () => {
 
       expect(clickHandler).toHaveBeenCalledTimes(1);
     });
+
+    it("이벤트 버블링이 DOM 트리를 따라 올바르게 동작해야 한다", () => {
+      const parent = document.createElement("div");
+      const child = document.createElement("div");
+      const grandchild = document.createElement("button");
+
+      child.appendChild(grandchild);
+      parent.appendChild(child);
+      container.appendChild(parent);
+
+      const parentClickHandler = vi.fn();
+      const childClickHandler = vi.fn();
+      const grandchildClickHandler = vi.fn();
+
+      addEvent(parent, "click", parentClickHandler);
+      addEvent(child, "click", childClickHandler);
+      addEvent(grandchild, "click", grandchildClickHandler);
+
+      setupEventListeners(container);
+
+      grandchild.click();
+
+      expect(grandchildClickHandler).toHaveBeenCalledTimes(1);
+      expect(childClickHandler).toHaveBeenCalledTimes(1);
+      expect(parentClickHandler).toHaveBeenCalledTimes(1);
+
+      const mockCalls = grandchildClickHandler.mock.calls[0];
+      expect(mockCalls[0] instanceof Event).toBe(true);
+      expect(mockCalls[0].target).toBe(grandchild);
+    });
+
+    it("이벤트 버블링이 stopPropagation으로 중단될 수 있어야 한다", () => {
+      const parent = document.createElement("div");
+      const child = document.createElement("div");
+      const grandchild = document.createElement("button");
+
+      child.appendChild(grandchild);
+      parent.appendChild(child);
+      container.appendChild(parent);
+
+      const parentClickHandler = vi.fn();
+      const childClickHandler = vi.fn((e) => e.stopPropagation());
+      const grandchildClickHandler = vi.fn();
+
+      addEvent(parent, "click", parentClickHandler);
+      addEvent(child, "click", childClickHandler);
+      addEvent(grandchild, "click", grandchildClickHandler);
+
+      setupEventListeners(container);
+
+      grandchild.click();
+
+      expect(grandchildClickHandler).toHaveBeenCalledTimes(1);
+      expect(childClickHandler).toHaveBeenCalledTimes(1);
+      expect(parentClickHandler).not.toHaveBeenCalled();
+    });
+
+    it("이벤트 핸들러는 등록된 순서대로 실행되어야 한다", () => {
+      const button = document.createElement("button");
+      container.appendChild(button);
+
+      let executionOrder = [];
+
+      const handler1 = vi.fn(() => executionOrder.push(1));
+      const handler2 = vi.fn(() => executionOrder.push(2));
+      const handler3 = vi.fn(() => executionOrder.push(3));
+
+      addEvent(button, "click", handler1);
+      addEvent(button, "click", handler2);
+      addEvent(button, "click", handler3);
+
+      setupEventListeners(container);
+
+      button.click();
+
+      expect(handler1).toHaveBeenCalledTimes(1);
+      expect(handler2).toHaveBeenCalledTimes(1);
+      expect(handler3).toHaveBeenCalledTimes(1);
+
+      expect(executionOrder).toEqual([1, 2, 3]);
+
+      // 핸들러 제거 후 실행 순서 다시 확인
+      executionOrder = [];
+      removeEvent(button, "click", handler2);
+
+      button.click();
+
+      // 제거된 핸들러는 호출되지 않아야 함
+      expect(handler1).toHaveBeenCalledTimes(2);
+      expect(handler2).toHaveBeenCalledTimes(1);
+      expect(handler3).toHaveBeenCalledTimes(2);
+
+      expect(executionOrder).toEqual([1, 3]);
+    });
   });
 
   describe("renderElement", () => {

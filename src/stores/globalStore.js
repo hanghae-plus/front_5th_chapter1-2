@@ -1,6 +1,6 @@
 import { createStore } from "../lib";
 import { userStorage } from "../storages";
-
+import { ERROR_TYPES, ERROR_MESSAGES } from "../errors";
 const 초 = 1000;
 const 분 = 초 * 60;
 const 시간 = 분 * 60;
@@ -51,7 +51,72 @@ export const globalStore = createStore(
   {
     logout(state) {
       userStorage.reset();
-      return { ...state, currentUser: null, loggedIn: false };
+      return { ...state, currentUser: null, loggedIn: false, error: null };
+    },
+    toggleLike(state, postId) {
+      if (!state.loggedIn) {
+        return {
+          ...state,
+          error: {
+            type: ERROR_TYPES.AUTH_REQUIRED,
+            message: ERROR_MESSAGES.AUTH_REQUIRED,
+          },
+        };
+      }
+
+      const updatedPosts = state.posts.map((post) => {
+        if (post.id === postId) {
+          const { username } = state.currentUser;
+          const isLiked = post.likeUsers.includes(username);
+
+          if (isLiked) {
+            return {
+              ...post,
+              likeUsers: post.likeUsers.filter((user) => user !== username),
+            };
+          } else {
+            return {
+              ...post,
+              likeUsers: [...post.likeUsers, username],
+            };
+          }
+        }
+        return post;
+      });
+
+      return { ...state, posts: updatedPosts, error: null };
+    },
+
+    addPost(state, content) {
+      if (!state.loggedIn || !state.currentUser) {
+        return {
+          ...state,
+          error: {
+            type: ERROR_TYPES.AUTH_REQUIRED,
+            message: ERROR_MESSAGES.AUTH_REQUIRED,
+          },
+        };
+      }
+
+      const newPost = {
+        id: Date.now(),
+        author: state.currentUser.username,
+        time: Date.now(),
+        content,
+        likeUsers: [],
+      };
+
+      return { ...state, posts: [newPost, ...state.posts], error: null };
+    },
+  },
+  {
+    getIsLiked(state, postId) {
+      if (!state.loggedIn || !state.currentUser) return false;
+
+      const post = state.posts.find((post) => post.id === postId);
+      if (!post) return false;
+
+      return post.likeUsers.includes(state.currentUser.username);
     },
   },
 );
