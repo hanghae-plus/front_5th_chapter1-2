@@ -10,7 +10,6 @@ const getMemoryTestFilePath = () => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const folderPath = path.resolve(process.cwd(), TEST_RESULT_BASE_FOLDER);
 
-  // 폴더가 없으면 생성
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
   }
@@ -18,7 +17,7 @@ const getMemoryTestFilePath = () => {
   return path.resolve(folderPath, `memory-test-${timestamp}.csv`);
 };
 
-// 측정 결과를 파일에 저장하는 함수
+// TODO: test util 함수로 분리
 function saveTestResult(
   filePath,
   testName,
@@ -30,12 +29,8 @@ function saveTestResult(
     "Timestamp,TestName,Cycle,InitialMemory(MB),CurrentMemory(MB),MemoryDiff(MB)\n";
   const exists = fs.existsSync(filePath);
 
-  // 파일이 없으면 헤더 생성
-  if (!exists) {
-    fs.writeFileSync(filePath, testHeader);
-  }
+  if (!exists) fs.writeFileSync(filePath, testHeader);
 
-  // 데이터 행 추가
   const memoryDiff = (currentMemory - initialMemory).toFixed(2);
   const row =
     [
@@ -51,22 +46,19 @@ function saveTestResult(
 }
 
 test.describe("EventManager 메모리 성능 테스트", () => {
+  // 테스트 전 eventManager 코드 주입
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
 
-    // eventManager.js 파일의 내용을 문자열로 읽어옴
     const eventManagerPath = path.join(
       process.cwd(),
       "src/lib/eventManager.js",
     );
     const eventManagerCode = fs.readFileSync(eventManagerPath, "utf8");
 
-    // 페이지에 eventManager 코드 주입
     await page.evaluate((code) => {
-      // 모듈 코드를 eval 하기 전에 window.testEventManager 객체 준비
       window.testEventManager = {};
 
-      // export 문을 window.testEventManager로 리다이렉트하는 코드로 변환
       const modifiedCode = code
         .replace(
           /export function ([a-zA-Z]+)/g,
@@ -74,7 +66,6 @@ test.describe("EventManager 메모리 성능 테스트", () => {
         )
         .replace(/export const ([a-zA-Z]+)/g, "window.testEventManager.$1 =");
 
-      // 코드 실행
       eval(modifiedCode);
     }, eventManagerCode);
   });
@@ -82,11 +73,9 @@ test.describe("EventManager 메모리 성능 테스트", () => {
   test("대량의 DOM 요소 생성 및 제거 후 메모리 사용량 측정", async ({
     page,
   }) => {
-    // 결과 파일 경로 생성
     const resultFilePath = getMemoryTestFilePath();
     console.log(`메모리 테스트 결과 파일: ${resultFilePath}`);
 
-    // 초기 메모리 측정
     const initialMemory = await page.evaluate(() =>
       performance.memory
         ? performance.memory.usedJSHeapSize / (1024 * 1024)
@@ -98,7 +87,6 @@ test.describe("EventManager 메모리 성능 테스트", () => {
     for (let cycle = 0; cycle < CYCLES; cycle++) {
       // 1. 대량의 DOM 요소 생성 및 이벤트 리스너 추가
       await page.evaluate((count) => {
-        // DOM 요소 생성
         const container = document.createElement("div");
         container.id = "test-container";
         document.body.appendChild(container);
@@ -124,7 +112,6 @@ test.describe("EventManager 메모리 성능 테스트", () => {
           );
         }
 
-        // 일부 이벤트 활성화
         for (let i = 0; i < Math.min(50, count); i++) {
           const element = document.getElementById(`btn-${i}`);
           if (element) {
@@ -145,7 +132,6 @@ test.describe("EventManager 메모리 성능 테스트", () => {
           : 0;
       });
 
-      // 사이클별 결과 저장
       saveTestResult(
         resultFilePath,
         "DOM 요소 생성 후",
@@ -171,7 +157,6 @@ test.describe("EventManager 메모리 성능 테스트", () => {
         if (window.gc) {
           window.gc();
         } else {
-          // 가비지 컬렉션을 유도하기 위한 메모리 압박
           const pressure = [];
           for (let i = 0; i < 1000000; i++) {
             pressure.push(new Array(100).fill(i));
@@ -189,7 +174,6 @@ test.describe("EventManager 메모리 성능 테스트", () => {
           : 0;
       });
 
-      // GC 후 결과 저장
       saveTestResult(
         resultFilePath,
         "GC 실행 후",
@@ -202,18 +186,15 @@ test.describe("EventManager 메모리 성능 테스트", () => {
         `GC 후 메모리 (사이클 ${cycle + 1}): ${afterGcMemory.toFixed(2)}MB`,
       );
 
-      // 짧은 대기 시간
       await page.waitForTimeout(500);
     }
 
-    // 최종 메모리 측정
     const finalMemory = await page.evaluate(() => {
       return performance.memory
         ? performance.memory.usedJSHeapSize / (1024 * 1024)
         : 0;
     });
 
-    // 최종 결과 저장
     saveTestResult(
       resultFilePath,
       "테스트 완료",
