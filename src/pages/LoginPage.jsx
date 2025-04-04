@@ -2,6 +2,7 @@
 import { createVNode } from "../lib";
 import { globalStore } from "../stores";
 import { userStorage } from "../storages";
+import { router } from "../router";
 
 function login(username) {
   const user = { username, email: "", bio: "" };
@@ -16,7 +17,15 @@ export const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const username = document.getElementById("username").value;
+
+    // 더미 데이터 (입력폼이 따로 없다고 가정)
+    const email = "test@example.com";
+    const bio = "자기소개입니다.";
+
     login(username);
+
+    // ✅ 홈으로 이동
+    router.get().push("/");
   };
 
   return (
@@ -35,6 +44,8 @@ export const LoginPage = () => {
           />
           <input
             type="password"
+            id="password"
+            autocomplete="current-password"
             placeholder="비밀번호"
             className="w-full p-2 mb-6 border rounded"
             required

@@ -49,9 +49,19 @@ export const globalStore = createStore(
     error: null,
   },
   {
+    loggedIn(state, user) {
+      userStorage.set(user);
+      return {
+        ...state,
+        currentUser: user,
+        loggedIn: true,
+      };
+    },
     logout(state) {
       userStorage.reset();
-      return { ...state, currentUser: null, loggedIn: false };
+      const newState = { ...state, currentUser: null, loggedIn: false };
+      window.location.href = "/";
+      return newState;
     },
   },
 );
