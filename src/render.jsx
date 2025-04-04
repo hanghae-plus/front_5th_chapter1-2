@@ -14,6 +14,7 @@ export function render() {
   } catch (error) {
     if (error instanceof ForbiddenError) {
       router.get().push("/");
+
       return;
     }
     if (error instanceof UnauthorizedError) {
