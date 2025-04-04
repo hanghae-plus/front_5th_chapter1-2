@@ -87,7 +87,7 @@ test.describe("SPA Part 1", () => {
       await page.getByLabel("자기소개").fill("자기소개입니다.");
       page.once("dialog", (dialog) => {
         console.log(`Dialog message: ${dialog.message()}`);
-        dialog.dismiss().catch(() => {});
+        dialog.dismiss().catch(() => { });
       });
       await page.getByRole("button", { name: "프로필 업데이트" }).click();
       await page.reload();
@@ -98,7 +98,7 @@ test.describe("SPA Part 1", () => {
     - text: 이메일
     - textbox "이메일": a@a.aa
     - text: 자기소개
-    - textbox "자기소개": 자기소개입니다. 자기소개입니다.
+    - textbox "자기소개": 자기소개입니다.
     - button "프로필 업데이트"
     `);
     });
@@ -218,7 +218,7 @@ test.describe("SPA Part 2", () => {
       const $firstLikeButton = page.getByText("좋아요").first();
       page.once("dialog", (dialog) => {
         console.log(`Dialog message: ${dialog.message()}`);
-        dialog.dismiss().catch(() => {});
+        dialog.dismiss().catch(() => { });
       });
       await $firstLikeButton.click();
       await expect(await $firstLikeButton.innerHTML()).toBe("좋아요 0");

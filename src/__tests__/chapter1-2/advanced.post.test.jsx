@@ -86,7 +86,7 @@ describe("Chapter1-2 > 심화과제 > 포스트 관리", () => {
       );
     });
 
-    it("포스트에 좋아요를 클릭할 경우, 좋아요가 토글된다.", () => {
+    it("포스트에 좋아요를 클릭할 경우, 좋아요가 토글된다.", async () => {
       const [$likeButton] = [
         ...document.querySelectorAll("#posts-container .like-button"),
       ];
@@ -95,10 +95,12 @@ describe("Chapter1-2 > 심화과제 > 포스트 관리", () => {
         '<span class="like-button cursor-pointer">좋아요 0</span>',
       );
       $likeButton.click();
+      await Promise.resolve();
       expect($likeButton.outerHTML).toBe(
         '<span class="like-button cursor-pointer text-blue-500">좋아요 1</span>',
       );
       $likeButton.click();
+      await Promise.resolve();
       expect($likeButton.outerHTML).toBe(
         '<span class="like-button cursor-pointer">좋아요 0</span>',
       );

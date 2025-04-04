@@ -19,7 +19,8 @@ router.set(
     "/profile": () => {
       const { loggedIn } = globalStore.getState();
       if (!loggedIn) {
-        throw new UnauthorizedError();
+        return <LoginPage />;
+        // throw new UnauthorizedError();
       }
       return <ProfilePage />;
     },
