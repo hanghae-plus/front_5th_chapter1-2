@@ -4,9 +4,7 @@ import { router } from "../../router";
 import { globalStore } from "../../stores";
 
 const getNavItemClass = (path) => {
-  const BASE_URL = import.meta.env.VITE_PUBLIC_PATH;
-
-  const currentPath = window.location.pathname.replace(BASE_URL, "");
+  const currentPath = router.get().path;
   return currentPath === path ? "text-blue-600 font-bold" : "text-gray-600";
 };
 
@@ -55,6 +53,7 @@ export const Navigation = () => {
               id="logout"
               className="text-gray-600"
               onClick={(e) => {
+                e.preventDefault();
                 logout();
               }}
             >

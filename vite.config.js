@@ -5,14 +5,13 @@ import { resolve } from "path";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
-  console.log(env);
   const baseConfig = {
     base: env.VITE_PUBLIC_PATH || "/",
     build: {
       rollupOptions: {
         input: {
           main: resolve(__dirname, "index.html"),
-          hash: resolve(__dirname, "index.hash.html"),
+          // hash: resolve(__dirname, "index.hash.html"),
         },
       },
     },

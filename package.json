@@ -11,9 +11,10 @@
   "scripts": {
     "dev": "vite",
     "dev:hash": "vite --open ./index.hash.html",
+    "clean": "rm -rf dist",
     "build": "vite build",
     "postbuild": "cp dist/index.html dist/404.html",
-    "predeploy": "pnpm run build",
+    "predeploy": "pnpm run clean && pnpm run build",
     "deploy": "gh-pages -d dist",
     "lint:fix": "eslint --fix",
     "prettier:write": "prettier --write ./src",
