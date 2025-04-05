@@ -3,8 +3,10 @@ import { defineConfig } from "vite";
 
 export default mergeConfig(
   defineConfig({
+    base: "/hanghae99-chap2/",
     esbuild: {
       jsxFactory: "createVNode",
+      loader: "jsx",
     },
     optimizeDeps: {
       esbuildOptions: {

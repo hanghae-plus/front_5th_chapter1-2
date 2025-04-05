@@ -35,3 +35,33 @@ export const HomePage = () => {
     </div>
   );
 };
+
+// export const HomePage = () => {
+//   const { posts } = globalStore.getState();
+
+//   return createVNode(
+//     "div",
+//     { className: "bg-gray-100 min-h-screen flex justify-center" },
+//     createVNode(
+//       "div",
+//       { className: "max-w-md w-full" },
+//       createVNode(Header),
+//       createVNode(Navigation),
+
+//       createVNode(
+//         "main",
+//         { className: "p-4" },
+//         createVNode(PostForm),
+//         createVNode(
+//           "div",
+//           { id: "posts-container", className: "space-y-4" },
+//           [...posts]
+//             .sort((a, b) => b.time - a.time)
+//             .map((props) => createVNode(Post, { ...props, activationLike: false }))
+//         )
+//       ),
+
+//       createVNode(Footer)
+//     )
+//   );
+// };
